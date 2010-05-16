@@ -1,0 +1,11 @@
+#include "nsISupports.idl"
+
+
+[scriptable, uuid(c5bf5079-8bc3-4fc5-881f-f3bd85a63c61)]
+interface nsISIP : nsISupports
+{
+  attribute long port;
+
+  void call(in AString URI);
+};
+
