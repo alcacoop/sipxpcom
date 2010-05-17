@@ -1,26 +1,10 @@
-/* $Id: pjsipsharedlib.c,v 1.1 2009/07/08 13:34:03 micadeyeye Exp $ */
-/* 
- * Copyright (C) 2003-2007 Benny Prijono <benny@prijono.org>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
- */
+// pjsip.cpp : Defines the exported functions for the DLL application.
+//
 
-#include "pjsip.h"
 #include <pjsua-lib/pjsua.h>
 #include "stdio.h"
 #include "string.h"
+#include "pjsip.h"
 
 #define THIS_FILE	"APP"
 #define current_acc	pjsua_acc_get_default()
@@ -69,10 +53,12 @@ static void error_exit(const char *title, pj_status_t status) {
 
 
 
-int sipregister(long sipPort) {
+PJSIP_API int sipregister(long sipPort) {
 
   static pj_thread_desc desc;
   static pj_thread_t *  thread;
+  pj_status_t status;
+  pjsua_acc_id acc_id;
 
 #define REGISTER_THREAD()	\
   if(!pj_thread_is_registered()) {\
@@ -80,8 +66,7 @@ int sipregister(long sipPort) {
   }
 
   REGISTER_THREAD();
-  pj_status_t status;
-  pjsua_acc_id acc_id;
+  
 
   /* Create pjsua first! */
   status = pjsua_create();
@@ -91,11 +76,12 @@ int sipregister(long sipPort) {
   /* Init pjsua */
   {
     pjsua_config cfg;
+	pjsua_logging_config log_cfg;
 
-    cfg.user_agent = pj_str("pjsip");
+    cfg.user_agent = pj_str((char*)"pjsip");
     /* Bind all multithread calls from an API to a single thread or worker thread */
     cfg.thread_cnt = 0;
-    pjsua_logging_config log_cfg;
+    
     pjsua_config_default(&cfg);
     cfg.cb.on_incoming_call = &on_incoming_call;
     cfg.cb.on_call_media_state = &on_call_media_state;
@@ -128,7 +114,7 @@ int sipregister(long sipPort) {
   {
     pjsua_acc_config cfg;
     pjsua_acc_config_default(&cfg);
-    cfg.id = pj_str("sip:tc@localhost");
+    cfg.id = pj_str((char*)"sip:tc@localhost");
     cfg.cred_count = 1;
     status = pjsua_acc_add(&cfg, PJ_TRUE, &acc_id);
     if (status != PJ_SUCCESS){ pjsua_destroy();}
@@ -137,7 +123,7 @@ int sipregister(long sipPort) {
 }
 
 
-int sipderegister(){
+PJSIP_API int sipderegister(){
   static pj_thread_desc desc;
   static pj_thread_t *  thread;
   #define REGISTER_THREAD()	\
@@ -153,9 +139,11 @@ int sipderegister(){
 }
 
 
-int sipmakecall(char *sipToAddr){
+PJSIP_API int sipmakecall(char *sipToAddr){
   /* Registering thread (MOZ.) with pj_register_thread before calling any pjlibs function */
   pj_status_t status;
+  pj_str_t uri = pj_str(sipToAddr);
+
   static pj_thread_desc desc;
   static pj_thread_t *  thread;
 #define REGISTER_THREAD()	\
@@ -163,13 +151,13 @@ int sipmakecall(char *sipToAddr){
     pj_thread_register(NULL,desc,&thread);\
   }
   REGISTER_THREAD();
-  pj_str_t uri = pj_str(sipToAddr);
+  
   status = pjsua_call_make_call(current_acc, &uri, 0, NULL, NULL, NULL);
   return 0;
 }
 
 
-int siphangup(){
+PJSIP_API int siphangup(){
   static pj_thread_desc desc;
   static pj_thread_t *  thread;
 #define REGISTER_THREAD()	\

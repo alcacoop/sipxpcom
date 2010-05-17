@@ -23,13 +23,10 @@ all: clean prepare build
 prepare: header xpt
 
 build:  
-	$(CXX) -fPIC -shared  -c pjsip.c $(PJSIP_FLAGS)
-	$(CXX) -fPIC -shared -Wl,-h,libpjsip.so -o libpjsip.so pjsip.c $(PJSIP_FLAGS)
+	$(CXX) -fPIC -shared -Wl,-h,libpjsip.so -o libpjsip.so pjsip.cpp $(PJSIP_FLAGS)
 	$(CXX) $(CPPFLAGS) -c nsSIP.cpp $(GECKO_INCLUDES) $(GECKO_CONFIG_INCLUDE)
 	$(CXX) $(CPPFLAGS) -c nsSIPModule.cpp  $(GECKO_INCLUDES) $(GECKO_CONFIG_INCLUDE)
-
 	$(CXX) $(CPPFLAGS) -o $(TARGET) $(FILES) $(GECKO_LDFLAGS) $(GECKO_DEFINES) -L. -lpjsip
-	#$(CXX) $(CPPFLAGS) -o $(TARGET) $(FILES) $(GECKO_LDFLAGS) $(GECKO_DEFINES)  $(PJSIP_FLAGS)
  
 header:
 	$(GECKO_SDK_PATH)/bin/xpidl -m header -w -v -I $(GECKO_SDK_PATH)/idl/ -o nsISIP nsISIP.idl

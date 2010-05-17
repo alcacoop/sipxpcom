@@ -1,8 +1,5 @@
 #include "nsSIP.h"
 #include "pjsip.h"
-
-//#include "nsAString.h"
-//#include "nsString.h"
 #include "nsStringAPI.h"
 
 
