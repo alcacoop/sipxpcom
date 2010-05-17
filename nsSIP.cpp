@@ -38,9 +38,23 @@ NS_IMETHODIMP nsSIP::Init(PRInt32 port)
   return NS_OK;
 }
 
+/* void destroy (); */
+NS_IMETHODIMP nsSIP::Destroy()
+{
+  sipderegister();
+  return NS_OK;
+}
+
 /* void call (in AString URI); */
 NS_IMETHODIMP nsSIP::Call(const char* URI)
 {
   sipmakecall((char*)URI);
+  return NS_OK;
+}
+
+/* void hangup (); */
+NS_IMETHODIMP nsSIP::Hangup()
+{
+  siphangup();
   return NS_OK;
 }
