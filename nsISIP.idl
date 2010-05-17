@@ -6,6 +6,7 @@ interface nsISIP : nsISupports
 {
   attribute long port;
 
-  void call(in AString URI);
+  void init(in long port);
+  void call(in string URI);
 };
 

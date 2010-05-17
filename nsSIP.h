@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <pjsip.h>
 
 #include "nsISIP.h"
 
@@ -22,5 +23,6 @@ private:
   ~nsSIP();
 
 protected:
+  long port;
   /* additional members */
 };

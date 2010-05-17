@@ -31,8 +31,11 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD GetPort(PRInt32 *aPort) = 0;
   NS_SCRIPTABLE NS_IMETHOD SetPort(PRInt32 aPort) = 0;
 
-  /* void call (in AString URI); */
-  NS_SCRIPTABLE NS_IMETHOD Call(const nsAString & URI) = 0;
+  /* void init (in long port); */
+  NS_SCRIPTABLE NS_IMETHOD Init(PRInt32 port) = 0;
+
+  /* void call (in string URI); */
+  NS_SCRIPTABLE NS_IMETHOD Call(const char *URI) = 0;
 
 };
 
@@ -42,19 +45,22 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
 #define NS_DECL_NSISIP \
   NS_SCRIPTABLE NS_IMETHOD GetPort(PRInt32 *aPort); \
   NS_SCRIPTABLE NS_IMETHOD SetPort(PRInt32 aPort); \
-  NS_SCRIPTABLE NS_IMETHOD Call(const nsAString & URI); 
+  NS_SCRIPTABLE NS_IMETHOD Init(PRInt32 port); \
+  NS_SCRIPTABLE NS_IMETHOD Call(const char *URI); 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object. */
 #define NS_FORWARD_NSISIP(_to) \
   NS_SCRIPTABLE NS_IMETHOD GetPort(PRInt32 *aPort) { return _to GetPort(aPort); } \
   NS_SCRIPTABLE NS_IMETHOD SetPort(PRInt32 aPort) { return _to SetPort(aPort); } \
-  NS_SCRIPTABLE NS_IMETHOD Call(const nsAString & URI) { return _to Call(URI); } 
+  NS_SCRIPTABLE NS_IMETHOD Init(PRInt32 port) { return _to Init(port); } \
+  NS_SCRIPTABLE NS_IMETHOD Call(const char *URI) { return _to Call(URI); } 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
 #define NS_FORWARD_SAFE_NSISIP(_to) \
   NS_SCRIPTABLE NS_IMETHOD GetPort(PRInt32 *aPort) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetPort(aPort); } \
   NS_SCRIPTABLE NS_IMETHOD SetPort(PRInt32 aPort) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetPort(aPort); } \
-  NS_SCRIPTABLE NS_IMETHOD Call(const nsAString & URI) { return !_to ? NS_ERROR_NULL_POINTER : _to->Call(URI); } 
+  NS_SCRIPTABLE NS_IMETHOD Init(PRInt32 port) { return !_to ? NS_ERROR_NULL_POINTER : _to->Init(port); } \
+  NS_SCRIPTABLE NS_IMETHOD Call(const char *URI) { return !_to ? NS_ERROR_NULL_POINTER : _to->Call(URI); } 
 
 #if 0
 /* Use the code below as a template for the implementation class for this interface. */
@@ -98,8 +104,14 @@ NS_IMETHODIMP nsSIP::SetPort(PRInt32 aPort)
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-/* void call (in AString URI); */
-NS_IMETHODIMP nsSIP::Call(const nsAString & URI)
+/* void init (in long port); */
+NS_IMETHODIMP nsSIP::Init(PRInt32 port)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void call (in string URI); */
+NS_IMETHODIMP nsSIP::Call(const char *URI)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }

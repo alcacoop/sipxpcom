@@ -1,4 +1,9 @@
 #include "nsSIP.h"
+#include "pjsip.h"
+
+//#include "nsAString.h"
+//#include "nsString.h"
+#include "nsStringAPI.h"
 
 
 NS_IMPL_ISUPPORTS1(nsSIP, nsISIP)
@@ -16,15 +21,26 @@ nsSIP::~nsSIP()
 /* attribute long port; */
 NS_IMETHODIMP nsSIP::GetPort(PRInt32 *aPort)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+  *aPort = port;
+  return NS_OK;
 }
 NS_IMETHODIMP nsSIP::SetPort(PRInt32 aPort)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+  port = aPort;
+  return NS_OK;
+}
+
+/* void init (in long port); */
+NS_IMETHODIMP nsSIP::Init(PRInt32 port)
+{
+  
+  sipregister((int)port);
+  return NS_OK;
 }
 
 /* void call (in AString URI); */
-NS_IMETHODIMP nsSIP::Call(const nsAString & URI)
+NS_IMETHODIMP nsSIP::Call(const char* URI)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+  sipmakecall((char*)URI);
+  return NS_OK;
 }
