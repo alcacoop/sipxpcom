@@ -9,6 +9,14 @@
 #define THIS_FILE	"APP"
 #define current_acc	pjsua_acc_get_default()
 
+#define REGISTER_THREAD()	\
+  static pj_thread_desc desc;\
+  static pj_thread_t *  thread;\
+  if(!pj_thread_is_registered()) {\
+    pj_thread_register(NULL,desc,&thread);\
+  }
+
+void state_handler(char*);
 
 /* Callback called by the library upon receiving incoming call */
 static void on_incoming_call(pjsua_acc_id acc_id, pjsua_call_id call_id, pjsip_rx_data *rdata){
@@ -54,30 +62,16 @@ static void error_exit(const char *title, pj_status_t status) {
 
 
 PJSIP_API int sipregister(long sipPort) {
-
-  static pj_thread_desc desc;
-  static pj_thread_t *  thread;
   pj_status_t status;
   pjsua_acc_id acc_id;
-
-#define REGISTER_THREAD()	\
-  if(!pj_thread_is_registered()) {\
-    pj_thread_register(NULL,desc,&thread);\
-  }
-
   REGISTER_THREAD();
-  
 
-  /* Create pjsua first! */
   status = pjsua_create();
 
-  /* if (status != PJ_SUCCESS) error_exit("Error in pjsua_create()", status); */
   if (status != PJ_SUCCESS){ pjsua_destroy();}
-  /* Init pjsua */
   {
     pjsua_config cfg;
-	pjsua_logging_config log_cfg;
-
+    pjsua_logging_config log_cfg;
     cfg.user_agent = pj_str((char*)"pjsip");
     /* Bind all multithread calls from an API to a single thread or worker thread */
     cfg.thread_cnt = 0;
@@ -124,14 +118,7 @@ PJSIP_API int sipregister(long sipPort) {
 
 
 PJSIP_API int sipderegister(){
-  static pj_thread_desc desc;
-  static pj_thread_t *  thread;
-  #define REGISTER_THREAD()	\
-  if(!pj_thread_is_registered()) {\
-    pj_thread_register(NULL,desc,&thread);\
-  }
   REGISTER_THREAD();
-  /* de-register client */
   pjsua_acc_del(current_acc);
   pjsua_destroy();
   printf("ESCO..\n");
@@ -140,30 +127,15 @@ PJSIP_API int sipderegister(){
 
 
 PJSIP_API int sipmakecall(char *sipToAddr){
-  /* Registering thread (MOZ.) with pj_register_thread before calling any pjlibs function */
   pj_status_t status;
   pj_str_t uri = pj_str(sipToAddr);
-
-  static pj_thread_desc desc;
-  static pj_thread_t *  thread;
-#define REGISTER_THREAD()	\
-  if(!pj_thread_is_registered()) {\
-    pj_thread_register(NULL,desc,&thread);\
-  }
   REGISTER_THREAD();
-  
   status = pjsua_call_make_call(current_acc, &uri, 0, NULL, NULL, NULL);
   return 0;
 }
 
 
 PJSIP_API int siphangup(){
-  static pj_thread_desc desc;
-  static pj_thread_t *  thread;
-#define REGISTER_THREAD()	\
-  if(!pj_thread_is_registered()) {\
-    pj_thread_register(NULL,desc,&thread);\
-  }
   REGISTER_THREAD();
 	pjsua_call_hangup_all();
   return 0;
