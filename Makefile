@@ -1,6 +1,6 @@
 GECKO_SDK_PATH=/src/firefox/xulrunner-sdk
 
-CXX=c++
+CXX=c++ -O3 
 CPPFLAGS+=-fPIC -shared -Wl,-h,libsip.so 
  
 GECKO_CONFIG_INCLUDE=-include mozilla-config.h 
