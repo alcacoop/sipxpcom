@@ -118,7 +118,6 @@ PJSIP_API int sipderegister(){
   REGISTER_THREAD();
   pjsua_acc_del(current_acc);
   pjsua_destroy();
-  printf("ESCO..\n");
   return 0;
 }
 
