@@ -24,18 +24,24 @@ static void on_incoming_call(pjsua_acc_id acc_id, pjsua_call_id call_id, pjsip_r
   PJ_LOG(3,(THIS_FILE, "Incoming call from %.*s!!",
         (int)ci.remote_info.slen,
         ci.remote_info.ptr));
-  /* Automatically answer incoming calls with 200/OK */
   pjsua_call_answer(call_id, 200, NULL, NULL);
 }
 
 /* Callback called by the library when call's state has changed */
-static void on_call_state(pjsua_call_id call_id, pjsip_event *e) {
+static void on_call_state(pjsua_call_id call_id, pjsip_event *e){
   pjsua_call_info ci;
   PJ_UNUSED_ARG(e);
   pjsua_call_get_info(call_id, &ci);
-  PJ_LOG(3,(THIS_FILE, "Call %d state=%.*s", call_id,
-        (int)ci.state_text.slen,
-        ci.state_text.ptr));
+  //printf("%s\n",ci.state_text.ptr);
+  if (strcmp(ci.state_text.ptr, "CALLING")==0)
+    state_handler((char*)"CALLING");
+  if (strcmp(ci.state_text.ptr, "CONFIRMED")==0)
+    state_handler((char*)"ANSWER");
+  if (strcmp(ci.state_text.ptr, "DISCONNCTD")==0){
+    state_handler((char*)"HANGUP");
+    siphangup();
+  }
+
 }
 
 /* Callback called by the library when call's media state has changed */

@@ -55,3 +55,14 @@ NS_IMETHODIMP nsSIP::Hangup()
   siphangup();
   return NS_OK;
 }
+
+
+void state_handler(char* status){
+  /*
+  Possible status are:
+  "CALLING"
+  "ANSWER"
+  "HANGUP"
+  */
+  printf(">%s\n", status);
+}; 
