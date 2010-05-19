@@ -1,12 +1,16 @@
 #include "nsISupports.idl"
 
 
+[scriptable, function, uuid(3869ed55-e06a-4ac1-84ea-4c3a4b696924)]
+interface nsSipStateObserver : nsISupports {
+  void onStatusChange(in string status);
+};
+
+
 [scriptable, uuid(c5bf5079-8bc3-4fc5-881f-f3bd85a63c61)]
 interface nsISIP : nsISupports
 {
-  attribute long port;
-
-  void init(in long port);
+  void init(in long port, in nsSipStateObserver cbk);
   void destroy();
   void call(in string URI);
   void hangup();

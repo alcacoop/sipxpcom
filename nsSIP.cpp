@@ -1,9 +1,17 @@
+#include "nsCOMPtr.h"
+#include "nsServiceManagerUtils.h"
+#include "nsIProxyObjectManager.h"
+#include "nsISupports.h"
+#include "nsXPCOMCIDInternal.h"
+
 #include "nsSIP.h"
 #include "pjsip.h"
-#include "nsStringAPI.h"
 
 
 NS_IMPL_ISUPPORTS1(nsSIP, nsISIP)
+
+nsCOMPtr<nsSipStateObserver> nsSIP::observer = nsnull;
+nsCOMPtr<nsSipStateObserver> nsSIP::proxy = nsnull;
 
 nsSIP::nsSIP()
 {
@@ -15,23 +23,28 @@ nsSIP::~nsSIP()
   /* destructor code */
 }
 
-/* attribute long port; */
-NS_IMETHODIMP nsSIP::GetPort(PRInt32 *aPort)
-{
-  *aPort = port;
-  return NS_OK;
-}
-NS_IMETHODIMP nsSIP::SetPort(PRInt32 aPort)
-{
-  port = aPort;
-  return NS_OK;
-}
 
 /* void init (in long port); */
-NS_IMETHODIMP nsSIP::Init(PRInt32 port)
+NS_IMETHODIMP nsSIP::Init(PRInt32 port, nsSipStateObserver *cbk)
 {
-  
+  nsSIP::observer = cbk;
+  nsresult rv = NS_OK;
+  nsCOMPtr<nsIProxyObjectManager> pIProxyObjectManager(do_GetService("@mozilla.org/xpcomproxy;1", &rv));
+  if(NS_FAILED(rv)) return rv;
+
+  nsCOMPtr<nsSipStateObserver> pProxy;
+  rv = pIProxyObjectManager->GetProxyForObject(
+      NS_PROXY_TO_MAIN_THREAD,
+      nsSipStateObserver::GetIID(),
+      //NS_GET_IID(nsSipStateObserver),
+      nsSIP::observer,
+      NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+      getter_AddRefs(pProxy));
+  if(NS_FAILED(rv)) return rv;
+
+  nsSIP::proxy=pProxy;
   sipregister((int)port);
+  nsSIP::proxy->OnStatusChange("INIT");
   return NS_OK;
 }
 
@@ -39,6 +52,7 @@ NS_IMETHODIMP nsSIP::Init(PRInt32 port)
 NS_IMETHODIMP nsSIP::Destroy()
 {
   sipderegister();
+  nsSIP::proxy->OnStatusChange("DESTROY");
   return NS_OK;
 }
 
@@ -56,13 +70,15 @@ NS_IMETHODIMP nsSIP::Hangup()
   return NS_OK;
 }
 
-
+/* Overwrite di funzione di libreria pjsip (wrapper a pjsua)*/
 void state_handler(char* status){
   /*
   Possible status are:
+  "INIT"
   "CALLING"
   "ANSWER"
   "HANGUP"
+  "DESTROY"
   */
-  printf(">%s\n", status);
+  nsSIP::proxy->OnStatusChange(status);
 }; 
