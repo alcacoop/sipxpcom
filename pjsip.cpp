@@ -1,6 +1,3 @@
-// pjsip.cpp : Defines the exported functions for the DLL application.
-//
-
 #include <pjsua-lib/pjsua.h>
 #include "stdio.h"
 #include "string.h"
@@ -81,9 +78,8 @@ PJSIP_API int sipregister(long sipPort) {
     cfg.cb.on_call_media_state = &on_call_media_state;
     cfg.cb.on_call_state = &on_call_state;
     pjsua_logging_config_default(&log_cfg);
-    log_cfg.console_level = 4;
+    log_cfg.console_level = 0;
     status = pjsua_init(&cfg, &log_cfg, NULL);
-    /* if (status != PJ_SUCCESS) error_exit("Error in pjsua_init()", status); */
     if (status != PJ_SUCCESS){ pjsua_destroy();}
   }
 
@@ -91,20 +87,15 @@ PJSIP_API int sipregister(long sipPort) {
   {
     pjsua_transport_config cfg;
     pjsua_transport_config_default(&cfg);
-    /*	cfg.port = 5060; Default Port Number */
     cfg.port = sipPort;
     status = pjsua_transport_create(PJSIP_TRANSPORT_UDP, &cfg, NULL);
-    /*	if (status != PJ_SUCCESS) error_exit("Error creating transport", status); */
     if (status != PJ_SUCCESS){ pjsua_destroy();}
   }
 
 
-  /* Initialization is done, now start pjsua */
   status = pjsua_start();
-  /*    if (status != PJ_SUCCESS) error_exit("Error starting pjsua", status); */
   if (status != PJ_SUCCESS){ pjsua_destroy();}
 
-  /* Register to SIP server by creating SIP account. */
   {
     pjsua_acc_config cfg;
     pjsua_acc_config_default(&cfg);
