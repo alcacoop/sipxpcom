@@ -2,6 +2,7 @@
 #include "stdio.h"
 #include "string.h"
 #include "pjsip.h"
+#include "nsSIP.h"
 
 #define THIS_FILE	"APP"
 #define current_acc	pjsua_acc_get_default()
@@ -14,6 +15,8 @@
   }
 
 void state_handler(char*);
+
+static nsCOMPtr<class nsSipStateObserver> observer;
 
 /* Callback called by the library upon receiving incoming call */
 static void on_incoming_call(pjsua_acc_id acc_id, pjsua_call_id call_id, pjsip_rx_data *rdata){
@@ -33,12 +36,13 @@ static void on_call_state(pjsua_call_id call_id, pjsip_event *e){
   PJ_UNUSED_ARG(e);
   pjsua_call_get_info(call_id, &ci);
   //printf("%s\n",ci.state_text.ptr);
+  observer->OnStatusChange("PIPPO");
   if (strcmp(ci.state_text.ptr, "CALLING")==0)
-    state_handler((char*)"CALLING");
+    observer->OnStatusChange("CALLING");
   if (strcmp(ci.state_text.ptr, "CONFIRMED")==0)
-    state_handler((char*)"ANSWER");
+    observer->OnStatusChange("ANSWER");
   if (strcmp(ci.state_text.ptr, "DISCONNCTD")==0){
-    state_handler((char*)"HANGUP");
+    observer->OnStatusChange("HANGUP");
     siphangup();
   }
 
@@ -64,11 +68,13 @@ static void error_exit(const char *title, pj_status_t status) {
 
 
 
-PJSIP_API int sipregister(long sipPort) {
+PJSIP_API int sipregister(long sipPort, nsCOMPtr<class nsSipStateObserver> o) {
+
   pj_status_t status;
   pjsua_acc_id acc_id;
   REGISTER_THREAD();
 
+  observer = o;
   status = pjsua_create();
 
   if (status != PJ_SUCCESS){ pjsua_destroy();}

@@ -3,3 +3,7 @@
 *.xpt
 Debug
 Release
+nssip/nssip.ncb
+nssip/nssip.suo
+pjsip/pjsip.ncb
+pjsip/pjsip.suo

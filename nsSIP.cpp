@@ -43,7 +43,7 @@ NS_IMETHODIMP nsSIP::Init(PRInt32 port, nsSipStateObserver *cbk)
   if(NS_FAILED(rv)) return rv;
 
   nsSIP::proxy=pProxy;
-  sipregister((int)port);
+  sipregister((int)port, proxy);
   nsSIP::proxy->OnStatusChange("INIT");
   return NS_OK;
 }
@@ -70,15 +70,3 @@ NS_IMETHODIMP nsSIP::Hangup()
   return NS_OK;
 }
 
-/* Overwrite di funzione di libreria pjsip (wrapper a pjsua)*/
-void state_handler(char* status){
-  /*
-  Possible status are:
-  "INIT"
-  "CALLING"
-  "ANSWER"
-  "HANGUP"
-  "DESTROY"
-  */
-  nsSIP::proxy->OnStatusChange(status);
-}; 
