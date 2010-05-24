@@ -14,5 +14,8 @@ interface nsISIP : nsISupports
   void destroy();
   void call(in string URI);
   void hangup();
+
+  void addObserver(in nsSipStateObserver cbk);
+  void removeObserver(in nsSipStateObserver cbk);
 };
 

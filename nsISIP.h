@@ -112,6 +112,12 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   /* void hangup (); */
   NS_SCRIPTABLE NS_IMETHOD Hangup(void) = 0;
 
+  /* void addObserver (in nsSipStateObserver cbk); */
+  NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk) = 0;
+
+  /* void removeObserver (in nsSipStateObserver cbk); */
+  NS_SCRIPTABLE NS_IMETHOD RemoveObserver(nsSipStateObserver *cbk) = 0;
+
 };
 
   NS_DEFINE_STATIC_IID_ACCESSOR(nsISIP, NS_ISIP_IID)
@@ -121,21 +127,27 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD Init(PRInt32 port, nsSipStateObserver *cbk); \
   NS_SCRIPTABLE NS_IMETHOD Destroy(void); \
   NS_SCRIPTABLE NS_IMETHOD Call(const char *URI); \
-  NS_SCRIPTABLE NS_IMETHOD Hangup(void); 
+  NS_SCRIPTABLE NS_IMETHOD Hangup(void); \
+  NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk); \
+  NS_SCRIPTABLE NS_IMETHOD RemoveObserver(nsSipStateObserver *cbk); 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object. */
 #define NS_FORWARD_NSISIP(_to) \
   NS_SCRIPTABLE NS_IMETHOD Init(PRInt32 port, nsSipStateObserver *cbk) { return _to Init(port, cbk); } \
   NS_SCRIPTABLE NS_IMETHOD Destroy(void) { return _to Destroy(); } \
   NS_SCRIPTABLE NS_IMETHOD Call(const char *URI) { return _to Call(URI); } \
-  NS_SCRIPTABLE NS_IMETHOD Hangup(void) { return _to Hangup(); } 
+  NS_SCRIPTABLE NS_IMETHOD Hangup(void) { return _to Hangup(); } \
+  NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk) { return _to AddObserver(cbk); } \
+  NS_SCRIPTABLE NS_IMETHOD RemoveObserver(nsSipStateObserver *cbk) { return _to RemoveObserver(cbk); } 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
 #define NS_FORWARD_SAFE_NSISIP(_to) \
   NS_SCRIPTABLE NS_IMETHOD Init(PRInt32 port, nsSipStateObserver *cbk) { return !_to ? NS_ERROR_NULL_POINTER : _to->Init(port, cbk); } \
   NS_SCRIPTABLE NS_IMETHOD Destroy(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Destroy(); } \
   NS_SCRIPTABLE NS_IMETHOD Call(const char *URI) { return !_to ? NS_ERROR_NULL_POINTER : _to->Call(URI); } \
-  NS_SCRIPTABLE NS_IMETHOD Hangup(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Hangup(); } 
+  NS_SCRIPTABLE NS_IMETHOD Hangup(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Hangup(); } \
+  NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddObserver(cbk); } \
+  NS_SCRIPTABLE NS_IMETHOD RemoveObserver(nsSipStateObserver *cbk) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveObserver(cbk); } 
 
 #if 0
 /* Use the code below as a template for the implementation class for this interface. */
@@ -189,6 +201,18 @@ NS_IMETHODIMP nsSIP::Call(const char *URI)
 
 /* void hangup (); */
 NS_IMETHODIMP nsSIP::Hangup()
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void addObserver (in nsSipStateObserver cbk); */
+NS_IMETHODIMP nsSIP::AddObserver(nsSipStateObserver *cbk)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void removeObserver (in nsSipStateObserver cbk); */
+NS_IMETHODIMP nsSIP::RemoveObserver(nsSipStateObserver *cbk)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }

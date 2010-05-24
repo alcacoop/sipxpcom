@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include "pjsip.h"
 #include "nsCOMPtr.h"
+#include "nsVoidArray.h"
+#include "nsWeakPtr.h"
+
 
 #include "nsISIP.h"
 
@@ -16,10 +19,9 @@ class nsSIP : public nsISIP
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSISIP
-
   nsSIP();
+  void callObservers(char* status);
   
-
 private:
   ~nsSIP();
 
@@ -27,5 +29,5 @@ protected:
   long port;
   static nsCOMPtr<nsSipStateObserver> observer;
   static nsCOMPtr<nsSipStateObserver> proxy;
-  /* additional members */
+  nsAutoVoidArray* mObservers;
 };
