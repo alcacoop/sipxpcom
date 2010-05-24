@@ -18,8 +18,6 @@ public:
   NS_DECL_NSISIP
 
   nsSIP();
-  static nsCOMPtr<nsSipStateObserver> observer;
-  static nsCOMPtr<nsSipStateObserver> proxy;
   
 
 private:
@@ -27,5 +25,7 @@ private:
 
 protected:
   long port;
+  static nsCOMPtr<nsSipStateObserver> observer;
+  static nsCOMPtr<nsSipStateObserver> proxy;
   /* additional members */
 };

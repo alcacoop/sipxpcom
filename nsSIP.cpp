@@ -13,20 +13,24 @@ NS_IMPL_ISUPPORTS1(nsSIP, nsISIP)
 nsCOMPtr<nsSipStateObserver> nsSIP::observer = nsnull;
 nsCOMPtr<nsSipStateObserver> nsSIP::proxy = nsnull;
 
-nsSIP::nsSIP()
-{
-  /* member initializers and constructor code */
+
+nsSIP::nsSIP() {
+  port = 0;
 }
 
-nsSIP::~nsSIP()
-{
+nsSIP::~nsSIP() {
   /* destructor code */
 }
 
 
 /* void init (in long port); */
-NS_IMETHODIMP nsSIP::Init(PRInt32 port, nsSipStateObserver *cbk)
-{
+NS_IMETHODIMP nsSIP::Init(PRInt32 port, nsSipStateObserver *cbk) {
+  if (nsSIP::port!=0){
+    Destroy();
+  }
+
+  nsSIP::port = port;
+
   nsSIP::observer = cbk;
   nsresult rv = NS_OK;
   nsCOMPtr<nsIProxyObjectManager> pIProxyObjectManager(do_GetService("@mozilla.org/xpcomproxy;1", &rv));
@@ -48,24 +52,25 @@ NS_IMETHODIMP nsSIP::Init(PRInt32 port, nsSipStateObserver *cbk)
   return NS_OK;
 }
 
+
 /* void destroy (); */
-NS_IMETHODIMP nsSIP::Destroy()
-{
+NS_IMETHODIMP nsSIP::Destroy() {
   sipderegister();
   nsSIP::proxy->OnStatusChange("DESTROY");
+  port = 0;
   return NS_OK;
 }
 
+
 /* void call (in AString URI); */
-NS_IMETHODIMP nsSIP::Call(const char* URI)
-{
+NS_IMETHODIMP nsSIP::Call(const char* URI) {
   sipmakecall((char*)URI);
   return NS_OK;
 }
 
+
 /* void hangup (); */
-NS_IMETHODIMP nsSIP::Hangup()
-{
+NS_IMETHODIMP nsSIP::Hangup() {
   siphangup();
   return NS_OK;
 }
