@@ -31,7 +31,7 @@ static void on_call_state(pjsua_call_id call_id, pjsip_event *e){
   pjsua_call_info ci;
   PJ_UNUSED_ARG(e);
   pjsua_call_get_info(call_id, &ci);
-  int code;
+  int code = 0;
   pj_str_t reason;
   pjsip_msg *msg;
 
@@ -45,6 +45,8 @@ static void on_call_state(pjsua_call_id call_id, pjsip_event *e){
 
     if (code==180)
       CallObservers("RINGING");
+    if (code==486)
+      CallObservers("BUSY");
     if (code==603)
       CallObservers("DECLINE");
   } 
@@ -53,7 +55,7 @@ static void on_call_state(pjsua_call_id call_id, pjsip_event *e){
     CallObservers("CALLING");
   if (strcmp(ci.state_text.ptr, "CONFIRMED")==0)
     CallObservers("ANSWER");
-  if (strcmp(ci.state_text.ptr, "DISCONNCTD")==0){
+  if ((strcmp(ci.state_text.ptr, "DISCONNCTD")==0)&&(code!=486)){//Hangup and reason != busy here
     CallObservers("HANGUP");
     siphangup();
   }
