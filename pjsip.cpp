@@ -1,24 +1,17 @@
-#include <pjsua-lib/pjsua.h>
-#include "stdio.h"
-#include "string.h"
 #include "pjsip.h"
-#include "nsSIP.h"
 
-#define THIS_FILE	"APP"
-#define current_acc	pjsua_acc_get_default()
 
-#define REGISTER_THREAD()	\
-  static pj_thread_desc desc;\
-  static pj_thread_t *  thread;\
-  if(!pj_thread_is_registered()) {\
-    pj_thread_register(NULL,desc,&thread);\
-  }
 
-void state_handler(char*);
 
-static nsCOMPtr<class nsSipStateObserver> observer;
+/*
+   Array di callback proxies
+*/
+static nsCOMPtr<nsIArray> mObservers;
 
-/* Callback called by the library upon receiving incoming call */
+
+/* 
+   Callback called by the library upon receiving incoming call 
+*/
 static void on_incoming_call(pjsua_acc_id acc_id, pjsua_call_id call_id, pjsip_rx_data *rdata){
   pjsua_call_info ci;
   PJ_UNUSED_ARG(acc_id);
@@ -30,25 +23,47 @@ static void on_incoming_call(pjsua_acc_id acc_id, pjsua_call_id call_id, pjsip_r
   pjsua_call_answer(call_id, 200, NULL, NULL);
 }
 
-/* Callback called by the library when call's state has changed */
+
+/* 
+   Callback called by the library when call's state has changed 
+*/
 static void on_call_state(pjsua_call_id call_id, pjsip_event *e){
   pjsua_call_info ci;
   PJ_UNUSED_ARG(e);
   pjsua_call_get_info(call_id, &ci);
-  //printf("%s\n",ci.state_text.ptr);
-  observer->OnStatusChange("PIPPO");
+  int code;
+  pj_str_t reason;
+  pjsip_msg *msg;
+
+  printf("\n->STATO: %s - %d\n",ci.state_text.ptr, ci.state);
+  if (e->body.tsx_state.type == PJSIP_EVENT_RX_MSG) {
+    msg = e->body.tsx_state.src.rdata->msg_info.msg;
+  } else {
+    msg = e->body.tsx_state.src.tdata->msg;
+  }
+  code = msg->line.status.code;
+  reason = msg->line.status.reason;
+  //printf("CODE: %d - REASON: %s\n", code, reason);
+
+  if (code==180)
+    CallObservers("RINGING");
+  if (code==603)
+    CallObservers("DECLINE");
   if (strcmp(ci.state_text.ptr, "CALLING")==0)
-    observer->OnStatusChange("CALLING");
+    CallObservers("CALLING");
   if (strcmp(ci.state_text.ptr, "CONFIRMED")==0)
-    observer->OnStatusChange("ANSWER");
+    CallObservers("ANSWER");
   if (strcmp(ci.state_text.ptr, "DISCONNCTD")==0){
-    observer->OnStatusChange("HANGUP");
+    CallObservers("HANGUP");
     siphangup();
   }
-
+  
 }
 
-/* Callback called by the library when call's media state has changed */
+
+/* 
+   Callback called by the library when call's media state has changed 
+*/
 static void on_call_media_state(pjsua_call_id call_id){
   pjsua_call_info ci;
   pjsua_call_get_info(call_id, &ci);
@@ -59,22 +74,17 @@ static void on_call_media_state(pjsua_call_id call_id){
   }
 }
 
-/* Display error and exit application */
-static void error_exit(const char *title, pj_status_t status) {
-  pjsua_perror(THIS_FILE, title, status);
-  pjsua_destroy();
-  exit(1);
-}
 
-
-
-PJSIP_API int sipregister(long sipPort, nsCOMPtr<class nsSipStateObserver> o) {
+/*
+   Stack, socket e thread constructor
+*/
+PJSIP_API int sipregister(long sipPort) {
 
   pj_status_t status;
   pjsua_acc_id acc_id;
   REGISTER_THREAD();
 
-  observer = o;
+
   status = pjsua_create();
 
   if (status != PJ_SUCCESS){ pjsua_destroy();}
@@ -125,29 +135,76 @@ PJSIP_API int sipregister(long sipPort, nsCOMPtr<class nsSipStateObserver> o) {
     if (status != PJ_SUCCESS){ pjsua_destroy();}
   }
 
+  CallObservers("INIT");
   return 0;
 }
 
 
+/*
+   Stack, socket e thread destructor
+*/
 PJSIP_API int sipderegister(){
   REGISTER_THREAD();
   pjsua_acc_del(current_acc);
   pjsua_destroy();
+
+  CallObservers("DESTROY");
   return 0;
 }
 
 
+/*
+   Inizializzazione chiamata in uscita
+*/
 PJSIP_API int sipmakecall(char *sipToAddr){
   pj_status_t status;
   pj_str_t uri = pj_str(sipToAddr);
   REGISTER_THREAD();
   status = pjsua_call_make_call(current_acc, &uri, 0, NULL, NULL, NULL);
+  if (status!=PJ_SUCCESS)
+    CallObservers("INVALIDURI");
   return 0;
 }
 
 
+/*
+   Chiusura chiamate attive
+*/
 PJSIP_API int siphangup(){
   REGISTER_THREAD();
 	pjsua_call_hangup_all();
   return 0;
+}
+
+
+/* 
+   Bridge verso l'API XPCOM
+   richiama gli observer registrati mediante proxy alla callbacks
+*/
+static void CallObservers(const char* status)
+{
+  if (!mObservers)
+      return;
+
+  PRUint32 count = 0;
+  mObservers->GetLength(&count);
+  if (count <= 0)
+      return;
+
+  PRIntn i;
+  nsCOMPtr<nsSipStateObserver> _pCallback;
+
+  for (i = 0; i < count; ++i) {
+    (nsIArray*)mObservers->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&_pCallback);
+    _pCallback->OnStatusChange(status);
+  }
+
+  return;
+}
+
+
+
+void SyncObservers(nsCOMPtr<nsIArray> o){
+  //mObservers = do_CreateInstance(NS_ARRAY_CONTRACTID);
+  mObservers = o;
 }

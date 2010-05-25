@@ -10,11 +10,7 @@ nsSIP::nsSIP() : mObservers(nsnull), proxy(nsnull) {
 
 nsSIP::~nsSIP() {
   /* destructor code */
-  if (mObservers) {
-    //(void)mObservers->EnumerateForwards(deleteObserver, nsnull);
-    delete mObservers;
-  }
-
+  FlushObservers();
 }
 
 
@@ -24,54 +20,16 @@ NS_IMETHODIMP nsSIP::Init(PRInt32 _port)
   if (port!=0){
     Destroy();
   }
-
   port = _port;
-  
- /* 
-  nsresult rv = NS_OK;
-  nsCOMPtr<nsIProxyObjectManager> pIProxyObjectManager(do_GetService("@mozilla.org/xpcomproxy;1", &rv));
-  if(NS_FAILED(rv)) return rv;
-
-  if (proxy)
-    NS_RELEASE(proxy);
-
-  nsCOMPtr<nsIArray> pProxy;
-  rv = pIProxyObjectManager->GetProxyForObject(
-      NS_PROXY_TO_MAIN_THREAD,
-      nsIArray::GetIID(),
-      //NS_GET_IID(nsAutoVoidArray),
-      mObservers,
-      //NS_PROXY_SYNC | NS_PROXY_ALWAYS,
-      NS_PROXY_SYNC,
-      (void**)&pProxy
-      //getter_AddRefs(pProxy));
-      );
-  if(NS_FAILED(rv)) return rv;
-
-  //printf("\nPROXY AT: %p\n\n", proxy);
-
-  /*
-  if (pProxy->mObservers){
-    printf("PROXY OBSERVERS: %d\n", pProxy->mObservers->Count());
-    pProxy->callObservers((char*)"INIT-PROXIED"); 
-  }
-  */
-  //proxy = pProxy;
-  //proxy->CallObservers((char*)"INIT-PROXIED");
-
-  //sipregister((int)port);
-  sipregister((int)port, NULL);
-
-  CallObservers("INIT");
+  sipregister((int)port); 
   return NS_OK;
 }
 
 
 /* void destroy (); */
 NS_IMETHODIMP nsSIP::Destroy() {
+  FlushObservers();
   sipderegister();
-
-  CallObservers("DESTROY");
   port = 0;
   return NS_OK;
 }
@@ -98,15 +56,28 @@ NS_IMETHODIMP nsSIP::AddObserver(nsSipStateObserver *cbk)
 
   if (!mObservers) {
     mObservers = do_CreateInstance(NS_ARRAY_CONTRACTID);
+    proxy = do_CreateInstance(NS_ARRAY_CONTRACTID);
     NS_ENSURE_STATE(mObservers);
-
-    if (mObservers == nsnull)
-      return NS_ERROR_OUT_OF_MEMORY;
+    NS_ENSURE_STATE(proxy);
   }
 
   NS_ADDREF(cbk); //CHE CAZZO FA NON SI CAPISCE.. MA COSI FUNZIONA!!
   mObservers->AppendElement(cbk, PR_FALSE);
   printf("ADDED OBSERVER AT ADDR: %p \n", cbk);
+
+  /* PROXY */
+  nsCOMPtr<nsSipStateObserver> pCbk;
+  getProxyForObserver(cbk, &pCbk);
+  NS_IF_ADDREF(pCbk);
+  proxy->AppendElement(pCbk, PR_FALSE);
+  nsCOMPtr<nsSipStateObserver> _pCallback;
+  (nsIArray*)proxy->QueryElementAt(0, NS_GET_IID(nsSipStateObserver), (void**)&_pCallback);
+  _pCallback->OnStatusChange("PIPPO");
+  //printf("ADDED PROXIED OBSERVER AT ADDR: %p \n", &_pCallback);
+  /* PROXY */
+
+  //SYNC OBSERVERS ARRAY ON pjsip BRIDGE
+  SyncObservers((nsIArray*)proxy);
   return NS_OK;
 }
 
@@ -125,23 +96,26 @@ NS_IMETHODIMP nsSIP::RemoveObserver(nsSipStateObserver *cbk)
         return NS_OK;
 
     PRIntn i;
-    nsSipStateObserver* pCallback;
+    nsCOMPtr<nsSipStateObserver> pCallback;
+    nsCOMPtr<nsSipStateObserver> _pCallback;
+
     for (i = 0; i < count; ++i) {
       (nsIArray*)mObservers->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&pCallback);
+      (nsIArray*)proxy->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&_pCallback);
       if (pCallback == cbk){
-        printf("REMOVED OBSERVER AT ADDR: %p\n", pCallback);
         mObservers->RemoveElementAt(i);
-        NS_RELEASE(pCallback);
+        proxy->RemoveElementAt(i);
+        printf("REMOVED OBSERVER\n");
         return NS_OK;
       }
     }
 
-
-    return NS_OK;
+  //SYNC OBSERVERS ARRAY ON pjsip BRIDGE
+  SyncObservers((nsIArray*)proxy);
+  return NS_OK;
 }
 
 
-//NS_IMETHODIMP nsSIP::CallObservers(const char *status)
 void nsSIP::CallObservers(const char* status)
 {
   if (!mObservers)
@@ -149,15 +123,58 @@ void nsSIP::CallObservers(const char* status)
 
   PRUint32 count = 0;
   mObservers->GetLength(&count);
-  //printf("COUNT: %d\n", count);
   if (count <= 0)
       return;
 
   PRIntn i;
-  nsSipStateObserver* pCallback;
+  nsCOMPtr<nsSipStateObserver> _pCallback;
+
+  for (i = 0; i < count; ++i) {
+    (nsIArray*)proxy->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&_pCallback);
+    _pCallback->OnStatusChange(status);
+  }
+
+  return;
+}
+
+
+
+void nsSIP::FlushObservers(){
+  if (!mObservers)
+      return;
+
+  PRUint32 count = 0;
+  mObservers->GetLength(&count);
+  if (count <= 0)
+      return;
+  printf("COUNT: %d\n", count);
+
+  PRIntn i;
+  nsCOMPtr<nsSipStateObserver> pCallback;
+  nsCOMPtr<nsSipStateObserver> _pCallback;
+
   for (i = 0; i < count; ++i) {
     (nsIArray*)mObservers->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&pCallback);
-    //printf("CALLBACK ADDR: %p\n", pCallback);
-    pCallback->OnStatusChange(status);
+    (nsIArray*)proxy->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&_pCallback);
+    mObservers->RemoveElementAt(i);
+    proxy->RemoveElementAt(i);
+    printf("REMOVED OBSERVER\n");
   }
+
+  NS_RELEASE(mObservers);
+}
+
+
+
+void nsSIP::getProxyForObserver(nsCOMPtr<nsSipStateObserver> cbk, nsCOMPtr<nsSipStateObserver> *pCbk){
+  nsresult rv = NS_OK;
+  nsCOMPtr<nsIProxyObjectManager> pIProxyObjectManager(do_GetService("@mozilla.org/xpcomproxy;1", &rv));
+
+  rv = pIProxyObjectManager->GetProxyForObject(
+    NS_PROXY_TO_MAIN_THREAD,
+    nsSipStateObserver::GetIID(),
+    cbk,
+    NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+    (void**)pCbk
+  );
 }

@@ -5,8 +5,6 @@
 #include "nsCOMPtr.h"
 #include "nsIArray.h"
 #include "nsIMutableArray.h"
-#include "nsTArray.h"
-#include "nsVoidArray.h"
 #include "nsWeakPtr.h"
 #include "nsServiceManagerUtils.h"
 #include "nsComponentManagerUtils.h"
@@ -32,6 +30,8 @@ public:
 private:
   ~nsSIP();
   void CallObservers(const char*);
+  void getProxyForObserver(nsCOMPtr<nsSipStateObserver>, nsCOMPtr<nsSipStateObserver>*);
+  void FlushObservers();
 
 protected:
   long port;
