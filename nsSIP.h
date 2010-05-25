@@ -3,9 +3,17 @@
 #include <stdlib.h>
 #include "pjsip.h"
 #include "nsCOMPtr.h"
+#include "nsIArray.h"
+#include "nsIMutableArray.h"
+#include "nsTArray.h"
 #include "nsVoidArray.h"
 #include "nsWeakPtr.h"
-
+#include "nsServiceManagerUtils.h"
+#include "nsComponentManagerUtils.h"
+#include "nsIProxyObjectManager.h"
+#include "nsISupports.h"
+#include "nsXPCOMCIDInternal.h"
+#include "pjsip.h"
 
 #include "nsISIP.h"
 
@@ -20,14 +28,13 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSISIP
   nsSIP();
-  void callObservers(char* status);
   
 private:
   ~nsSIP();
+  void CallObservers(const char*);
 
 protected:
   long port;
-  static nsCOMPtr<nsSipStateObserver> observer;
-  static nsCOMPtr<nsSipStateObserver> proxy;
-  nsAutoVoidArray* mObservers;
+  nsCOMPtr<nsIMutableArray> mObservers;
+  nsCOMPtr<nsIMutableArray> proxy;
 };

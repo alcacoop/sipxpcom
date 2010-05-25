@@ -10,7 +10,7 @@ interface nsSipStateObserver : nsISupports {
 [scriptable, uuid(c5bf5079-8bc3-4fc5-881f-f3bd85a63c61)]
 interface nsISIP : nsISupports
 {
-  void init(in long port, in nsSipStateObserver cbk);
+  void init(in long port);
   void destroy();
   void call(in string URI);
   void hangup();
