@@ -38,17 +38,17 @@ static void on_call_state(pjsua_call_id call_id, pjsip_event *e){
   printf("\n->STATO: %s - %d\n",ci.state_text.ptr, ci.state);
   if (e->body.tsx_state.type == PJSIP_EVENT_RX_MSG) {
     msg = e->body.tsx_state.src.rdata->msg_info.msg;
-  } else {
-    msg = e->body.tsx_state.src.tdata->msg;
-  }
-  code = msg->line.status.code;
-  reason = msg->line.status.reason;
-  //printf("CODE: %d - REASON: %s\n", code, reason);
 
-  if (code==180)
-    CallObservers("RINGING");
-  if (code==603)
-    CallObservers("DECLINE");
+    code = msg->line.status.code;
+    reason = msg->line.status.reason;
+    //printf("CODE: %d - REASON: %s\n", code, reason);
+
+    if (code==180)
+      CallObservers("RINGING");
+    if (code==603)
+      CallObservers("DECLINE");
+  } 
+
   if (strcmp(ci.state_text.ptr, "CALLING")==0)
     CallObservers("CALLING");
   if (strcmp(ci.state_text.ptr, "CONFIRMED")==0)
