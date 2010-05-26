@@ -134,6 +134,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="libg7221codec-i386-Win32-vc8-Release.lib libgsmcodec-i386-Win32-vc8-Release.lib libilbccodec-i386-Win32-vc8-Release.lib libmilenage-i386-Win32-vc8-Release.lib libpjproject-i386-Win32-vc8-Release.lib libportaudio-i386-Win32-vc8-Release.lib libresample-i386-Win32-vc8-Release.lib libspeex-i386-Win32-vc8-Release.lib libsrtp-i386-Win32-vc8-Release.lib pjlib-i386-Win32-vc8-Release.lib pjlib-util-i386-Win32-vc8-Release.lib pjmedia-audiodev-i386-Win32-vc8-Release.lib pjmedia-codec-i386-Win32-vc8-Release.lib pjmedia-i386-Win32-vc8-Release.lib pjnath-i386-Win32-vc8-Release.lib pjsip-core-i386-Win32-vc8-Release.lib pjsip-simple-i386-Win32-vc8-Release.lib pjsip-ua-i386-Win32-vc8-Release.lib pjsua-lib-i386-Win32-vc8-Release.lib wsock32.lib ws2_32.lib ole32.lib dsound.lib nspr4.lib xpcom.lib xpcomglue_s.lib"
+				OutputFile="$(OutDir)\libsip.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;C:\Documents and Settings\Domenico Martella\Desktop\pjsip\lib&quot;"
 				GenerateDebugInformation="true"
@@ -174,6 +175,14 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\nsSIP.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\nsSIPModule.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\pjsip.cpp"
 				>
 			</File>
@@ -183,6 +192,14 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\..\nsISIP.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\nsSIP.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\pjsip.h"
 				>
