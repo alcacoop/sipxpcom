@@ -76,8 +76,6 @@ NS_IMETHODIMP nsSIP::AddObserver(nsSipStateObserver *cbk)
   proxy->AppendElement(pCbk, PR_FALSE);
   nsCOMPtr<nsSipStateObserver> _pCallback;
   (nsIArray*)proxy->QueryElementAt(0, NS_GET_IID(nsSipStateObserver), (void**)&_pCallback);
-  _pCallback->OnStatusChange("PIPPO");
-  //printf("ADDED PROXIED OBSERVER AT ADDR: %p \n", &_pCallback);
   /* PROXY */
 
   //SYNC OBSERVERS ARRAY ON pjsip BRIDGE
@@ -101,11 +99,9 @@ NS_IMETHODIMP nsSIP::RemoveObserver(nsSipStateObserver *cbk)
 
     PRIntn i;
     nsCOMPtr<nsSipStateObserver> pCallback;
-    nsCOMPtr<nsSipStateObserver> _pCallback;
 
     for (i = 0; i < count; ++i) {
       (nsIArray*)mObservers->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&pCallback);
-      (nsIArray*)proxy->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&_pCallback);
       if (pCallback == cbk){
         mObservers->RemoveElementAt(i);
         proxy->RemoveElementAt(i);
@@ -151,21 +147,17 @@ void nsSIP::FlushObservers(){
   mObservers->GetLength(&count);
   if (count <= 0)
       return;
-  printf("COUNT: %d\n", count);
 
   PRIntn i;
-  nsCOMPtr<nsSipStateObserver> pCallback;
-  nsCOMPtr<nsSipStateObserver> _pCallback;
-
   for (i = 0; i < count; ++i) {
-    (nsIArray*)mObservers->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&pCallback);
-    (nsIArray*)proxy->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&_pCallback);
     mObservers->RemoveElementAt(i);
     proxy->RemoveElementAt(i);
     printf("REMOVED OBSERVER\n");
   }
 
   NS_RELEASE(mObservers);
+  NS_RELEASE(proxy);
+  SyncObservers(NULL);
 }
 
 

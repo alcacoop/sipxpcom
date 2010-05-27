@@ -63,7 +63,6 @@ static void on_call_state(pjsua_call_id call_id, pjsip_event *e){
     CallObservers("HANGUP");
     siphangup();
   }
-  
 }
 
 
@@ -134,11 +133,12 @@ PJSIP_API int sipregister(long sipPort) {
 
   {
     pjsua_acc_config cfg;
+
     pjsua_acc_config_default(&cfg);
-    cfg.id = pj_str((char*)"sip:tc@localhost");
     cfg.cred_count = 1;
+    cfg.id = pj_str("sip:localhost");
+
     status = pjsua_acc_add(&cfg, PJ_TRUE, &acc_id);
-    if (status != PJ_SUCCESS){ pjsua_destroy();}
   }
 
   CallObservers("INIT");
