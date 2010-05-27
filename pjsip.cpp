@@ -35,21 +35,25 @@ static void on_call_state(pjsua_call_id call_id, pjsip_event *e){
   pj_str_t reason;
   pjsip_msg *msg;
 
-  printf("\n->STATO: %s - %d\n",ci.state_text.ptr, ci.state);
   if (e->body.tsx_state.type == PJSIP_EVENT_RX_MSG) {
     msg = e->body.tsx_state.src.rdata->msg_info.msg;
-
     code = msg->line.status.code;
     reason = msg->line.status.reason;
     //printf("CODE: %d - REASON: %s\n", code, reason);
-
-    if (code==180)
+    if (code==180){
       CallObservers("RINGING");
-    if (code==486)
+      printf("STATO: RINGING - %d\n", code);
+    } else if (code==486){
       CallObservers("BUSY");
-    if (code==603)
+      printf("STATO: BUSY - %d\n", code);
+    } if (code==603){
       CallObservers("DECLINE");
-  } 
+      printf("STATO: DECLINE - %d\n", code);
+    } 
+  }  
+  
+  if (ci.state != 3 && ci.state != 4) //EARLY AND CONNECTING
+    printf("STATO: %s - %d\n",ci.state_text.ptr, ci.state);
 
   if (strcmp(ci.state_text.ptr, "CALLING")==0)
     CallObservers("CALLING");
