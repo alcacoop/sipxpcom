@@ -99,18 +99,18 @@ PJSIP_API int sipregister(long sipPort) {
     pjsua_logging_config log_cfg;
     pjsua_media_config m_cfg;
 
-    cfg.user_agent = pj_str((char*)"pjsip");
-    cfg.thread_cnt = 1;
+    pjsua_config_default(&cfg);
+    //cfg.thread_cnt = 0;
 
     cfg.use_srtp = PJMEDIA_SRTP_DISABLED;
     
-    pjsua_config_default(&cfg);
     cfg.cb.on_incoming_call = &on_incoming_call;
     cfg.cb.on_call_media_state = &on_call_media_state;
     cfg.cb.on_call_state = &on_call_state;
     pjsua_logging_config_default(&log_cfg);
-    log_cfg.console_level = 1;
+    log_cfg.console_level = 0;
 
+    //MEDIA
     pjsua_media_config_default(&m_cfg);
     m_cfg.no_vad = PJ_TRUE;
     m_cfg.ec_tail_len = 0;
