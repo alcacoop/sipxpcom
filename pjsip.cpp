@@ -81,6 +81,44 @@ static void on_call_media_state(pjsua_call_id call_id){
 
 
 /*
+   STUN Server configuration
+*/
+PJSIP_API void sipsetstunserver(char* stun){
+  /* FUTURO STUN */
+  //pjsua_config cfg;
+  //cfg.stun_host = pj_str("stun.ekiga.net");
+}
+
+
+/*
+   Account management
+*/
+PJSIP_API int sipaddaccount(char* user, char* domain, char* password){
+  /* FUTURA REGISTRAZIONE 
+  #define SIP_DOMAIN	"ekiga.net"
+  #define SIP_USER	"dom0"
+  #define SIP_PASSWD	""
+  pj_status_t status;
+  pjsua_acc_config cfg;
+  pjsua_acc_id acc_id;
+
+  pjsua_acc_config_default(&cfg);
+  cfg.cred_count = 1;
+
+  cfg.id = pj_str("sip:" SIP_USER "@" SIP_DOMAIN);
+  cfg.reg_uri = pj_str("sip:" SIP_DOMAIN);
+  cfg.cred_count = 1;
+  cfg.cred_info[0].realm = pj_str(SIP_DOMAIN);
+  cfg.cred_info[0].username = pj_str(SIP_USER);
+  cfg.cred_info[0].data_type = PJSIP_CRED_DATA_PLAIN_PASSWD;
+  cfg.cred_info[0].data = pj_str(SIP_PASSWD);
+
+  status = pjsua_acc_add(&cfg, PJ_TRUE, &acc_id);
+  */
+}
+
+
+/*
    Stack, socket e thread constructor
 */
 PJSIP_API int sipregister(long sipPort) {

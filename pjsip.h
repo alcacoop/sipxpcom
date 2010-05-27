@@ -34,5 +34,8 @@ PJSIP_API int sipderegister();
 PJSIP_API int sipmakecall(char*);
 PJSIP_API int siphangup();
 
+PJSIP_API int sipaddaccount(char*, char*, char*);
+PJSIP_API void sipsetstunserver(char*);
+
 void SyncObservers(nsCOMPtr<nsIArray>);
 static void CallObservers(const char*);
