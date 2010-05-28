@@ -29,7 +29,6 @@ public:
   
 private:
   ~nsSIP();
-  void CallObservers(const char*);
   void getProxyForObserver(nsCOMPtr<nsSipStateObserver>, nsCOMPtr<nsSipStateObserver>*);
   void FlushObservers();
 
