@@ -135,24 +135,28 @@ void nsSIP::FlushObservers(){
   if (!mObservers)
       return;
 
-  /*
   PRUint32 count = 0;
   mObservers->GetLength(&count);
-  if (count <= 0)
-      return;
 
   PRIntn i;
+  nsCOMPtr<nsSipStateObserver> pCallback;
+  nsCOMPtr<nsSipStateObserver> _pCallback;
+
   for (i = 0; i < count; ++i) {
+    (nsIArray*)mObservers->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&pCallback);
+    (nsIArray*)proxy->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&_pCallback);
     mObservers->RemoveElementAt(i);
     proxy->RemoveElementAt(i);
-    printf("REMOVED OBSERVER\n");
+    printf("FLUSHED ALL OBSERVERS\n");
+
+    NS_RELEASE(_pCallback);
+    NS_RELEASE(pCallback);
   }
-  */
-  mObservers->Clear();
-  proxy->Clear();
+
   NS_RELEASE(mObservers);
   NS_RELEASE(proxy);
   SyncObservers(NULL);
+  return;
 }
 
 
