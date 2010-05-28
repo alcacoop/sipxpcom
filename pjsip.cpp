@@ -165,17 +165,24 @@ PJSIP_API int sipregister(long sipPort) {
     if (status != PJ_SUCCESS){ pjsua_destroy();}
   }
 
+  /* Add RTP transport. */
+  {
+    pjsua_transport_config cfg;
+    pjsua_transport_config_default(&cfg);
+    cfg.port = 7072;
+    cfg.qos_type = PJ_QOS_TYPE_VOICE;
+    status = pjsua_media_transports_create(&cfg);
+  }
 
   status = pjsua_start();
   if (status != PJ_SUCCESS){ pjsua_destroy();}
 
+  /* Add local account */
   {
     pjsua_acc_config cfg;
-
     pjsua_acc_config_default(&cfg);
     cfg.cred_count = 1;
     cfg.id = pj_str("sip:localhost");
-
     status = pjsua_acc_add(&cfg, PJ_TRUE, &acc_id);
   }
 
