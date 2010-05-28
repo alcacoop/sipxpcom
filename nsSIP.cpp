@@ -162,6 +162,13 @@ void nsSIP::FlushObservers(){
 }
 
 
+/* void clearObservers (); */
+NS_IMETHODIMP nsSIP::ClearObservers()
+{
+  FlushObservers();
+  return NS_OK;
+}
+
 
 void nsSIP::getProxyForObserver(nsCOMPtr<nsSipStateObserver> cbk, nsCOMPtr<nsSipStateObserver> *pCbk){
   nsresult rv = NS_OK;

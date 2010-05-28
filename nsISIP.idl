@@ -17,5 +17,6 @@ interface nsISIP : nsISupports
 
   void addObserver(in nsSipStateObserver cbk);
   void removeObserver(in nsSipStateObserver cbk);
+  void clearObservers();
 };
 
