@@ -9,7 +9,6 @@ nsSIP::nsSIP() : mObservers(nsnull), proxy(nsnull) {
 }
 
 nsSIP::~nsSIP() {
-  /* destructor code */
   FlushObservers();
 }
 
@@ -32,8 +31,11 @@ NS_IMETHODIMP nsSIP::Init(PRInt32 _port)
 
 /* void destroy (); */
 NS_IMETHODIMP nsSIP::Destroy() {
-  FlushObservers();
+  if (port==0)
+    return NS_OK;
+
   sipderegister();
+  FlushObservers();
   port = 0;
   return NS_OK;
 }
@@ -147,12 +149,12 @@ void nsSIP::FlushObservers(){
     (nsIArray*)proxy->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&_pCallback);
     mObservers->RemoveElementAt(i);
     proxy->RemoveElementAt(i);
-    printf("FLUSHED ALL OBSERVERS\n");
 
-    NS_RELEASE(_pCallback);
     NS_RELEASE(pCallback);
+    NS_RELEASE(_pCallback);
   }
 
+  printf("FLUSHED ALL OBSERVERS\n");
   NS_RELEASE(mObservers);
   NS_RELEASE(proxy);
   SyncObservers(NULL);

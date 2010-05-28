@@ -189,9 +189,11 @@ PJSIP_API int sipregister(long sipPort) {
 */
 PJSIP_API int sipderegister(){
   REGISTER_THREAD();
-  pjsua_acc_del(current_acc);
+  
+  pjsua_acc_id acc_id = pjsua_acc_get_default();
+  if (acc_id != PJSUA_INVALID_ID)
+    pjsua_acc_del(acc_id);
   pjsua_destroy();
-
   CallObservers("DESTROY");
   return 0;
 }
