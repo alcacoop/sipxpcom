@@ -28,13 +28,13 @@ public:
   nsSIP();
   
 private:
+  long port;
   ~nsSIP();
   void getProxyForObserver(nsCOMPtr<nsSipStateObserver>, nsCOMPtr<nsSipStateObserver>*);
   void CallObservers(const char* status);
   void FlushObservers();
 
 protected:
-  long port;
   nsCOMPtr<nsIMutableArray> mObservers;
   nsCOMPtr<nsIMutableArray> proxy;
 };

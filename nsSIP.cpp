@@ -20,10 +20,8 @@ NS_IMETHODIMP nsSIP::Init(PRInt32 _port)
   if (port!=0){
     Destroy();
   }
-
   if (_port<1024)
     return NS_ERROR_ILLEGAL_VALUE;
-
   port = _port;
   sipregister((int)port); 
   return NS_OK;
@@ -52,8 +50,6 @@ NS_IMETHODIMP nsSIP::Call(const char* URI) {
 
 /* void hangup (); */
 NS_IMETHODIMP nsSIP::Hangup() {
-  siphangup();
-  siphangup();
   siphangup();
   return NS_OK;
 }
