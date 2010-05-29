@@ -3,8 +3,8 @@
 
 /* Array di observer proxies */
 static nsCOMPtr<nsIArray> mObservers;
-/* Stato chaiamate */
-static bool call_in_progress = false; 
+/* ID Chaiamata attiva */
+static pjsua_call_id cid = -1;
 
 
 /* 
@@ -17,11 +17,11 @@ static void on_incoming_call(pjsua_acc_id acc_id, pjsua_call_id call_id, pjsip_r
   pjsua_call_get_info(call_id, &ci);
   CallObservers("INCOMING");
   //PJ_LOG(3,(THIS_FILE, "Incoming call from %.*s!!",(int)ci.remote_info.slen, ci.remote_info.ptr));
-  if (call_in_progress)
+  if (cid != -1)
     pjsua_call_answer(call_id, 486, NULL, NULL);
   else {
-    call_in_progress = true;
     pjsua_call_answer(call_id, 200, NULL, NULL);
+    cid = call_id;
   }
 }
 
@@ -30,6 +30,10 @@ static void on_incoming_call(pjsua_acc_id acc_id, pjsua_call_id call_id, pjsip_r
    Callback called by the library when call's state has changed 
 */
 static void on_call_state(pjsua_call_id call_id, pjsip_event *e){
+
+  if ((cid!=-1)&&(call_id != cid))
+    return;
+
   pjsua_call_info ci;
   PJ_UNUSED_ARG(e);
   pjsua_call_get_info(call_id, &ci);
@@ -61,8 +65,10 @@ static void on_call_state(pjsua_call_id call_id, pjsip_event *e){
     CallObservers("CALLING");
   if (strcmp(ci.state_text.ptr, "CONFIRMED")==0)
     CallObservers("ANSWER");
-  if ((strcmp(ci.state_text.ptr, "DISCONNCTD")==0)&&(code!=486)&&(!call_in_progress))//Hangup and reason != busy here
+  if ((strcmp(ci.state_text.ptr, "DISCONNCTD")==0)&&(code!=486)){//Hangup and reason != busy here
     CallObservers("HANGUP");
+    cid = -1;
+  }
 }
 
 
@@ -197,7 +203,7 @@ PJSIP_API int sipderegister(){
     pjsua_acc_del(acc_id);
 
   pjsua_destroy();
-  call_in_progress = false;
+  cid = -1;
   CallObservers("DESTROY");
   return 0;
 }
@@ -207,15 +213,17 @@ PJSIP_API int sipderegister(){
    Inizializzazione chiamata in uscita
 */
 PJSIP_API int sipmakecall(char *sipToAddr){
-  if (call_in_progress)
+  if (cid != -1)
     return 1;
   pj_status_t status;
+  pjsua_call_id _cid;
   pj_str_t uri = pj_str(sipToAddr);
-  status = pjsua_call_make_call(current_acc, &uri, 0, NULL, NULL, NULL);
+
+  status = pjsua_call_make_call(current_acc, &uri, 0, NULL, NULL, &_cid);
   if (status!=PJ_SUCCESS)
     CallObservers("INVALIDURI");
   else
-    call_in_progress = true;
+    cid = _cid;
   return 0;
 }
 
@@ -225,7 +233,7 @@ PJSIP_API int sipmakecall(char *sipToAddr){
 */
 PJSIP_API int siphangup(){
 	pjsua_call_hangup_all();
-  call_in_progress = false;
+  cid = -1;
   CallObservers("HANGUP");
   return 0;
 }
