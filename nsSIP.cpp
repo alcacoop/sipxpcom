@@ -1,6 +1,7 @@
 #include "nsSIP.h"
 
 
+
 NS_IMPL_ISUPPORTS1(nsSIP, nsISIP)
 
 
@@ -51,6 +52,8 @@ NS_IMETHODIMP nsSIP::Call(const char* URI) {
 /* void hangup (); */
 NS_IMETHODIMP nsSIP::Hangup() {
   siphangup();
+  siphangup();
+  siphangup();
   return NS_OK;
 }
 
@@ -80,7 +83,6 @@ NS_IMETHODIMP nsSIP::AddObserver(nsSipStateObserver *cbk)
     }
   }
 
-
   NS_IF_ADDREF(cbk);
   mObservers->AppendElement(cbk, PR_FALSE);
   printf("ADDED OBSERVER AT ADDR: %p \n", cbk);
@@ -98,36 +100,41 @@ NS_IMETHODIMP nsSIP::AddObserver(nsSipStateObserver *cbk)
 /* void removeObserver (in nsSipStateObserver cbk); */
 NS_IMETHODIMP nsSIP::RemoveObserver(nsSipStateObserver *cbk)
 {
-    NS_ENSURE_ARG_POINTER(cbk);
+  NS_ENSURE_ARG_POINTER(cbk);
 
-    if (!mObservers)
-        return NS_OK;
+  if (!mObservers){
+    printf("NO SUCH OBSERVER\n");
+    return NS_OK;
+  }
 
-    PRUint32 count = 0;
-    mObservers->GetLength(&count);
-    if (count <= 0)
-        return NS_OK;
+  PRUint32 count = 0;
+  mObservers->GetLength(&count);
+  if (count <= 0){
+    printf("NO SUCH OBSERVER\n");
+    return NS_OK;
+  }
 
-    PRIntn i;
-    nsCOMPtr<nsSipStateObserver> pCallback;
-    nsCOMPtr<nsSipStateObserver> _pCallback;
+  PRIntn i;
+  nsCOMPtr<nsSipStateObserver> pCallback;
+  nsCOMPtr<nsSipStateObserver> _pCallback;
 
-    for (i = 0; i < count; ++i) {
-      (nsIArray*)mObservers->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&pCallback);
-      (nsIArray*)proxy->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&_pCallback);
-      if (pCallback == cbk){
-        mObservers->RemoveElementAt(i);
-        proxy->RemoveElementAt(i);
-        printf("REMOVED OBSERVER AT ADDR: %p - %p\n", cbk, (nsSipStateObserver*)pCallback);
-        //SYNC OBSERVERS ARRAY ON pjsip BRIDGE
-        SyncObservers((nsIArray*)proxy);
+  for (i = 0; i < count; ++i) {
+    (nsIArray*)mObservers->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&pCallback);
+    (nsIArray*)proxy->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&_pCallback);
+    if (pCallback == cbk){
+      mObservers->RemoveElementAt(i);
+      proxy->RemoveElementAt(i);
+      printf("REMOVED OBSERVER AT ADDR: %p - %p\n", cbk, (nsSipStateObserver*)pCallback);
+      //SYNC OBSERVERS ARRAY ON pjsip BRIDGE
+      SyncObservers((nsIArray*)proxy);
 
-        NS_RELEASE(_pCallback);
-        NS_RELEASE(pCallback);
-        return NS_OK;
-      }
+      NS_RELEASE(_pCallback);
+      NS_RELEASE(pCallback);
+      return NS_OK;
     }
+  }
 
+  printf("NO SUCH OBSERVER\n");
   return NS_OK;
 }
 

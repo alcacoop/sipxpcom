@@ -12,13 +12,6 @@
 #define THIS_FILE	"APP"
 #define current_acc	pjsua_acc_get_default()
 
-#define REGISTER_THREAD()	\
-  static pj_thread_desc desc;\
-  static pj_thread_t *  thread;\
-  if(!pj_thread_is_registered()) {\
-    pj_thread_register(NULL,desc,&thread);\
-  }
-
 #ifdef __GNUG__
 	#define PJSIP_API 
 #else

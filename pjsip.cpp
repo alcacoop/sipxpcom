@@ -1,10 +1,8 @@
 #include "pjsip.h"
 
 
-
-
 /*
-   Array di callback proxies
+   Array di observer proxies
 */
 static nsCOMPtr<nsIArray> mObservers;
 
@@ -59,10 +57,8 @@ static void on_call_state(pjsua_call_id call_id, pjsip_event *e){
     CallObservers("CALLING");
   if (strcmp(ci.state_text.ptr, "CONFIRMED")==0)
     CallObservers("ANSWER");
-  if ((strcmp(ci.state_text.ptr, "DISCONNCTD")==0)&&(code!=486)){//Hangup and reason != busy here
+  if ((strcmp(ci.state_text.ptr, "DISCONNCTD")==0)&&(code!=486))//Hangup and reason != busy here
     CallObservers("HANGUP");
-    siphangup();
-  }
 }
 
 
@@ -125,11 +121,10 @@ PJSIP_API int sipregister(long sipPort) {
 
   pj_status_t status;
   pjsua_acc_id acc_id;
-  REGISTER_THREAD();
-
 
   status = pjsua_create();
 
+  /* Init pjsip stack */
   if (status != PJ_SUCCESS){ pjsua_destroy();}
   {
     pjsua_config cfg;
@@ -137,10 +132,8 @@ PJSIP_API int sipregister(long sipPort) {
     pjsua_media_config m_cfg;
 
     pjsua_config_default(&cfg);
-    //cfg.thread_cnt = 0;
-
+    cfg.thread_cnt = 1;
     cfg.use_srtp = PJMEDIA_SRTP_DISABLED;
-    
     cfg.cb.on_incoming_call = &on_incoming_call;
     cfg.cb.on_call_media_state = &on_call_media_state;
     cfg.cb.on_call_state = &on_call_state;
@@ -195,11 +188,13 @@ PJSIP_API int sipregister(long sipPort) {
    Stack, socket e thread destructor
 */
 PJSIP_API int sipderegister(){
-  REGISTER_THREAD();
-  
   pjsua_acc_id acc_id = pjsua_acc_get_default();
   if (acc_id != PJSUA_INVALID_ID)
     pjsua_acc_del(acc_id);
+
+  //siphangup();
+  //pjsua_handle_events(500);
+  //pjsua_destroy();
   pjsua_destroy();
   CallObservers("DESTROY");
   return 0;
@@ -212,7 +207,6 @@ PJSIP_API int sipderegister(){
 PJSIP_API int sipmakecall(char *sipToAddr){
   pj_status_t status;
   pj_str_t uri = pj_str(sipToAddr);
-  REGISTER_THREAD();
   status = pjsua_call_make_call(current_acc, &uri, 0, NULL, NULL, NULL);
   if (status!=PJ_SUCCESS)
     CallObservers("INVALIDURI");
@@ -224,8 +218,8 @@ PJSIP_API int sipmakecall(char *sipToAddr){
    Chiusura chiamate attive
 */
 PJSIP_API int siphangup(){
-  REGISTER_THREAD();
 	pjsua_call_hangup_all();
+  CallObservers("HANGUP");
   return 0;
 }
 
@@ -246,7 +240,6 @@ static void CallObservers(const char* status)
 
   PRIntn i;
   nsCOMPtr<nsSipStateObserver> _pCallback;
-
   for (i = 0; i < count; ++i) {
     (nsIArray*)mObservers->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&_pCallback);
     _pCallback->OnStatusChange(status);
@@ -256,8 +249,6 @@ static void CallObservers(const char* status)
 }
 
 
-
 void SyncObservers(nsCOMPtr<nsIArray> o){
-  //mObservers = do_CreateInstance(NS_ARRAY_CONTRACTID);
   mObservers = o;
 }
