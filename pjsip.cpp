@@ -15,9 +15,7 @@ static void on_incoming_call(pjsua_acc_id acc_id, pjsua_call_id call_id, pjsip_r
   PJ_UNUSED_ARG(acc_id);
   PJ_UNUSED_ARG(rdata);
   pjsua_call_get_info(call_id, &ci);
-  PJ_LOG(3,(THIS_FILE, "Incoming call from %.*s!!",
-        (int)ci.remote_info.slen,
-        ci.remote_info.ptr));
+  //PJ_LOG(3,(THIS_FILE, "Incoming call from %.*s!!",(int)ci.remote_info.slen, ci.remote_info.ptr));
   pjsua_call_answer(call_id, 200, NULL, NULL);
 }
 

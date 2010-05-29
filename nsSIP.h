@@ -30,6 +30,7 @@ public:
 private:
   ~nsSIP();
   void getProxyForObserver(nsCOMPtr<nsSipStateObserver>, nsCOMPtr<nsSipStateObserver>*);
+  void CallObservers(const char* status);
   void FlushObservers();
 
 protected:

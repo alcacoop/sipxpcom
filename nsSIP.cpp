@@ -35,8 +35,9 @@ NS_IMETHODIMP nsSIP::Destroy() {
   if (port==0)
     return NS_OK;
 
-  sipderegister();
+  CallObservers("DESTROY");
   FlushObservers();
+  sipderegister();
   port = 0;
   return NS_OK;
 }
@@ -188,4 +189,25 @@ void nsSIP::getProxyForObserver(nsCOMPtr<nsSipStateObserver> cbk, nsCOMPtr<nsSip
     NS_PROXY_SYNC | NS_PROXY_ALWAYS,
     (void**)pCbk
   );
+}
+
+
+void nsSIP::CallObservers(const char* status)
+{
+  if (!mObservers)
+      return;
+
+  PRUint32 count = 0;
+  mObservers->GetLength(&count);
+  if (count <= 0)
+      return;
+
+  PRIntn i;
+  nsCOMPtr<nsSipStateObserver> _pCallback;
+  for (i = 0; i < count; ++i) {
+    (nsIArray*)mObservers->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&_pCallback);
+    _pCallback->OnStatusChange(status);
+  }
+
+  return;
 }
