@@ -1,10 +1,10 @@
 #include "pjsip.h"
 
 
-/*
-   Array di observer proxies
-*/
+/* Array di observer proxies */
 static nsCOMPtr<nsIArray> mObservers;
+/* Stato chaiamate */
+static bool call_in_progress = false; 
 
 
 /* 
@@ -15,8 +15,14 @@ static void on_incoming_call(pjsua_acc_id acc_id, pjsua_call_id call_id, pjsip_r
   PJ_UNUSED_ARG(acc_id);
   PJ_UNUSED_ARG(rdata);
   pjsua_call_get_info(call_id, &ci);
+  CallObservers("INCOMING");
   //PJ_LOG(3,(THIS_FILE, "Incoming call from %.*s!!",(int)ci.remote_info.slen, ci.remote_info.ptr));
-  pjsua_call_answer(call_id, 200, NULL, NULL);
+  if (call_in_progress)
+    pjsua_call_answer(call_id, 486, NULL, NULL);
+  else {
+    call_in_progress = true;
+    pjsua_call_answer(call_id, 200, NULL, NULL);
+  }
 }
 
 
@@ -55,7 +61,7 @@ static void on_call_state(pjsua_call_id call_id, pjsip_event *e){
     CallObservers("CALLING");
   if (strcmp(ci.state_text.ptr, "CONFIRMED")==0)
     CallObservers("ANSWER");
-  if ((strcmp(ci.state_text.ptr, "DISCONNCTD")==0)&&(code!=486))//Hangup and reason != busy here
+  if ((strcmp(ci.state_text.ptr, "DISCONNCTD")==0)&&(code!=486)&&(!call_in_progress))//Hangup and reason != busy here
     CallObservers("HANGUP");
 }
 
@@ -190,10 +196,8 @@ PJSIP_API int sipderegister(){
   if (acc_id != PJSUA_INVALID_ID)
     pjsua_acc_del(acc_id);
 
-  //siphangup();
-  //pjsua_handle_events(500);
-  //pjsua_destroy();
   pjsua_destroy();
+  call_in_progress = false;
   CallObservers("DESTROY");
   return 0;
 }
@@ -203,11 +207,15 @@ PJSIP_API int sipderegister(){
    Inizializzazione chiamata in uscita
 */
 PJSIP_API int sipmakecall(char *sipToAddr){
+  if (call_in_progress)
+    return 1;
   pj_status_t status;
   pj_str_t uri = pj_str(sipToAddr);
   status = pjsua_call_make_call(current_acc, &uri, 0, NULL, NULL, NULL);
   if (status!=PJ_SUCCESS)
     CallObservers("INVALIDURI");
+  else
+    call_in_progress = true;
   return 0;
 }
 
@@ -217,6 +225,7 @@ PJSIP_API int sipmakecall(char *sipToAddr){
 */
 PJSIP_API int siphangup(){
 	pjsua_call_hangup_all();
+  call_in_progress = false;
   CallObservers("HANGUP");
   return 0;
 }
