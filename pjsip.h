@@ -12,23 +12,14 @@
 #define THIS_FILE	"APP"
 #define current_acc	pjsua_acc_get_default()
 
-#ifdef __GNUG__
-	#define PJSIP_API 
-#else
-	#ifdef PJSIP_EXPORTS
-		#define PJSIP_API __declspec(dllexport)
-	#else
-		#define PJSIP_API __declspec(dllimport)
-	#endif
-#endif
 
-PJSIP_API int sipregister(long sipPort);
-PJSIP_API int sipderegister();
-PJSIP_API int sipmakecall(char*);
-PJSIP_API int siphangup();
+int sipregister(long sipPort);
+int sipderegister();
+int sipmakecall(char*);
+int siphangup();
 
-PJSIP_API int sipaddaccount(char*, char*, char*);
-PJSIP_API void sipsetstunserver(char*);
+int sipaddaccount(char*, char*, char*);
+void sipsetstunserver(char*);
 
 void SyncObservers(nsCOMPtr<nsIArray>);
 static void CallObservers(const char*);

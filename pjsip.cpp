@@ -89,7 +89,7 @@ static void on_call_media_state(pjsua_call_id call_id){
 /*
    STUN Server configuration
 */
-PJSIP_API void sipsetstunserver(char* stun){
+void sipsetstunserver(char* stun){
   /* FUTURO STUN */
   //pjsua_config cfg;
   //cfg.stun_host = pj_str("stun.ekiga.net");
@@ -99,7 +99,7 @@ PJSIP_API void sipsetstunserver(char* stun){
 /*
    Account management
 */
-PJSIP_API int sipaddaccount(char* user, char* domain, char* password){
+int sipaddaccount(char* user, char* domain, char* password){
   /* FUTURA REGISTRAZIONE 
   #define SIP_DOMAIN	"ekiga.net"
   #define SIP_USER	"dom0"
@@ -127,7 +127,7 @@ PJSIP_API int sipaddaccount(char* user, char* domain, char* password){
 /*
    Stack, socket e thread constructor
 */
-PJSIP_API int sipregister(long sipPort) {
+int sipregister(long sipPort) {
 
   pj_status_t status;
   pjsua_acc_id acc_id;
@@ -185,7 +185,7 @@ PJSIP_API int sipregister(long sipPort) {
     pjsua_acc_config cfg;
     pjsua_acc_config_default(&cfg);
     cfg.cred_count = 1;
-    cfg.id = pj_str("sip:localhost");
+    cfg.id = pj_str((char*)"sip:localhost");
     status = pjsua_acc_add(&cfg, PJ_TRUE, &acc_id);
   }
 
@@ -197,7 +197,7 @@ PJSIP_API int sipregister(long sipPort) {
 /*
    Stack, socket e thread destructor
 */
-PJSIP_API int sipderegister(){
+int sipderegister(){
   pjsua_acc_id acc_id = pjsua_acc_get_default();
   if (acc_id != PJSUA_INVALID_ID)
     pjsua_acc_del(acc_id);
@@ -212,7 +212,7 @@ PJSIP_API int sipderegister(){
 /*
    Inizializzazione chiamata in uscita
 */
-PJSIP_API int sipmakecall(char *sipToAddr){
+int sipmakecall(char *sipToAddr){
   if (cid != -1)
     return 1;
   pj_status_t status;
@@ -231,7 +231,7 @@ PJSIP_API int sipmakecall(char *sipToAddr){
 /*
    Chiusura chiamate attive
 */
-PJSIP_API int siphangup(){
+int siphangup(){
 	pjsua_call_hangup_all();
   cid = -1;
   CallObservers("HANGUP");
