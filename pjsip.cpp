@@ -143,6 +143,7 @@ int sipregister(long sipPort) {
 
     pjsua_config_default(&cfg);
     cfg.thread_cnt = 1;
+    cfg.max_calls  = 1;
     cfg.use_srtp = PJMEDIA_SRTP_DISABLED;
     cfg.cb.on_incoming_call = &on_incoming_call;
     cfg.cb.on_call_media_state = &on_call_media_state;
