@@ -1,3 +1,6 @@
+#include <pjmedia.h>
+#include <pjlib-util.h>
+#include <pjlib.h>
 #include <pjsua-lib/pjsua.h>
 #include "stdio.h"
 #include "string.h"
@@ -17,6 +20,10 @@ int sipregister(long sipPort);
 int sipderegister();
 int sipmakecall(char*);
 int siphangup();
+
+void playring();
+void stopring();
+void setringtone(char*);
 
 int sipaddaccount(char*, char*, char*);
 void sipsetstunserver(char*);

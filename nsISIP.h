@@ -10,6 +10,14 @@
 #include "nsISupports.h"
 #endif
 
+#ifndef __gen_nsIExtensionManager_h__
+#include "nsIExtensionManager.h"
+#endif
+
+#ifndef __gen_nsIFile_h__
+#include "nsIFile.h"
+#endif
+
 /* For IDL files that don't want to include root IDL files. */
 #ifndef NS_NO_VTABLE
 #define NS_NO_VTABLE
@@ -112,6 +120,15 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   /* void hangup (); */
   NS_SCRIPTABLE NS_IMETHOD Hangup(void) = 0;
 
+  /* void setringtone (in string file); */
+  NS_SCRIPTABLE NS_IMETHOD Setringtone(const char *file) = 0;
+
+  /* void playringtone (); */
+  NS_SCRIPTABLE NS_IMETHOD Playringtone(void) = 0;
+
+  /* void stopringtone (); */
+  NS_SCRIPTABLE NS_IMETHOD Stopringtone(void) = 0;
+
   /* void addObserver (in nsSipStateObserver cbk); */
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk) = 0;
 
@@ -131,6 +148,9 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD Destroy(void); \
   NS_SCRIPTABLE NS_IMETHOD Call(const char *URI); \
   NS_SCRIPTABLE NS_IMETHOD Hangup(void); \
+  NS_SCRIPTABLE NS_IMETHOD Setringtone(const char *file); \
+  NS_SCRIPTABLE NS_IMETHOD Playringtone(void); \
+  NS_SCRIPTABLE NS_IMETHOD Stopringtone(void); \
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk); \
   NS_SCRIPTABLE NS_IMETHOD RemoveObserver(nsSipStateObserver *cbk); \
   NS_SCRIPTABLE NS_IMETHOD ClearObservers(void); 
@@ -141,6 +161,9 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD Destroy(void) { return _to Destroy(); } \
   NS_SCRIPTABLE NS_IMETHOD Call(const char *URI) { return _to Call(URI); } \
   NS_SCRIPTABLE NS_IMETHOD Hangup(void) { return _to Hangup(); } \
+  NS_SCRIPTABLE NS_IMETHOD Setringtone(const char *file) { return _to Setringtone(file); } \
+  NS_SCRIPTABLE NS_IMETHOD Playringtone(void) { return _to Playringtone(); } \
+  NS_SCRIPTABLE NS_IMETHOD Stopringtone(void) { return _to Stopringtone(); } \
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk) { return _to AddObserver(cbk); } \
   NS_SCRIPTABLE NS_IMETHOD RemoveObserver(nsSipStateObserver *cbk) { return _to RemoveObserver(cbk); } \
   NS_SCRIPTABLE NS_IMETHOD ClearObservers(void) { return _to ClearObservers(); } 
@@ -151,6 +174,9 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD Destroy(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Destroy(); } \
   NS_SCRIPTABLE NS_IMETHOD Call(const char *URI) { return !_to ? NS_ERROR_NULL_POINTER : _to->Call(URI); } \
   NS_SCRIPTABLE NS_IMETHOD Hangup(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Hangup(); } \
+  NS_SCRIPTABLE NS_IMETHOD Setringtone(const char *file) { return !_to ? NS_ERROR_NULL_POINTER : _to->Setringtone(file); } \
+  NS_SCRIPTABLE NS_IMETHOD Playringtone(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Playringtone(); } \
+  NS_SCRIPTABLE NS_IMETHOD Stopringtone(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Stopringtone(); } \
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddObserver(cbk); } \
   NS_SCRIPTABLE NS_IMETHOD RemoveObserver(nsSipStateObserver *cbk) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveObserver(cbk); } \
   NS_SCRIPTABLE NS_IMETHOD ClearObservers(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->ClearObservers(); } 
@@ -207,6 +233,24 @@ NS_IMETHODIMP nsSIP::Call(const char *URI)
 
 /* void hangup (); */
 NS_IMETHODIMP nsSIP::Hangup()
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void setringtone (in string file); */
+NS_IMETHODIMP nsSIP::Setringtone(const char *file)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void playringtone (); */
+NS_IMETHODIMP nsSIP::Playringtone()
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void stopringtone (); */
+NS_IMETHODIMP nsSIP::Stopringtone()
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }

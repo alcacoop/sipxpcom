@@ -1,4 +1,5 @@
 #include "nsSIP.h"
+#include "nsStringAPI.h"
 
 
 
@@ -17,6 +18,7 @@ nsSIP::~nsSIP() {
 /* void init (in long port); */
 NS_IMETHODIMP nsSIP::Init(PRInt32 _port)
 {
+
   if (port!=0){
     Destroy();
   }
@@ -206,4 +208,31 @@ void nsSIP::CallObservers(const char* status)
   }
 
   return;
+}
+
+
+
+
+/* void setringtone (in string file); */
+NS_IMETHODIMP nsSIP::Setringtone(const char *file)
+{
+  if (port==0) return NS_OK;
+  setringtone((char*)file);
+  return NS_OK;
+}
+
+/* void playring (); */
+NS_IMETHODIMP nsSIP::Playringtone()
+{
+  if (port==0) return NS_OK;
+  playring();
+  return NS_OK;
+}
+
+/* void stopring (); */
+NS_IMETHODIMP nsSIP::Stopringtone()
+{
+  if (port==0) return NS_OK;
+  stopring();
+  return NS_OK;
 }

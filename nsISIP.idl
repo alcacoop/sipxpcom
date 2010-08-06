@@ -1,4 +1,6 @@
 #include "nsISupports.idl"
+#include "nsIExtensionManager.idl"
+#include "nsIFile.idl"
 
 
 [scriptable, function, uuid(3869ed55-e06a-4ac1-84ea-4c3a4b696924)]
@@ -14,6 +16,10 @@ interface nsISIP : nsISupports
   void destroy();
   void call(in string URI);
   void hangup();
+
+  void setringtone(in string file);
+  void playringtone();
+  void stopringtone();
 
   void addObserver(in nsSipStateObserver cbk);
   void removeObserver(in nsSipStateObserver cbk);

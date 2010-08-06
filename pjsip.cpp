@@ -7,6 +7,19 @@ static nsCOMPtr<nsIArray> mObservers;
 static pjsua_call_id cid = -1;
 
 
+static pj_caching_pool cp;
+static pjmedia_endpt *med_endpt;
+static pj_pool_t *pool;
+static pjmedia_port *file_port;
+static pjmedia_snd_port *snd_port;
+
+static char* ringtone;
+static int rtsetted = 0;
+
+
+
+
+
 /* 
    Callback called by the library upon receiving incoming call 
 */
@@ -16,7 +29,7 @@ static void on_incoming_call(pjsua_acc_id acc_id, pjsua_call_id call_id, pjsip_r
   PJ_UNUSED_ARG(rdata);
   pjsua_call_get_info(call_id, &ci);
   CallObservers("INCOMING");
-  //PJ_LOG(3,(THIS_FILE, "Incoming call from %.*s!!",(int)ci.remote_info.slen, ci.remote_info.ptr));
+
   if (cid != -1)
     pjsua_call_answer(call_id, 486, NULL, NULL);
   else {
@@ -45,7 +58,7 @@ static void on_call_state(pjsua_call_id call_id, pjsip_event *e){
     msg = e->body.tsx_state.src.rdata->msg_info.msg;
     code = msg->line.status.code;
     reason = msg->line.status.reason;
-    //printf("CODE: %d - REASON: %s\n", code, reason);
+
     if (code==180){
       CallObservers("RINGING");
       printf("STATO: RINGING - %d\n", code);
@@ -133,7 +146,6 @@ int sipregister(long sipPort) {
   pjsua_acc_id acc_id;
 
   status = pjsua_create();
-
   /* Init pjsip stack */
   if (status != PJ_SUCCESS){ pjsua_destroy();}
   {
@@ -190,6 +202,7 @@ int sipregister(long sipPort) {
     status = pjsua_acc_add(&cfg, PJ_TRUE, &acc_id);
   }
 
+
   CallObservers("INIT");
   return 0;
 }
@@ -202,6 +215,22 @@ int sipderegister(){
   pjsua_acc_id acc_id = pjsua_acc_get_default();
   if (acc_id != PJSUA_INVALID_ID)
     pjsua_acc_del(acc_id);
+
+  /* RING DEINITIALIZATION */
+  if (rtsetted) {
+    /* Destroy sound device */
+    pjmedia_snd_port_destroy( snd_port );
+    /* Destroy file port */
+    pjmedia_port_destroy( file_port );
+    /* Release application pool */
+    pj_pool_release( pool );
+    /* Destroy media endpoint. */
+    pjmedia_endpt_destroy( med_endpt );
+    /* Destroy pool factory */
+    pj_caching_pool_destroy( &cp );
+    rtsetted = 0;
+  }
+
 
   pjsua_destroy();
   cid = -1;
@@ -237,6 +266,50 @@ int siphangup(){
   cid = -1;
   CallObservers("HANGUP");
   return 0;
+}
+
+
+void setringtone(char* rt){
+  /* RING INITIALIZATIONS */
+  //ringtone = "/home/dmt/Scrivania/oldphone-mono.wav";
+  ringtone = rt;
+  if (!rtsetted) {
+    rtsetted = 1;
+    /* Must create a pool factory before we can allocate any memory. */
+    pj_caching_pool_init(&cp, &pj_pool_factory_default_policy, 0);
+    /* Initialize media endpoint. */
+    pjmedia_endpt_create(&cp.factory, NULL, 1, &med_endpt);
+    /* Create memory pool for our file player */
+    pool = pj_pool_create( &cp.factory, "wav", 4000, 4000, NULL);
+    /* Create file media port from the WAV file */
+    pjmedia_wav_player_port_create(pool, ringtone, 20, 0, 0, &file_port);
+    /* Create sound player port. */
+    pjmedia_snd_port_create_player( 
+      pool,
+      -1,	
+      file_port->info.clock_rate,	
+      file_port->info.channel_count,
+      file_port->info.samples_per_frame,
+      file_port->info.bits_per_sample,
+      0,
+      &snd_port
+    );
+  } else {
+    pjmedia_wav_player_port_create(pool, ringtone, 20, 0, 0, &file_port);
+  }
+}
+
+void playring(){ 
+  if (!rtsetted) return;
+  pjmedia_wav_player_port_create(pool, ringtone, 20, 0, 0, &file_port);
+  pjmedia_snd_port_connect( snd_port, file_port);
+}
+
+
+void stopring(){
+  if (!rtsetted) return;
+  pjmedia_snd_port_disconnect(snd_port);
+  pjmedia_port_destroy(file_port);
 }
 
 
