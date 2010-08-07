@@ -1,5 +1,9 @@
 #include "pjsip.h"
 
+#define ON_DURATION     200
+#define OFF_DURATION      100
+#define SAMPLES_PER_FRAME   64
+
 
 /* Array di observer proxies */
 static nsCOMPtr<nsIArray> mObservers;
@@ -7,16 +11,21 @@ static nsCOMPtr<nsIArray> mObservers;
 static pjsua_call_id cid = -1;
 
 
-static pj_caching_pool cp;
-static pjmedia_endpt *med_endpt;
+/* Memory pool */ 
 static pj_pool_t *pool;
-static pjmedia_port *file_port;
-static pjmedia_snd_port *snd_port;
 
-static char* ringtone;
+
+/* Gestione wav file */
+static int wav_slot;
+static pjmedia_port *wav_port;
+static char* wav_file;
 static int rtsetted = 0;
+static int ringing = 0;
 
 
+/* Gestione toni DTMF */
+static pjmedia_port *tone_port;
+static int tone_slot;
 
 
 
@@ -203,6 +212,11 @@ int sipregister(long sipPort) {
   }
 
 
+  pool = pjsua_pool_create("tone", 256, 256);
+  pjmedia_tonegen_create(pool, 8000, 1, SAMPLES_PER_FRAME, 16, 0, &tone_port);
+  pjsua_conf_add_port(pool, tone_port, &tone_slot);
+  pjsua_conf_connect(tone_slot, 0);
+
   CallObservers("INIT");
   return 0;
 }
@@ -212,24 +226,12 @@ int sipregister(long sipPort) {
    Stack, socket e thread destructor
 */
 int sipderegister(){
+
+  pj_pool_release(pool);
+
   pjsua_acc_id acc_id = pjsua_acc_get_default();
   if (acc_id != PJSUA_INVALID_ID)
     pjsua_acc_del(acc_id);
-
-  /* RING DEINITIALIZATION */
-  if (rtsetted) {
-    /* Destroy sound device */
-    pjmedia_snd_port_destroy( snd_port );
-    /* Destroy file port */
-    pjmedia_port_destroy( file_port );
-    /* Release application pool */
-    pj_pool_release( pool );
-    /* Destroy media endpoint. */
-    pjmedia_endpt_destroy( med_endpt );
-    /* Destroy pool factory */
-    pj_caching_pool_destroy( &cp );
-    rtsetted = 0;
-  }
 
 
   pjsua_destroy();
@@ -269,47 +271,45 @@ int siphangup(){
 }
 
 
-void setringtone(char* rt){
-  /* RING INITIALIZATIONS */
-  //ringtone = "/home/dmt/Scrivania/oldphone-mono.wav";
-  ringtone = rt;
-  if (!rtsetted) {
-    rtsetted = 1;
-    /* Must create a pool factory before we can allocate any memory. */
-    pj_caching_pool_init(&cp, &pj_pool_factory_default_policy, 0);
-    /* Initialize media endpoint. */
-    pjmedia_endpt_create(&cp.factory, NULL, 1, &med_endpt);
-    /* Create memory pool for our file player */
-    pool = pj_pool_create( &cp.factory, "wav", 4000, 4000, NULL);
-    /* Create file media port from the WAV file */
-    pjmedia_wav_player_port_create(pool, ringtone, 20, 0, 0, &file_port);
-    /* Create sound player port. */
-    pjmedia_snd_port_create_player( 
-      pool,
-      -1,	
-      file_port->info.clock_rate,	
-      file_port->info.channel_count,
-      file_port->info.samples_per_frame,
-      file_port->info.bits_per_sample,
-      0,
-      &snd_port
-    );
-  } else {
-    pjmedia_wav_player_port_create(pool, ringtone, 20, 0, 0, &file_port);
-  }
+void playtone(char tone){
+
+  pjmedia_tone_digit digits[2]; 
+  digits[0].digit = tone; 
+  digits[0].on_msec = ON_DURATION; 
+  digits[0].off_msec = OFF_DURATION; 
+
+  pjmedia_tonegen_play_digits(tone_port, 1, digits, 0); 
 }
 
+
+void setringtone(char* rt){
+  wav_file = rt;
+  if (!rtsetted) {
+    rtsetted = 1;
+  } 
+}
+
+
 void playring(){ 
-  if (!rtsetted) return;
-  pjmedia_wav_player_port_create(pool, ringtone, 20, 0, 0, &file_port);
-  pjmedia_snd_port_connect( snd_port, file_port);
+  if (ringing){
+    stopring();
+    ringing=0;
+  }
+
+  if ((rtsetted)&&(!ringing)){
+    pjmedia_wav_player_port_create(pool, wav_file, 20, 0, 0, &wav_port);
+    pjsua_conf_add_port(pool, wav_port, &wav_slot);
+    pjsua_conf_connect(wav_slot, 0);
+    ringing = 1;
+  }
 }
 
 
 void stopring(){
-  if (!rtsetted) return;
-  pjmedia_snd_port_disconnect(snd_port);
-  pjmedia_port_destroy(file_port);
+  if ((rtsetted)&&(ringing)){
+    pjsua_conf_disconnect(wav_slot, 0);
+    ringing = 0;
+  }
 }
 
 

@@ -129,6 +129,9 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   /* void stopringtone (); */
   NS_SCRIPTABLE NS_IMETHOD Stopringtone(void) = 0;
 
+  /* void playdtmftone (in char tone); */
+  NS_SCRIPTABLE NS_IMETHOD Playdtmftone(char tone) = 0;
+
   /* void addObserver (in nsSipStateObserver cbk); */
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk) = 0;
 
@@ -151,6 +154,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD Setringtone(const char *file); \
   NS_SCRIPTABLE NS_IMETHOD Playringtone(void); \
   NS_SCRIPTABLE NS_IMETHOD Stopringtone(void); \
+  NS_SCRIPTABLE NS_IMETHOD Playdtmftone(char tone); \
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk); \
   NS_SCRIPTABLE NS_IMETHOD RemoveObserver(nsSipStateObserver *cbk); \
   NS_SCRIPTABLE NS_IMETHOD ClearObservers(void); 
@@ -164,6 +168,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD Setringtone(const char *file) { return _to Setringtone(file); } \
   NS_SCRIPTABLE NS_IMETHOD Playringtone(void) { return _to Playringtone(); } \
   NS_SCRIPTABLE NS_IMETHOD Stopringtone(void) { return _to Stopringtone(); } \
+  NS_SCRIPTABLE NS_IMETHOD Playdtmftone(char tone) { return _to Playdtmftone(tone); } \
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk) { return _to AddObserver(cbk); } \
   NS_SCRIPTABLE NS_IMETHOD RemoveObserver(nsSipStateObserver *cbk) { return _to RemoveObserver(cbk); } \
   NS_SCRIPTABLE NS_IMETHOD ClearObservers(void) { return _to ClearObservers(); } 
@@ -177,6 +182,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD Setringtone(const char *file) { return !_to ? NS_ERROR_NULL_POINTER : _to->Setringtone(file); } \
   NS_SCRIPTABLE NS_IMETHOD Playringtone(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Playringtone(); } \
   NS_SCRIPTABLE NS_IMETHOD Stopringtone(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Stopringtone(); } \
+  NS_SCRIPTABLE NS_IMETHOD Playdtmftone(char tone) { return !_to ? NS_ERROR_NULL_POINTER : _to->Playdtmftone(tone); } \
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddObserver(cbk); } \
   NS_SCRIPTABLE NS_IMETHOD RemoveObserver(nsSipStateObserver *cbk) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveObserver(cbk); } \
   NS_SCRIPTABLE NS_IMETHOD ClearObservers(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->ClearObservers(); } 
@@ -251,6 +257,12 @@ NS_IMETHODIMP nsSIP::Playringtone()
 
 /* void stopringtone (); */
 NS_IMETHODIMP nsSIP::Stopringtone()
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void playdtmftone (in char tone); */
+NS_IMETHODIMP nsSIP::Playdtmftone(char tone)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }

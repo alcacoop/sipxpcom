@@ -21,6 +21,8 @@ interface nsISIP : nsISupports
   void playringtone();
   void stopringtone();
 
+  void playdtmftone(in char tone);
+
   void addObserver(in nsSipStateObserver cbk);
   void removeObserver(in nsSipStateObserver cbk);
   void clearObservers();

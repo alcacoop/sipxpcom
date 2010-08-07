@@ -25,6 +25,8 @@ void playring();
 void stopring();
 void setringtone(char*);
 
+void playtone(char);
+
 int sipaddaccount(char*, char*, char*);
 void sipsetstunserver(char*);
 
