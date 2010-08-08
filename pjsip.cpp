@@ -1,7 +1,7 @@
 #include "pjsip.h"
 
-#define ON_DURATION     200
-#define OFF_DURATION      100
+#define ON_DURATION     100
+#define OFF_DURATION      20
 #define SAMPLES_PER_FRAME   64
 
 

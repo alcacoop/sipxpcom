@@ -225,7 +225,6 @@ NS_IMETHODIMP nsSIP::Setringtone(const char *file)
 NS_IMETHODIMP nsSIP::Playringtone()
 {
   if (port==0) return NS_OK;
-  //playring();
   playring();
   return NS_OK;
 }
@@ -241,6 +240,7 @@ NS_IMETHODIMP nsSIP::Stopringtone()
 /* void playdtmftone (in char tone); */
 NS_IMETHODIMP nsSIP::Playdtmftone(const char tone)
 {
+  if (port==0) return NS_OK;
   playtone((char)tone);
   return NS_OK;
 }
