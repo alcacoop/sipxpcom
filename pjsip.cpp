@@ -1,7 +1,7 @@
 #include "pjsip.h"
 
-#define ON_DURATION     100
-#define OFF_DURATION      20
+#define ON_DURATION     80
+#define OFF_DURATION      10
 #define SAMPLES_PER_FRAME   64
 
 
@@ -215,7 +215,7 @@ int sipregister(long sipPort) {
   pool = pjsua_pool_create("tone", 256, 256);
   pjmedia_tonegen_create(pool, 8000, 1, SAMPLES_PER_FRAME, 16, 0, &tone_port);
   pjsua_conf_add_port(pool, tone_port, &tone_slot);
-  pjsua_conf_connect(tone_slot, 0);
+  //pjsua_conf_connect(tone_slot, 0);
 
   CallObservers("INIT");
   return 0;
@@ -272,6 +272,7 @@ int siphangup(){
 
 
 void playtone(char tone){
+  pjsua_conf_connect(tone_slot, 0);
 
   pjmedia_tone_digit digits[2]; 
   digits[0].digit = tone; 
@@ -279,6 +280,8 @@ void playtone(char tone){
   digits[0].off_msec = OFF_DURATION; 
 
   pjmedia_tonegen_play_digits(tone_port, 1, digits, 0); 
+  pj_thread_sleep(100);
+  pjsua_conf_disconnect(tone_slot, 0);
 }
 
 
