@@ -1,5 +1,7 @@
 #include "stdio.h"
 #include "string.h"
+#include "linphone/linphonecore.h"
+
 #include "nsCOMPtr.h"
 #include "nsIArray.h"
 #include "nsIMutableArray.h"
@@ -14,6 +16,7 @@ int sipdestroy();
 int sipmakecall(char*);
 int siphangup();
 
+void setringtone(char*);
 
 void SyncObservers(nsCOMPtr<nsIArray>);
 static void CallObservers(const char*);

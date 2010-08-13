@@ -59,3 +59,10 @@ int sipmakecall(char *sipToAddr){
 int siphangup(){
 }
 
+
+/*
+   Imposta la suoneria di avviso chiamata
+*/
+void setringtone(char* aFile){
+}
+
