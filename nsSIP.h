@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "pjsip.h"
 #include "nsCOMPtr.h"
 #include "nsIArray.h"
 #include "nsIMutableArray.h"
@@ -11,7 +10,7 @@
 #include "nsIProxyObjectManager.h"
 #include "nsISupports.h"
 #include "nsXPCOMCIDInternal.h"
-#include "pjsip.h"
+#include "linphone.h"
 
 #include "nsISIP.h"
 

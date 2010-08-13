@@ -1,5 +1,23 @@
 #include "nsSIP.h"
 #include "nsStringAPI.h"
+#include "nsThreadUtils.h"
+
+
+class nsRunner : public nsIRunnable 
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_IMETHOD Run(){
+    for (;;){
+      printf("\nOK");
+      PR_Sleep(PR_MillisecondsToInterval(50));
+    }
+    return NS_OK;
+  } 
+};
+
+NS_IMPL_THREADSAFE_ISUPPORTS1(nsRunner, nsIRunnable)
+
 
 
 
@@ -25,7 +43,15 @@ NS_IMETHODIMP nsSIP::Init(PRInt32 _port)
   if (_port<1024)
     return NS_ERROR_ILLEGAL_VALUE;
   port = _port;
-  sipregister((int)port); 
+  sipinit((int)port); 
+
+
+  nsCOMPtr<nsIRunnable> runner = new nsRunner();
+  nsCOMPtr<nsIThread> aThread;
+
+  NS_NewThread(getter_AddRefs(aThread), runner);
+
+
   return NS_OK;
 }
 
@@ -37,7 +63,7 @@ NS_IMETHODIMP nsSIP::Destroy() {
 
   CallObservers("DESTROY");
   FlushObservers();
-  sipderegister();
+  sipdestroy();
   port = 0;
   return NS_OK;
 }
@@ -90,7 +116,7 @@ NS_IMETHODIMP nsSIP::AddObserver(nsSipStateObserver *cbk)
   getProxyForObserver(cbk, &pCbk);
   NS_IF_ADDREF(pCbk);
   proxy->AppendElement(pCbk, PR_FALSE);
-  //SYNC OBSERVERS ARRAY ON pjsip BRIDGE
+  //SYNC OBSERVERS ARRAY ON linphone BRIDGE
   SyncObservers((nsIArray*)proxy);
   return NS_OK;
 }
@@ -124,7 +150,7 @@ NS_IMETHODIMP nsSIP::RemoveObserver(nsSipStateObserver *cbk)
       mObservers->RemoveElementAt(i);
       proxy->RemoveElementAt(i);
       printf("REMOVED OBSERVER AT ADDR: %p - %p\n", cbk, (nsSipStateObserver*)pCallback);
-      //SYNC OBSERVERS ARRAY ON pjsip BRIDGE
+      //SYNC OBSERVERS ARRAY ON linphone BRIDGE
       SyncObservers((nsIArray*)proxy);
 
       NS_RELEASE(_pCallback);
