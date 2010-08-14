@@ -61,6 +61,7 @@ NS_IMETHODIMP nsSIP::Init(PRInt32 _port)
   port = _port;
   lc = linphone_core_new(&cb_table, NULL, NULL, this);
   linphone_core_set_sip_port(lc, port);
+  linphone_core_set_inc_timeout(lc, 20);
 
   mRunner = new nsRunner();
   NS_NewThread(getter_AddRefs(mThread), mRunner);
@@ -105,7 +106,7 @@ NS_IMETHODIMP nsSIP::Call(const char* URI) {
 
 /* void hangup (); */
 NS_IMETHODIMP nsSIP::Hangup() {
-  //siphangup();
+  linphone_core_terminate_call(lc, NULL);
   return NS_OK;
 }
 
@@ -113,7 +114,8 @@ NS_IMETHODIMP nsSIP::Hangup() {
 /* void accept (); */
 NS_IMETHODIMP nsSIP::Accept()
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  linphone_core_accept_call(lc, NULL);
+  return NS_OK;
 }
 
 
@@ -172,8 +174,6 @@ NS_IMETHODIMP nsSIP::AddObserver(nsSipStateObserver *cbk)
   getProxyForObserver(cbk, &pCbk);
   NS_IF_ADDREF(pCbk);
   proxy->AppendElement(pCbk, PR_FALSE);
-  //SYNC OBSERVERS ARRAY ON linphone BRIDGE
-  //SyncObservers((nsIArray*)proxy);
   return NS_OK;
 }
 
@@ -206,8 +206,6 @@ NS_IMETHODIMP nsSIP::RemoveObserver(nsSipStateObserver *cbk)
       mObservers->RemoveElementAt(i);
       proxy->RemoveElementAt(i);
       printf("REMOVED OBSERVER AT ADDR: %p - %p\n", cbk, (nsSipStateObserver*)pCallback);
-      //SYNC OBSERVERS ARRAY ON linphone BRIDGE
-      //SyncObservers((nsIArray*)proxy);
 
       NS_RELEASE(_pCallback);
       NS_RELEASE(pCallback);
@@ -245,7 +243,6 @@ void nsSIP::FlushObservers(){
   printf("FLUSHED ALL OBSERVERS\n");
   NS_RELEASE(mObservers);
   NS_RELEASE(proxy);
-  //SyncObservers(NULL);
   return;
 }
 
