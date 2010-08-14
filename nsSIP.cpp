@@ -8,9 +8,9 @@ class nsRunner : public nsIRunnable
 public:
   NS_DECL_ISUPPORTS
   NS_IMETHOD Run(){
-    for (;;){
-      printf("\nOK");
-      PR_Sleep(PR_MillisecondsToInterval(50));
+    while (nsSIP::port){
+      PR_Sleep(PR_MillisecondsToInterval(300));
+      linphone_core_iterate(nsSIP::lc);
     }
     return NS_OK;
   } 
@@ -23,9 +23,29 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(nsRunner, nsIRunnable)
 
 NS_IMPL_ISUPPORTS1(nsSIP, nsISIP)
 
+LinphoneCore *nsSIP::lc = NULL;
+long nsSIP::port = 0;
+
 
 nsSIP::nsSIP() : mObservers(nsnull), proxy(nsnull) {
   port = 0;
+  call_in_progress = 0;
+
+  cb_table.show =(ShowInterfaceCb)stub;
+  cb_table.inv_recv = linphonec_call_received;
+  cb_table.bye_recv = (ByeReceivedCb) stub;
+  cb_table.notify_recv = (NotifyReceivedCb)stub;
+  cb_table.new_unknown_subscriber = (NewUnknownSubscriberCb)stub;
+  cb_table.auth_info_requested = (AuthInfoRequested) stub;
+  cb_table.display_status = (DisplayStatusCb) stub;
+  cb_table.display_message = (DisplayMessageCb)stub;
+  cb_table.display_url = (DisplayUrlCb) stub;
+  cb_table.call_log_updated = (CallLogUpdated) stub;
+  cb_table.text_received = (TextMessageReceived)stub;
+  cb_table.general_state = linphonec_general_state;
+  cb_table.dtmf_received = (DtmfReceived) stub;
+  cb_table.refer_received = (ReferReceived)stub;
+  cb_table.buddy_info_updated = (BuddyInfoUpdated) stub;
 }
 
 nsSIP::~nsSIP() {
@@ -43,7 +63,7 @@ NS_IMETHODIMP nsSIP::Init(PRInt32 _port)
   if (_port<1024)
     return NS_ERROR_ILLEGAL_VALUE;
   port = _port;
-  sipinit((int)port); 
+  lc = linphone_core_new(&cb_table, NULL, NULL, NULL);
 
 
   nsCOMPtr<nsIRunnable> runner = new nsRunner();
@@ -61,27 +81,66 @@ NS_IMETHODIMP nsSIP::Destroy() {
   if (port==0)
     return NS_OK;
 
+  port = 0;
   CallObservers("DESTROY");
   FlushObservers();
-  sipdestroy();
-  port = 0;
+  
+  //PR_Sleep(PR_MillisecondsToInterval(400));
+
+  return NS_OK;
+}
+
+
+/* void changesipport (in long port); */
+NS_IMETHODIMP nsSIP::Changesipport(PRInt32 port)
+{
+  linphone_core_set_sip_port(lc, port);
   return NS_OK;
 }
 
 
 /* void call (in AString URI); */
 NS_IMETHODIMP nsSIP::Call(const char* URI) {
-  sipmakecall((char*)URI);
+  linphone_core_invite(lc, URI);
   return NS_OK;
 }
 
 
 /* void hangup (); */
 NS_IMETHODIMP nsSIP::Hangup() {
-  siphangup();
+  //siphangup();
   return NS_OK;
 }
 
+
+/* void accept (); */
+NS_IMETHODIMP nsSIP::Accept()
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+
+/* void senddtmf (in char tone); */
+NS_IMETHODIMP nsSIP::Senddtmf(char tone)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+
+
+/* void setringtone (in string file); */
+NS_IMETHODIMP nsSIP::Setringtone(const char *file)
+{
+  if (port==0) return NS_OK;
+  //DO SOMETHING
+  return NS_OK;
+}
+
+
+
+/* ************************************* *
+ *          GESTIONE OBSERVERS           *
+ * ************************************* */     
 
 /* void addObserver (in nsSipStateObserver cbk); */
 NS_IMETHODIMP nsSIP::AddObserver(nsSipStateObserver *cbk)
@@ -117,7 +176,7 @@ NS_IMETHODIMP nsSIP::AddObserver(nsSipStateObserver *cbk)
   NS_IF_ADDREF(pCbk);
   proxy->AppendElement(pCbk, PR_FALSE);
   //SYNC OBSERVERS ARRAY ON linphone BRIDGE
-  SyncObservers((nsIArray*)proxy);
+  //SyncObservers((nsIArray*)proxy);
   return NS_OK;
 }
 
@@ -151,7 +210,7 @@ NS_IMETHODIMP nsSIP::RemoveObserver(nsSipStateObserver *cbk)
       proxy->RemoveElementAt(i);
       printf("REMOVED OBSERVER AT ADDR: %p - %p\n", cbk, (nsSipStateObserver*)pCallback);
       //SYNC OBSERVERS ARRAY ON linphone BRIDGE
-      SyncObservers((nsIArray*)proxy);
+      //SyncObservers((nsIArray*)proxy);
 
       NS_RELEASE(_pCallback);
       NS_RELEASE(pCallback);
@@ -189,7 +248,7 @@ void nsSIP::FlushObservers(){
   printf("FLUSHED ALL OBSERVERS\n");
   NS_RELEASE(mObservers);
   NS_RELEASE(proxy);
-  SyncObservers(NULL);
+  //SyncObservers(NULL);
   return;
 }
 
@@ -234,39 +293,4 @@ void nsSIP::CallObservers(const char* status)
   }
 
   return;
-}
-
-
-
-
-/* void setringtone (in string file); */
-NS_IMETHODIMP nsSIP::Setringtone(const char *file)
-{
-  if (port==0) return NS_OK;
-  setringtone((char*)file);
-  return NS_OK;
-}
-
-/* void playring (); */
-NS_IMETHODIMP nsSIP::Playringtone()
-{
-  if (port==0) return NS_OK;
-  //DO SOMETHING 
-  return NS_OK;
-}
-
-/* void stopring (); */
-NS_IMETHODIMP nsSIP::Stopringtone()
-{
-  if (port==0) return NS_OK;
-  //DO SOMETHING  
-  return NS_OK;
-}
-
-/* void playdtmftone (in char tone); */
-NS_IMETHODIMP nsSIP::Playdtmftone(const char tone)
-{
-  if (port==0) return NS_OK;
-  //DO SOMETHING
-  return NS_OK;
 }

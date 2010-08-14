@@ -15,14 +15,14 @@ interface nsISIP : nsISupports
 {
   void init(in long port);
   void destroy();
+  void changesipport(in long port);
+
   void call(in string URI);
   void hangup();
+  void accept();
+  void senddtmf(in char tone);
 
   void setringtone(in string file);
-  void playringtone();
-  void stopringtone();
-
-  void playdtmftone(in char tone);
 
   void addObserver(in nsSipStateObserver cbk);
   void removeObserver(in nsSipStateObserver cbk);
