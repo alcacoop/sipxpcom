@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "linphone/linphonecore.h"
+
 #include "nsCOMPtr.h"
 #include "nsIArray.h"
 #include "nsIMutableArray.h"
@@ -9,14 +11,18 @@
 #include "nsComponentManagerUtils.h"
 #include "nsIProxyObjectManager.h"
 #include "nsISupports.h"
+#include "nsStringAPI.h"
+#include "nsThreadUtils.h"
 #include "nsXPCOMCIDInternal.h"
-#include "linphone/linphonecore.h"
 
 #include "nsISIP.h"
 
 #define SIP_CONTRACTID "@alcacoop.it/sip;1"
 #define SIP_CLASSNAME "Simple XPCOM SIP stack"
 #define SIP_CID  { 0xc5bf5079, 0x8bc3, 0x4fc5, { 0x88, 0x1f, 0xf3, 0xbd, 0x85, 0xa6, 0x3c, 0x61 } }
+
+
+
 
 
 class nsSIP : public nsISIP
@@ -27,15 +33,18 @@ public:
   nsSIP();
   static LinphoneCore* lc;
   static long port;
-  
-private:
-  LinphoneCoreVTable cb_table;
-  int call_in_progress;
-  ~nsSIP();
 
   void getProxyForObserver(nsCOMPtr<nsSipStateObserver>, nsCOMPtr<nsSipStateObserver>*);
   void CallObservers(const char* status);
   void FlushObservers();
+  
+
+private:
+  nsCOMPtr<nsIRunnable> mRunner;
+  nsCOMPtr<nsIThread> mThread;
+  LinphoneCoreVTable cb_table;
+  int call_in_progress;
+  ~nsSIP();
 
 
 protected:
@@ -56,5 +65,57 @@ static void linphonec_notify_presence_received(LinphoneCore *lc,LinphoneFriend *
 static void linphonec_new_unknown_subscriber(LinphoneCore *lc, LinphoneFriend *lf, const char *url){};
 static void linphonec_bye_received(LinphoneCore *lc, const char *from){};
 static void linphonec_dtmf_received(LinphoneCore *lc, int dtmf){};
-static void linphonec_general_state (LinphoneCore * lc, LinphoneGeneralState *gstate){};
+static void linphonec_general_state (LinphoneCore * lc, LinphoneGeneralState *gstate){
+  switch(gstate->new_state) {
+    case GSTATE_POWER_OFF:
+      printf("GSTATE_POWER_OFF");
+      break;
+    case GSTATE_POWER_STARTUP:
+      printf("GSTATE_POWER_STARTUP");
+      break;
+    case GSTATE_POWER_ON:
+      printf("GSTATE_POWER_ON");
+      break;
+    case GSTATE_POWER_SHUTDOWN:
+      printf("GSTATE_POWER_SHUTDOWN");
+      break;
+    case GSTATE_REG_NONE:
+      printf("GSTATE_REG_NONE");
+      break;
+    case GSTATE_REG_OK:
+      printf("GSTATE_REG_OK");
+      break;
+    case GSTATE_REG_FAILED:
+      printf("GSTATE_REG_FAILED");
+      break;
+    case GSTATE_CALL_IDLE:
+      printf("GSTATE_CALL_IDLE");
+      break;
+    case GSTATE_CALL_OUT_INVITE:
+      printf("GSTATE_CALL_OUT_INVITE");
+      break;
+    case GSTATE_CALL_OUT_CONNECTED:
+      printf("GSTATE_CALL_OUT_CONNECTED");
+      break;
+    case GSTATE_CALL_IN_INVITE:
+      printf("GSTATE_CALL_IN_INVITE");
+      break;
+    case GSTATE_CALL_IN_CONNECTED:
+      printf("GSTATE_CALL_IN_CONNECTED");
+      break;
+    case GSTATE_CALL_END:
+      printf("GSTATE_CALL_END");
+      break;
+    case GSTATE_CALL_ERROR:
+      printf("GSTATE_CALL_ERROR");
+      break;
+    default:
+      printf("GSTATE_UNKNOWN_%d",gstate->new_state);
+  }
+  if (gstate->message) printf(" %s", gstate->message);
+  printf("\n");
+  nsSIP* app = (nsSIP*)linphone_core_get_user_data(lc);
+  app->CallObservers("DENTRO");
+  printf("... %p ...\n", app);
+};
 static void stub(){};

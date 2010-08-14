@@ -1,6 +1,4 @@
 #include "nsSIP.h"
-#include "nsStringAPI.h"
-#include "nsThreadUtils.h"
 
 
 class nsRunner : public nsIRunnable 
@@ -15,9 +13,7 @@ public:
     return NS_OK;
   } 
 };
-
 NS_IMPL_THREADSAFE_ISUPPORTS1(nsRunner, nsIRunnable)
-
 
 
 
@@ -63,14 +59,11 @@ NS_IMETHODIMP nsSIP::Init(PRInt32 _port)
   if (_port<1024)
     return NS_ERROR_ILLEGAL_VALUE;
   port = _port;
-  lc = linphone_core_new(&cb_table, NULL, NULL, NULL);
+  lc = linphone_core_new(&cb_table, NULL, NULL, this);
+  linphone_core_set_sip_port(lc, port);
 
-
-  nsCOMPtr<nsIRunnable> runner = new nsRunner();
-  nsCOMPtr<nsIThread> aThread;
-
-  NS_NewThread(getter_AddRefs(aThread), runner);
-
+  mRunner = new nsRunner();
+  NS_NewThread(getter_AddRefs(mThread), mRunner);
 
   return NS_OK;
 }
@@ -85,7 +78,11 @@ NS_IMETHODIMP nsSIP::Destroy() {
   CallObservers("DESTROY");
   FlushObservers();
   
-  //PR_Sleep(PR_MillisecondsToInterval(400));
+  PR_Sleep(PR_MillisecondsToInterval(350));
+  linphone_core_destroy(lc);
+
+  NS_RELEASE(mRunner);
+  NS_RELEASE(mThread);
 
   return NS_OK;
 }
