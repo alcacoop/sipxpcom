@@ -59,12 +59,17 @@ NS_IMETHODIMP nsSIP::Init(PRInt32 _port)
   if (_port<1024)
     return NS_ERROR_ILLEGAL_VALUE;
   port = _port;
+
+  //LINPHONE INITIALIZATION
   lc = linphone_core_new(&cb_table, NULL, NULL, this);
   linphone_core_set_sip_port(lc, port);
   linphone_core_set_inc_timeout(lc, 20);
+  linphone_core_enable_echo_cancellation(lc, false);
 
   mRunner = new nsRunner();
   NS_NewThread(getter_AddRefs(mThread), mRunner);
+
+  CallObservers("INIT");
 
   return NS_OK;
 }
