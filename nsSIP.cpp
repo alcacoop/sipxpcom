@@ -100,7 +100,8 @@ NS_IMETHODIMP nsSIP::Changesipport(PRInt32 port)
 
 /* void call (in AString URI); */
 NS_IMETHODIMP nsSIP::Call(const char* URI) {
-  linphone_core_invite(lc, URI);
+  if (!call_in_progress)
+    linphone_core_invite(lc, URI);
   return NS_OK;
 }
 

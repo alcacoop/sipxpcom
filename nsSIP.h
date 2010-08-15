@@ -33,6 +33,7 @@ public:
   nsSIP();
   static LinphoneCore* lc;
   static long port;
+  int call_in_progress;
 
   void getProxyForObserver(nsCOMPtr<nsSipStateObserver>, nsCOMPtr<nsSipStateObserver>*);
   void CallObservers(const char* status);
@@ -43,7 +44,6 @@ private:
   nsCOMPtr<nsIRunnable> mRunner;
   nsCOMPtr<nsIThread> mThread;
   LinphoneCoreVTable cb_table;
-  int call_in_progress;
   ~nsSIP();
 
 
@@ -66,6 +66,8 @@ static void linphonec_new_unknown_subscriber(LinphoneCore *lc, LinphoneFriend *l
 static void linphonec_bye_received(LinphoneCore *lc, const char *from){};
 static void linphonec_dtmf_received(LinphoneCore *lc, int dtmf){};
 static void linphonec_general_state (LinphoneCore * lc, LinphoneGeneralState *gstate){
+  nsSIP* app = (nsSIP*)linphone_core_get_user_data(lc);
+
   switch(gstate->new_state) {
     case GSTATE_POWER_OFF:
       printf("GSTATE_POWER_OFF");
@@ -90,15 +92,18 @@ static void linphonec_general_state (LinphoneCore * lc, LinphoneGeneralState *gs
       break;
     case GSTATE_CALL_IDLE:
       printf("GSTATE_CALL_IDLE");
+      app->call_in_progress = 0;
       break;
     case GSTATE_CALL_OUT_INVITE:
       printf("GSTATE_CALL_OUT_INVITE");
+      app->call_in_progress = 1;
       break;
     case GSTATE_CALL_OUT_CONNECTED:
       printf("GSTATE_CALL_OUT_CONNECTED");
       break;
     case GSTATE_CALL_IN_INVITE:
       printf("GSTATE_CALL_IN_INVITE");
+      app->call_in_progress = 1;
       break;
     case GSTATE_CALL_IN_CONNECTED:
       printf("GSTATE_CALL_IN_CONNECTED");
@@ -114,8 +119,5 @@ static void linphonec_general_state (LinphoneCore * lc, LinphoneGeneralState *gs
   }
   if (gstate->message) printf(" %s", gstate->message);
   printf("\n");
-  nsSIP* app = (nsSIP*)linphone_core_get_user_data(lc);
-  app->CallObservers("DENTRO");
-  printf("... %p ...\n", app);
 };
 static void stub(){};
