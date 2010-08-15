@@ -80,6 +80,13 @@ NS_IMETHODIMP nsSIP::Destroy() {
   if (port==0)
     return NS_OK;
 
+  //HANGUP ALL CALLS IN PROGRESS
+  if (call_in_progress){
+    Hangup();
+    while (call_in_progress)
+      PR_Sleep(PR_MillisecondsToInterval(50));
+  }
+
   port = 0;
   FlushObservers();
   
