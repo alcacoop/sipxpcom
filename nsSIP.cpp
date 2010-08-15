@@ -7,7 +7,7 @@ public:
   NS_DECL_ISUPPORTS
   NS_IMETHOD Run(){
     while (nsSIP::port){
-      PR_Sleep(PR_MillisecondsToInterval(300));
+      PR_Sleep(PR_MillisecondsToInterval(200));
       linphone_core_iterate(nsSIP::lc);
     }
     return NS_OK;
@@ -76,14 +76,15 @@ NS_IMETHODIMP nsSIP::Destroy() {
     return NS_OK;
 
   port = 0;
-  CallObservers("DESTROY");
   FlushObservers();
   
-  PR_Sleep(PR_MillisecondsToInterval(350));
+  PR_Sleep(PR_MillisecondsToInterval(220));
   linphone_core_destroy(lc);
 
-  NS_RELEASE(mRunner);
   NS_RELEASE(mThread);
+  NS_RELEASE(mRunner);
+
+  CallObservers("DESTROY");
 
   return NS_OK;
 }
