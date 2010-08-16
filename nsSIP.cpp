@@ -297,7 +297,11 @@ void nsSIP::CallObservers(const char* status)
   nsCOMPtr<nsSipStateObserver> _pCallback;
   for (i = 0; i < count; ++i) {
     (nsIArray*)mObservers->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&_pCallback);
-    _pCallback->OnStatusChange(status);
+    nsCOMPtr<nsSipStateObserver> pCbk;
+    getProxyForObserver(_pCallback, &pCbk);
+    NS_IF_ADDREF(pCbk);
+    pCbk->OnStatusChange(status);
+    //_pCallback->OnStatusChange(status);
   }
 
   return;
