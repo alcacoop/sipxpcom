@@ -13,6 +13,8 @@
 #include "nsISupports.h"
 #include "nsStringAPI.h"
 #include "nsThreadUtils.h"
+#include "nsIThread.h"
+
 #include "nsXPCOMCIDInternal.h"
 
 #include "nsISIP.h"
@@ -97,25 +99,36 @@ static void linphonec_general_state (LinphoneCore * lc, LinphoneGeneralState *gs
     case GSTATE_CALL_OUT_INVITE:
       printf("GSTATE_CALL_OUT_INVITE");
       app->call_in_progress = 1;
+      app->CallObservers("CALLING");
       break;
     case GSTATE_CALL_OUT_CONNECTED:
       printf("GSTATE_CALL_OUT_CONNECTED");
+      app->CallObservers("CONNECTED");
       break;
     case GSTATE_CALL_IN_INVITE:
       printf("GSTATE_CALL_IN_INVITE");
       app->call_in_progress = 1;
+      app->CallObservers("INCOMING");
       break;
     case GSTATE_CALL_IN_CONNECTED:
       printf("GSTATE_CALL_IN_CONNECTED");
+      app->CallObservers("CONNECTED");
       break;
     case GSTATE_CALL_END:
       printf("GSTATE_CALL_END");
+      app->CallObservers("HANGUP");
       break;
     case GSTATE_CALL_ERROR:
       printf("GSTATE_CALL_ERROR");
+      if (strcmp(gstate->message, "User is busy.")==0)
+        app->CallObservers("BUSY");
+      if (strcmp(gstate->message, "No response.")==0)
+        app->CallObservers("INVALIDURI");
       break;
     default:
       printf("GSTATE_UNKNOWN_%d",gstate->new_state);
+      if (gstate->new_state == 28)
+        app->CallObservers("RINGING");
   }
   if (gstate->message) printf(" %s", gstate->message);
   printf("\n");
