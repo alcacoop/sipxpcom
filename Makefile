@@ -2,7 +2,8 @@ GECKO_SDK_PATH=/src/firefox/xulrunner-sdk
 LINPHONE_SDK=/opt/linphone-sdk/
 
 CXX=c++ 
-CPPFLAGS+=-O3 -fPIC -shared -Wl,-h,libsip.so 
+CPPFLAGS+=-O3 -fPIC -shared 
+LDFLAGS+=-Wl,-h,libsip.so 
  
 GECKO_DEFINES=-DXPCOM_GLUE
 GECKO_INCLUDES=-I $(GECKO_SDK_PATH)/include -I$(LINPHONE_SDK)/include -include mozilla-config.h
@@ -18,7 +19,6 @@ GECKO_LDFLAGS=-L$(GECKO_SDK_PATH)/lib -L$(GECKO_SDK_PATH)/bin -Wl,-rpath-link,$(
 # REQUIRE LIBLINPHONE CONFIGURED WITH --disable-video
 LINPHONE_FLAGS=-D_REENTRANT -DORTP_INET6  -L/usr/local/lib  -lpthread -lssl -lcrypto $(LINPHONE_SDK)/lib/liblinphone.a  $(LINPHONE_SDK)/lib/libmediastreamer.a $(LINPHONE_SDK)/lib/libortp.a /usr/lib/libeXosip2.a /usr/lib/libosip2.a /usr/lib/libosipparser2.a /usr/lib/libspeex.a /usr/lib/libspeexdsp.a -lasound
 
-
 FILES=nsSIP.o nsSIPModule.o
 TARGET=libsip.so
 
@@ -31,7 +31,7 @@ prepare: header xpt
 build:  
 	$(CXX) $(CPPFLAGS) -c nsSIP.cpp $(GECKO_INCLUDES) $(GECKO_CONFIG_INCLUDE)
 	$(CXX) $(CPPFLAGS) -c nsSIPModule.cpp  $(GECKO_INCLUDES) $(GECKO_CONFIG_INCLUDE)
-	$(CXX) $(CPPFLAGS) -o $(TARGET) $(FILES) $(GECKO_LDFLAGS) $(GECKO_DEFINES) $(LINPHONE_FLAGS)
+	$(CXX) $(CPPFLAGS) $(LDFLAGS) -o $(TARGET) $(FILES) $(GECKO_LDFLAGS) $(GECKO_DEFINES) $(LINPHONE_FLAGS)
 	strip $(TARGET)
  
 header:
