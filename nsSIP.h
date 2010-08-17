@@ -33,25 +33,20 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSISIP
   nsSIP();
-  static LinphoneCore* lc;
-  static long port;
   int call_in_progress;
-
-  void getProxyForObserver(nsCOMPtr<nsSipStateObserver>, nsCOMPtr<nsSipStateObserver>*);
   void CallObservers(const char* status);
-  void FlushObservers();
   
 
 private:
-  nsCOMPtr<nsIRunnable> mRunner;
+  LinphoneCore* lc;
+  long port;
   nsCOMPtr<nsIThread> mThread;
   LinphoneCoreVTable cb_table;
   ~nsSIP();
-
-
-protected:
   nsCOMPtr<nsIMutableArray> mObservers;
   nsCOMPtr<nsIMutableArray> proxy;
+  void getProxyForObserver(nsCOMPtr<nsSipStateObserver>, nsCOMPtr<nsSipStateObserver>*);
+  void FlushObservers();
 };
 
 
@@ -67,9 +62,9 @@ static void linphonec_notify_presence_received(LinphoneCore *lc,LinphoneFriend *
 static void linphonec_new_unknown_subscriber(LinphoneCore *lc, LinphoneFriend *lf, const char *url){};
 static void linphonec_bye_received(LinphoneCore *lc, const char *from){};
 static void linphonec_dtmf_received(LinphoneCore *lc, int dtmf){};
+
 static void linphonec_general_state (LinphoneCore * lc, LinphoneGeneralState *gstate){
   nsSIP* app = (nsSIP*)linphone_core_get_user_data(lc);
-
   switch(gstate->new_state) {
     case GSTATE_POWER_OFF:
       printf("GSTATE_POWER_OFF");

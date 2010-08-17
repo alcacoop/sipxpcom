@@ -5,13 +5,23 @@ class nsRunner : public nsIRunnable
 {
 public:
   NS_DECL_ISUPPORTS
+
+  nsRunner(LinphoneCore* _lc, long* _port){
+    port=_port;
+    lc = _lc;
+  };
+
   NS_IMETHOD Run(){
-    while (nsSIP::port){
-      PR_Sleep(PR_MillisecondsToInterval(200));
-      linphone_core_iterate(nsSIP::lc);
+    while (true){
+      if (!*port) return NS_OK;
+      PR_Sleep(PR_MillisecondsToInterval(100));
+      linphone_core_iterate(lc);
     }
-    return NS_OK;
   } 
+
+private:
+  LinphoneCore* lc;
+  long* port;
 };
 NS_IMPL_THREADSAFE_ISUPPORTS1(nsRunner, nsIRunnable)
 
@@ -19,11 +29,10 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(nsRunner, nsIRunnable)
 
 NS_IMPL_ISUPPORTS1(nsSIP, nsISIP)
 
-LinphoneCore *nsSIP::lc = NULL;
-long nsSIP::port = 0;
 
 
-nsSIP::nsSIP() : mObservers(nsnull), proxy(nsnull) {
+nsSIP::nsSIP() : mObservers(nsnull), proxy(nsnull){
+  lc = NULL;
   port = 0;
   call_in_progress = 0;
 
@@ -45,14 +54,13 @@ nsSIP::nsSIP() : mObservers(nsnull), proxy(nsnull) {
 }
 
 nsSIP::~nsSIP() {
-  FlushObservers();
+  Destroy();
 }
 
 
 /* void init (in long port); */
 NS_IMETHODIMP nsSIP::Init(PRInt32 _port)
 {
-
   if (port!=0){
     Destroy();
   }
@@ -66,11 +74,9 @@ NS_IMETHODIMP nsSIP::Init(PRInt32 _port)
   linphone_core_set_inc_timeout(lc, 20);
   linphone_core_enable_echo_cancellation(lc, false);
 
-  mRunner = new nsRunner();
-  NS_NewThread(getter_AddRefs(mThread), mRunner);
+  NS_NewThread(getter_AddRefs(mThread), new nsRunner(lc, &port));
 
   CallObservers("INIT");
-
   return NS_OK;
 }
 
@@ -80,7 +86,7 @@ NS_IMETHODIMP nsSIP::Destroy() {
   if (port==0)
     return NS_OK;
 
-  //HANGUP ALL CALLS IN PROGRESS
+  //HANGUP CALLS IN PROGRESS
   if (call_in_progress){
     Hangup();
     while (call_in_progress)
@@ -88,24 +94,26 @@ NS_IMETHODIMP nsSIP::Destroy() {
   }
 
   port = 0;
-  FlushObservers();
-  
-  PR_Sleep(PR_MillisecondsToInterval(220));
   linphone_core_destroy(lc);
+  lc = NULL;
 
-  NS_RELEASE(mThread);
-  NS_RELEASE(mRunner);
+
+  printf("\n\nTHREAD SHUTDOWN..");
+  mThread->Shutdown();
+  printf("..OK\n\n");
 
   CallObservers("DESTROY");
+  FlushObservers();
 
   return NS_OK;
 }
 
 
 /* void changesipport (in long port); */
-NS_IMETHODIMP nsSIP::Changesipport(PRInt32 port)
+NS_IMETHODIMP nsSIP::Changesipport(PRInt32 _port)
 {
-  linphone_core_set_sip_port(lc, port);
+  port = _port;
+  linphone_core_set_sip_port(lc, _port);
   return NS_OK;
 }
 
