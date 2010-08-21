@@ -44,7 +44,6 @@ private:
   LinphoneCoreVTable cb_table;
   ~nsSIP();
   nsCOMPtr<nsIMutableArray> mObservers;
-  nsCOMPtr<nsIMutableArray> proxy;
   void getProxyForObserver(nsCOMPtr<nsSipStateObserver>, nsCOMPtr<nsSipStateObserver>*);
   void FlushObservers();
 };
