@@ -129,7 +129,10 @@ NS_IMETHODIMP nsSIP::Call(const char* URI) {
 
 /* void hangup (); */
 NS_IMETHODIMP nsSIP::Hangup() {
-  linphone_core_terminate_call(lc, NULL);
+  if (call_in_progress)
+    linphone_core_terminate_call(lc, NULL);
+  else
+    CallObservers("HANGUP");
   return NS_OK;
 }
 
