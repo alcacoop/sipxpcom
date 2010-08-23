@@ -112,7 +112,7 @@ NS_IMETHODIMP nsSIP::Destroy() {
 
 
 /* void changesipport (in long port); */
-NS_IMETHODIMP nsSIP::Changesipport(PRInt32 _port)
+NS_IMETHODIMP nsSIP::ChangeSipPort(PRInt32 _port)
 {
   port = _port;
   linphone_core_set_sip_port(lc, _port);
@@ -147,7 +147,7 @@ NS_IMETHODIMP nsSIP::Accept()
 
 
 /* void senddtmf (in char tone); */
-NS_IMETHODIMP nsSIP::Senddtmf(char tone)
+NS_IMETHODIMP nsSIP::SendDtmf(char tone)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
@@ -155,7 +155,7 @@ NS_IMETHODIMP nsSIP::Senddtmf(char tone)
 
 
 /* void setringtone (in string file); */
-NS_IMETHODIMP nsSIP::Setringtone(const char *file)
+NS_IMETHODIMP nsSIP::SetRingTone(const char *file)
 {
   if (port==0) return NS_OK;
   //DO SOMETHING

@@ -388,8 +388,8 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   /* void destroy (); */
   NS_SCRIPTABLE NS_IMETHOD Destroy(void) = 0;
 
-  /* void changesipport (in long port); */
-  NS_SCRIPTABLE NS_IMETHOD Changesipport(PRInt32 port) = 0;
+  /* void changeSipPort (in long port); */
+  NS_SCRIPTABLE NS_IMETHOD ChangeSipPort(PRInt32 port) = 0;
 
   /* void call (in string URI); */
   NS_SCRIPTABLE NS_IMETHOD Call(const char *URI) = 0;
@@ -400,11 +400,11 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   /* void accept (); */
   NS_SCRIPTABLE NS_IMETHOD Accept(void) = 0;
 
-  /* void senddtmf (in char tone); */
-  NS_SCRIPTABLE NS_IMETHOD Senddtmf(char tone) = 0;
+  /* void sendDtmf (in char tone); */
+  NS_SCRIPTABLE NS_IMETHOD SendDtmf(char tone) = 0;
 
-  /* void setringtone (in string file); */
-  NS_SCRIPTABLE NS_IMETHOD Setringtone(const char *file) = 0;
+  /* void setRingTone (in string file); */
+  NS_SCRIPTABLE NS_IMETHOD SetRingTone(const char *file) = 0;
 
   /* void getCallLogs ([retval] out nsIList retv); */
   NS_SCRIPTABLE NS_IMETHOD GetCallLogs(nsIList **retv NS_OUTPARAM) = 0;
@@ -426,12 +426,12 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
 #define NS_DECL_NSISIP \
   NS_SCRIPTABLE NS_IMETHOD Init(PRInt32 port); \
   NS_SCRIPTABLE NS_IMETHOD Destroy(void); \
-  NS_SCRIPTABLE NS_IMETHOD Changesipport(PRInt32 port); \
+  NS_SCRIPTABLE NS_IMETHOD ChangeSipPort(PRInt32 port); \
   NS_SCRIPTABLE NS_IMETHOD Call(const char *URI); \
   NS_SCRIPTABLE NS_IMETHOD Hangup(void); \
   NS_SCRIPTABLE NS_IMETHOD Accept(void); \
-  NS_SCRIPTABLE NS_IMETHOD Senddtmf(char tone); \
-  NS_SCRIPTABLE NS_IMETHOD Setringtone(const char *file); \
+  NS_SCRIPTABLE NS_IMETHOD SendDtmf(char tone); \
+  NS_SCRIPTABLE NS_IMETHOD SetRingTone(const char *file); \
   NS_SCRIPTABLE NS_IMETHOD GetCallLogs(nsIList **retv NS_OUTPARAM); \
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk); \
   NS_SCRIPTABLE NS_IMETHOD RemoveObserver(nsSipStateObserver *cbk); \
@@ -441,12 +441,12 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
 #define NS_FORWARD_NSISIP(_to) \
   NS_SCRIPTABLE NS_IMETHOD Init(PRInt32 port) { return _to Init(port); } \
   NS_SCRIPTABLE NS_IMETHOD Destroy(void) { return _to Destroy(); } \
-  NS_SCRIPTABLE NS_IMETHOD Changesipport(PRInt32 port) { return _to Changesipport(port); } \
+  NS_SCRIPTABLE NS_IMETHOD ChangeSipPort(PRInt32 port) { return _to ChangeSipPort(port); } \
   NS_SCRIPTABLE NS_IMETHOD Call(const char *URI) { return _to Call(URI); } \
   NS_SCRIPTABLE NS_IMETHOD Hangup(void) { return _to Hangup(); } \
   NS_SCRIPTABLE NS_IMETHOD Accept(void) { return _to Accept(); } \
-  NS_SCRIPTABLE NS_IMETHOD Senddtmf(char tone) { return _to Senddtmf(tone); } \
-  NS_SCRIPTABLE NS_IMETHOD Setringtone(const char *file) { return _to Setringtone(file); } \
+  NS_SCRIPTABLE NS_IMETHOD SendDtmf(char tone) { return _to SendDtmf(tone); } \
+  NS_SCRIPTABLE NS_IMETHOD SetRingTone(const char *file) { return _to SetRingTone(file); } \
   NS_SCRIPTABLE NS_IMETHOD GetCallLogs(nsIList **retv NS_OUTPARAM) { return _to GetCallLogs(retv); } \
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk) { return _to AddObserver(cbk); } \
   NS_SCRIPTABLE NS_IMETHOD RemoveObserver(nsSipStateObserver *cbk) { return _to RemoveObserver(cbk); } \
@@ -456,12 +456,12 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
 #define NS_FORWARD_SAFE_NSISIP(_to) \
   NS_SCRIPTABLE NS_IMETHOD Init(PRInt32 port) { return !_to ? NS_ERROR_NULL_POINTER : _to->Init(port); } \
   NS_SCRIPTABLE NS_IMETHOD Destroy(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Destroy(); } \
-  NS_SCRIPTABLE NS_IMETHOD Changesipport(PRInt32 port) { return !_to ? NS_ERROR_NULL_POINTER : _to->Changesipport(port); } \
+  NS_SCRIPTABLE NS_IMETHOD ChangeSipPort(PRInt32 port) { return !_to ? NS_ERROR_NULL_POINTER : _to->ChangeSipPort(port); } \
   NS_SCRIPTABLE NS_IMETHOD Call(const char *URI) { return !_to ? NS_ERROR_NULL_POINTER : _to->Call(URI); } \
   NS_SCRIPTABLE NS_IMETHOD Hangup(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Hangup(); } \
   NS_SCRIPTABLE NS_IMETHOD Accept(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Accept(); } \
-  NS_SCRIPTABLE NS_IMETHOD Senddtmf(char tone) { return !_to ? NS_ERROR_NULL_POINTER : _to->Senddtmf(tone); } \
-  NS_SCRIPTABLE NS_IMETHOD Setringtone(const char *file) { return !_to ? NS_ERROR_NULL_POINTER : _to->Setringtone(file); } \
+  NS_SCRIPTABLE NS_IMETHOD SendDtmf(char tone) { return !_to ? NS_ERROR_NULL_POINTER : _to->SendDtmf(tone); } \
+  NS_SCRIPTABLE NS_IMETHOD SetRingTone(const char *file) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetRingTone(file); } \
   NS_SCRIPTABLE NS_IMETHOD GetCallLogs(nsIList **retv NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetCallLogs(retv); } \
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddObserver(cbk); } \
   NS_SCRIPTABLE NS_IMETHOD RemoveObserver(nsSipStateObserver *cbk) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveObserver(cbk); } \
@@ -511,8 +511,8 @@ NS_IMETHODIMP nsSIP::Destroy()
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-/* void changesipport (in long port); */
-NS_IMETHODIMP nsSIP::Changesipport(PRInt32 port)
+/* void changeSipPort (in long port); */
+NS_IMETHODIMP nsSIP::ChangeSipPort(PRInt32 port)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
@@ -535,14 +535,14 @@ NS_IMETHODIMP nsSIP::Accept()
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-/* void senddtmf (in char tone); */
-NS_IMETHODIMP nsSIP::Senddtmf(char tone)
+/* void sendDtmf (in char tone); */
+NS_IMETHODIMP nsSIP::SendDtmf(char tone)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-/* void setringtone (in string file); */
-NS_IMETHODIMP nsSIP::Setringtone(const char *file)
+/* void setRingTone (in string file); */
+NS_IMETHODIMP nsSIP::SetRingTone(const char *file)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
