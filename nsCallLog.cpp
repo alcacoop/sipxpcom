@@ -23,7 +23,7 @@ NS_IMETHODIMP nsList::Item(PRUint32 index, nsICallLog **_retval NS_OUTPARAM)
     return NS_OK;
 
   nsCOMPtr<nsCallLog> cl;
-  (nsIArray*)mList->QueryElementAt(index, NS_GET_IID(nsCallLog), (void**)&cl);
+  (nsIArray*)mList->QueryElementAt(index, NS_GET_IID(nsCallLog), getter_AddRefs(cl));
   *_retval = cl;
   return NS_OK;
 }
@@ -36,25 +36,11 @@ NS_IMETHODIMP nsList::GetLength(PRUint32 *aLength)
 }
 
 /* add call log to list */
-void nsList::Add(LinphoneCallLog* elem)
+/* [noscriptable] void add (in nsICallLog cl); */
+NS_IMETHODIMP nsList::Add(nsICallLog *cl)
 {
+  NS_ENSURE_ARG_POINTER(cl);
   length++;
-  nsCOMPtr<nsICallLog> cl = do_CreateInstance(LOG_CONTRACTID);
-
-  char* from = linphone_address_as_string(elem->from);
-  char* to = linphone_address_as_string(elem->to);
-
-  cl->SetDirection(elem->dir);
-  cl->SetStatus(elem->status);
-  cl->SetDuration(elem->duration);
-
-  cl->SetDate(Substring(elem->start_date, (PRUint32)strlen(elem->start_date)));
-  cl->SetFrom(Substring(from, (PRUint32)strlen(from)));
-  cl->SetTo(Substring(to, (PRUint32)strlen(to)));
-
-  ms_free(from);
-  ms_free(to);
-
   mList->AppendElement(cl, PR_FALSE);
 };
 

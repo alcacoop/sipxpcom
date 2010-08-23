@@ -30,6 +30,7 @@ interface nsICallLog : nsISupports
 interface nsIList : nsISupports
 {
   nsICallLog item(in unsigned long index);
+  [noscript] void add(in nsICallLog cl);
   readonly attribute unsigned long length;
 };
 

@@ -300,6 +300,9 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsIList : public nsISupports {
   /* nsICallLog item (in unsigned long index); */
   NS_SCRIPTABLE NS_IMETHOD Item(PRUint32 index, nsICallLog **_retval NS_OUTPARAM) = 0;
 
+  /* [noscript] void add (in nsICallLog cl); */
+  NS_IMETHOD Add(nsICallLog *cl) = 0;
+
   /* readonly attribute unsigned long length; */
   NS_SCRIPTABLE NS_IMETHOD GetLength(PRUint32 *aLength) = 0;
 
@@ -310,16 +313,19 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsIList : public nsISupports {
 /* Use this macro when declaring classes that implement this interface. */
 #define NS_DECL_NSILIST \
   NS_SCRIPTABLE NS_IMETHOD Item(PRUint32 index, nsICallLog **_retval NS_OUTPARAM); \
+  NS_IMETHOD Add(nsICallLog *cl); \
   NS_SCRIPTABLE NS_IMETHOD GetLength(PRUint32 *aLength); 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object. */
 #define NS_FORWARD_NSILIST(_to) \
   NS_SCRIPTABLE NS_IMETHOD Item(PRUint32 index, nsICallLog **_retval NS_OUTPARAM) { return _to Item(index, _retval); } \
+  NS_IMETHOD Add(nsICallLog *cl) { return _to Add(cl); } \
   NS_SCRIPTABLE NS_IMETHOD GetLength(PRUint32 *aLength) { return _to GetLength(aLength); } 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
 #define NS_FORWARD_SAFE_NSILIST(_to) \
   NS_SCRIPTABLE NS_IMETHOD Item(PRUint32 index, nsICallLog **_retval NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->Item(index, _retval); } \
+  NS_IMETHOD Add(nsICallLog *cl) { return !_to ? NS_ERROR_NULL_POINTER : _to->Add(cl); } \
   NS_SCRIPTABLE NS_IMETHOD GetLength(PRUint32 *aLength) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetLength(aLength); } 
 
 #if 0
@@ -356,6 +362,12 @@ nsList::~nsList()
 
 /* nsICallLog item (in unsigned long index); */
 NS_IMETHODIMP nsList::Item(PRUint32 index, nsICallLog **_retval NS_OUTPARAM)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* [noscript] void add (in nsICallLog cl); */
+NS_IMETHODIMP nsList::Add(nsICallLog *cl)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }

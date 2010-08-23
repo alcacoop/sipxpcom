@@ -163,21 +163,36 @@ NS_IMETHODIMP nsSIP::SetRingTone(const char *file)
 }
 
 
-/* void getCallLogs (); */
 //NS_IMETHODIMP nsSIP::GetCallLogs()
 NS_IMETHODIMP nsSIP::GetCallLogs(nsIList **retv NS_OUTPARAM)
 {
 
-  //nsCOMPtr<nsIList> 
-  nsList*  nl;
-  nl = new nsList();//do_CreateInstance(LIST_CONTRACTID);
-  nl->AddRef();
-  //NS_ADDREF(nl);
+  nsCOMPtr<nsIList> nl; 
+  nl = do_CreateInstance(LIST_CONTRACTID);
+  NS_ADDREF(nl);
 
   const MSList *elem=linphone_core_get_call_logs(lc);
   for (;elem!=NULL;elem=ms_list_next(elem))
   {
-    LinphoneCallLog *cl=(LinphoneCallLog*)elem->data;
+    LinphoneCallLog *_cl=(LinphoneCallLog*)elem->data;
+
+    nsCOMPtr<nsICallLog> cl = do_CreateInstance(LOG_CONTRACTID);
+    NS_ADDREF(cl);
+
+    char* from = linphone_address_as_string(_cl->from);
+    char* to = linphone_address_as_string(_cl->to);
+
+    cl->SetDirection(_cl->dir);
+    cl->SetStatus(_cl->status);
+    cl->SetDuration(_cl->duration);
+
+    cl->SetDate(Substring(_cl->start_date, (PRUint32)strlen(_cl->start_date)));
+    cl->SetFrom(Substring(from, (PRUint32)strlen(from)));
+    cl->SetTo(Substring(to, (PRUint32)strlen(to)));
+
+    ms_free(from);
+    ms_free(to);
+
     nl->Add(cl);    
   }
 
