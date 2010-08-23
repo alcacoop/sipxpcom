@@ -89,6 +89,7 @@ static void linphonec_general_state (LinphoneCore * lc, LinphoneGeneralState *gs
     case GSTATE_CALL_IDLE:
       printf("GSTATE_CALL_IDLE");
       app->call_in_progress = 0;
+      app->CallObservers("UPDATELOG");
       break;
     case GSTATE_CALL_OUT_INVITE:
       printf("GSTATE_CALL_OUT_INVITE");
