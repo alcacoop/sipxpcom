@@ -1,3 +1,4 @@
+#include "nsCallLog.h"
 #include "nsSIP.h"
 
 
@@ -162,13 +163,28 @@ NS_IMETHODIMP nsSIP::Setringtone(const char *file)
 }
 
 
-
-/* void clearObservers (); */
-NS_IMETHODIMP nsSIP::ClearObservers()
+/* void getCallLogs (); */
+//NS_IMETHODIMP nsSIP::GetCallLogs()
+NS_IMETHODIMP nsSIP::GetCallLogs(nsIList **retv NS_OUTPARAM)
 {
-  FlushObservers();
-  return NS_OK;
+
+  //nsCOMPtr<nsIList> 
+  nsList*  nl;
+  nl = new nsList();//do_CreateInstance(LIST_CONTRACTID);
+  nl->AddRef();
+  //NS_ADDREF(nl);
+
+  const MSList *elem=linphone_core_get_call_logs(lc);
+  for (;elem!=NULL;elem=ms_list_next(elem))
+  {
+    LinphoneCallLog *cl=(LinphoneCallLog*)elem->data;
+    nl->Add(cl);    
+  }
+
+  *retv = nl;
+  return NS_OK; 
 }
+
 
 
 
@@ -266,6 +282,14 @@ void nsSIP::FlushObservers(){
 }
 
 
+/* void clearObservers (); */
+NS_IMETHODIMP nsSIP::ClearObservers()
+{
+  FlushObservers();
+  return NS_OK;
+}
+
+
 
 void nsSIP::getProxyForObserver(nsCOMPtr<nsSipStateObserver> cbk, nsCOMPtr<nsSipStateObserver> *pCbk){
   nsresult rv = NS_OK;
@@ -299,7 +323,6 @@ void nsSIP::CallObservers(const char* status)
     getProxyForObserver(_pCallback, &pCbk);
     NS_IF_ADDREF(pCbk);
     pCbk->OnStatusChange(status);
-    //_pCallback->OnStatusChange(status);
   }
 
   return;

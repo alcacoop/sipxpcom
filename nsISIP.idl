@@ -2,12 +2,37 @@
 #include "nsIExtensionManager.idl"
 #include "nsIFile.idl"
 #include "nsIRunnable.idl"
+#include "nsIArray.idl"
 
 
 [scriptable, function, uuid(3869ed55-e06a-4ac1-84ea-4c3a4b696924)]
 interface nsSipStateObserver : nsISupports {
   void onStatusChange(in string status);
 };
+
+
+
+
+[scriptable, uuid(248eaceb-8910-49a5-a775-f06b62eaa2cd)]
+interface nsICallLog : nsISupports
+{
+  attribute short direction;
+  attribute short status;
+  attribute long duration;
+  attribute ACString date;
+  attribute ACString from;
+  attribute ACString to;
+};
+
+
+
+[scriptable, uuid(fe4d239b-8766-4386-999d-bcd68903eb71)]
+interface nsIList : nsISupports
+{
+  nsICallLog item(in unsigned long index);
+  readonly attribute unsigned long length;
+};
+
 
 
 [scriptable, uuid(c5bf5079-8bc3-4fc5-881f-f3bd85a63c61)]
@@ -23,6 +48,7 @@ interface nsISIP : nsISupports
   void senddtmf(in char tone);
 
   void setringtone(in string file);
+  void getCallLogs([retval] out nsIList retv);
 
   void addObserver(in nsSipStateObserver cbk);
   void removeObserver(in nsSipStateObserver cbk);

@@ -22,6 +22,10 @@
 #include "nsIRunnable.h"
 #endif
 
+#ifndef __gen_nsIArray_h__
+#include "nsIArray.h"
+#endif
+
 /* For IDL files that don't want to include root IDL files. */
 #ifndef NS_NO_VTABLE
 #define NS_NO_VTABLE
@@ -100,6 +104,272 @@ NS_IMETHODIMP _MYCLASS_::OnStatusChange(const char *status)
 #endif
 
 
+/* starting interface:    nsICallLog */
+#define NS_ICALLLOG_IID_STR "248eaceb-8910-49a5-a775-f06b62eaa2cd"
+
+#define NS_ICALLLOG_IID \
+  {0x248eaceb, 0x8910, 0x49a5, \
+    { 0xa7, 0x75, 0xf0, 0x6b, 0x62, 0xea, 0xa2, 0xcd }}
+
+class NS_NO_VTABLE NS_SCRIPTABLE nsICallLog : public nsISupports {
+ public: 
+
+  NS_DECLARE_STATIC_IID_ACCESSOR(NS_ICALLLOG_IID)
+
+  /* attribute short direction; */
+  NS_SCRIPTABLE NS_IMETHOD GetDirection(PRInt16 *aDirection) = 0;
+  NS_SCRIPTABLE NS_IMETHOD SetDirection(PRInt16 aDirection) = 0;
+
+  /* attribute short status; */
+  NS_SCRIPTABLE NS_IMETHOD GetStatus(PRInt16 *aStatus) = 0;
+  NS_SCRIPTABLE NS_IMETHOD SetStatus(PRInt16 aStatus) = 0;
+
+  /* attribute long duration; */
+  NS_SCRIPTABLE NS_IMETHOD GetDuration(PRInt32 *aDuration) = 0;
+  NS_SCRIPTABLE NS_IMETHOD SetDuration(PRInt32 aDuration) = 0;
+
+  /* attribute ACString date; */
+  NS_SCRIPTABLE NS_IMETHOD GetDate(nsACString & aDate) = 0;
+  NS_SCRIPTABLE NS_IMETHOD SetDate(const nsACString & aDate) = 0;
+
+  /* attribute ACString from; */
+  NS_SCRIPTABLE NS_IMETHOD GetFrom(nsACString & aFrom) = 0;
+  NS_SCRIPTABLE NS_IMETHOD SetFrom(const nsACString & aFrom) = 0;
+
+  /* attribute ACString to; */
+  NS_SCRIPTABLE NS_IMETHOD GetTo(nsACString & aTo) = 0;
+  NS_SCRIPTABLE NS_IMETHOD SetTo(const nsACString & aTo) = 0;
+
+};
+
+  NS_DEFINE_STATIC_IID_ACCESSOR(nsICallLog, NS_ICALLLOG_IID)
+
+/* Use this macro when declaring classes that implement this interface. */
+#define NS_DECL_NSICALLLOG \
+  NS_SCRIPTABLE NS_IMETHOD GetDirection(PRInt16 *aDirection); \
+  NS_SCRIPTABLE NS_IMETHOD SetDirection(PRInt16 aDirection); \
+  NS_SCRIPTABLE NS_IMETHOD GetStatus(PRInt16 *aStatus); \
+  NS_SCRIPTABLE NS_IMETHOD SetStatus(PRInt16 aStatus); \
+  NS_SCRIPTABLE NS_IMETHOD GetDuration(PRInt32 *aDuration); \
+  NS_SCRIPTABLE NS_IMETHOD SetDuration(PRInt32 aDuration); \
+  NS_SCRIPTABLE NS_IMETHOD GetDate(nsACString & aDate); \
+  NS_SCRIPTABLE NS_IMETHOD SetDate(const nsACString & aDate); \
+  NS_SCRIPTABLE NS_IMETHOD GetFrom(nsACString & aFrom); \
+  NS_SCRIPTABLE NS_IMETHOD SetFrom(const nsACString & aFrom); \
+  NS_SCRIPTABLE NS_IMETHOD GetTo(nsACString & aTo); \
+  NS_SCRIPTABLE NS_IMETHOD SetTo(const nsACString & aTo); 
+
+/* Use this macro to declare functions that forward the behavior of this interface to another object. */
+#define NS_FORWARD_NSICALLLOG(_to) \
+  NS_SCRIPTABLE NS_IMETHOD GetDirection(PRInt16 *aDirection) { return _to GetDirection(aDirection); } \
+  NS_SCRIPTABLE NS_IMETHOD SetDirection(PRInt16 aDirection) { return _to SetDirection(aDirection); } \
+  NS_SCRIPTABLE NS_IMETHOD GetStatus(PRInt16 *aStatus) { return _to GetStatus(aStatus); } \
+  NS_SCRIPTABLE NS_IMETHOD SetStatus(PRInt16 aStatus) { return _to SetStatus(aStatus); } \
+  NS_SCRIPTABLE NS_IMETHOD GetDuration(PRInt32 *aDuration) { return _to GetDuration(aDuration); } \
+  NS_SCRIPTABLE NS_IMETHOD SetDuration(PRInt32 aDuration) { return _to SetDuration(aDuration); } \
+  NS_SCRIPTABLE NS_IMETHOD GetDate(nsACString & aDate) { return _to GetDate(aDate); } \
+  NS_SCRIPTABLE NS_IMETHOD SetDate(const nsACString & aDate) { return _to SetDate(aDate); } \
+  NS_SCRIPTABLE NS_IMETHOD GetFrom(nsACString & aFrom) { return _to GetFrom(aFrom); } \
+  NS_SCRIPTABLE NS_IMETHOD SetFrom(const nsACString & aFrom) { return _to SetFrom(aFrom); } \
+  NS_SCRIPTABLE NS_IMETHOD GetTo(nsACString & aTo) { return _to GetTo(aTo); } \
+  NS_SCRIPTABLE NS_IMETHOD SetTo(const nsACString & aTo) { return _to SetTo(aTo); } 
+
+/* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
+#define NS_FORWARD_SAFE_NSICALLLOG(_to) \
+  NS_SCRIPTABLE NS_IMETHOD GetDirection(PRInt16 *aDirection) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetDirection(aDirection); } \
+  NS_SCRIPTABLE NS_IMETHOD SetDirection(PRInt16 aDirection) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetDirection(aDirection); } \
+  NS_SCRIPTABLE NS_IMETHOD GetStatus(PRInt16 *aStatus) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetStatus(aStatus); } \
+  NS_SCRIPTABLE NS_IMETHOD SetStatus(PRInt16 aStatus) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetStatus(aStatus); } \
+  NS_SCRIPTABLE NS_IMETHOD GetDuration(PRInt32 *aDuration) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetDuration(aDuration); } \
+  NS_SCRIPTABLE NS_IMETHOD SetDuration(PRInt32 aDuration) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetDuration(aDuration); } \
+  NS_SCRIPTABLE NS_IMETHOD GetDate(nsACString & aDate) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetDate(aDate); } \
+  NS_SCRIPTABLE NS_IMETHOD SetDate(const nsACString & aDate) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetDate(aDate); } \
+  NS_SCRIPTABLE NS_IMETHOD GetFrom(nsACString & aFrom) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetFrom(aFrom); } \
+  NS_SCRIPTABLE NS_IMETHOD SetFrom(const nsACString & aFrom) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetFrom(aFrom); } \
+  NS_SCRIPTABLE NS_IMETHOD GetTo(nsACString & aTo) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetTo(aTo); } \
+  NS_SCRIPTABLE NS_IMETHOD SetTo(const nsACString & aTo) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetTo(aTo); } 
+
+#if 0
+/* Use the code below as a template for the implementation class for this interface. */
+
+/* Header file */
+class nsCallLog : public nsICallLog
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSICALLLOG
+
+  nsCallLog();
+
+private:
+  ~nsCallLog();
+
+protected:
+  /* additional members */
+};
+
+/* Implementation file */
+NS_IMPL_ISUPPORTS1(nsCallLog, nsICallLog)
+
+nsCallLog::nsCallLog()
+{
+  /* member initializers and constructor code */
+}
+
+nsCallLog::~nsCallLog()
+{
+  /* destructor code */
+}
+
+/* attribute short direction; */
+NS_IMETHODIMP nsCallLog::GetDirection(PRInt16 *aDirection)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+NS_IMETHODIMP nsCallLog::SetDirection(PRInt16 aDirection)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* attribute short status; */
+NS_IMETHODIMP nsCallLog::GetStatus(PRInt16 *aStatus)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+NS_IMETHODIMP nsCallLog::SetStatus(PRInt16 aStatus)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* attribute long duration; */
+NS_IMETHODIMP nsCallLog::GetDuration(PRInt32 *aDuration)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+NS_IMETHODIMP nsCallLog::SetDuration(PRInt32 aDuration)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* attribute ACString date; */
+NS_IMETHODIMP nsCallLog::GetDate(nsACString & aDate)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+NS_IMETHODIMP nsCallLog::SetDate(const nsACString & aDate)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* attribute ACString from; */
+NS_IMETHODIMP nsCallLog::GetFrom(nsACString & aFrom)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+NS_IMETHODIMP nsCallLog::SetFrom(const nsACString & aFrom)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* attribute ACString to; */
+NS_IMETHODIMP nsCallLog::GetTo(nsACString & aTo)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+NS_IMETHODIMP nsCallLog::SetTo(const nsACString & aTo)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* End of implementation class template. */
+#endif
+
+
+/* starting interface:    nsIList */
+#define NS_ILIST_IID_STR "fe4d239b-8766-4386-999d-bcd68903eb71"
+
+#define NS_ILIST_IID \
+  {0xfe4d239b, 0x8766, 0x4386, \
+    { 0x99, 0x9d, 0xbc, 0xd6, 0x89, 0x03, 0xeb, 0x71 }}
+
+class NS_NO_VTABLE NS_SCRIPTABLE nsIList : public nsISupports {
+ public: 
+
+  NS_DECLARE_STATIC_IID_ACCESSOR(NS_ILIST_IID)
+
+  /* nsICallLog item (in unsigned long index); */
+  NS_SCRIPTABLE NS_IMETHOD Item(PRUint32 index, nsICallLog **_retval NS_OUTPARAM) = 0;
+
+  /* readonly attribute unsigned long length; */
+  NS_SCRIPTABLE NS_IMETHOD GetLength(PRUint32 *aLength) = 0;
+
+};
+
+  NS_DEFINE_STATIC_IID_ACCESSOR(nsIList, NS_ILIST_IID)
+
+/* Use this macro when declaring classes that implement this interface. */
+#define NS_DECL_NSILIST \
+  NS_SCRIPTABLE NS_IMETHOD Item(PRUint32 index, nsICallLog **_retval NS_OUTPARAM); \
+  NS_SCRIPTABLE NS_IMETHOD GetLength(PRUint32 *aLength); 
+
+/* Use this macro to declare functions that forward the behavior of this interface to another object. */
+#define NS_FORWARD_NSILIST(_to) \
+  NS_SCRIPTABLE NS_IMETHOD Item(PRUint32 index, nsICallLog **_retval NS_OUTPARAM) { return _to Item(index, _retval); } \
+  NS_SCRIPTABLE NS_IMETHOD GetLength(PRUint32 *aLength) { return _to GetLength(aLength); } 
+
+/* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
+#define NS_FORWARD_SAFE_NSILIST(_to) \
+  NS_SCRIPTABLE NS_IMETHOD Item(PRUint32 index, nsICallLog **_retval NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->Item(index, _retval); } \
+  NS_SCRIPTABLE NS_IMETHOD GetLength(PRUint32 *aLength) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetLength(aLength); } 
+
+#if 0
+/* Use the code below as a template for the implementation class for this interface. */
+
+/* Header file */
+class nsList : public nsIList
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSILIST
+
+  nsList();
+
+private:
+  ~nsList();
+
+protected:
+  /* additional members */
+};
+
+/* Implementation file */
+NS_IMPL_ISUPPORTS1(nsList, nsIList)
+
+nsList::nsList()
+{
+  /* member initializers and constructor code */
+}
+
+nsList::~nsList()
+{
+  /* destructor code */
+}
+
+/* nsICallLog item (in unsigned long index); */
+NS_IMETHODIMP nsList::Item(PRUint32 index, nsICallLog **_retval NS_OUTPARAM)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* readonly attribute unsigned long length; */
+NS_IMETHODIMP nsList::GetLength(PRUint32 *aLength)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* End of implementation class template. */
+#endif
+
+
 /* starting interface:    nsISIP */
 #define NS_ISIP_IID_STR "c5bf5079-8bc3-4fc5-881f-f3bd85a63c61"
 
@@ -136,6 +406,9 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   /* void setringtone (in string file); */
   NS_SCRIPTABLE NS_IMETHOD Setringtone(const char *file) = 0;
 
+  /* void getCallLogs ([retval] out nsIList retv); */
+  NS_SCRIPTABLE NS_IMETHOD GetCallLogs(nsIList **retv NS_OUTPARAM) = 0;
+
   /* void addObserver (in nsSipStateObserver cbk); */
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk) = 0;
 
@@ -159,6 +432,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD Accept(void); \
   NS_SCRIPTABLE NS_IMETHOD Senddtmf(char tone); \
   NS_SCRIPTABLE NS_IMETHOD Setringtone(const char *file); \
+  NS_SCRIPTABLE NS_IMETHOD GetCallLogs(nsIList **retv NS_OUTPARAM); \
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk); \
   NS_SCRIPTABLE NS_IMETHOD RemoveObserver(nsSipStateObserver *cbk); \
   NS_SCRIPTABLE NS_IMETHOD ClearObservers(void); 
@@ -173,6 +447,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD Accept(void) { return _to Accept(); } \
   NS_SCRIPTABLE NS_IMETHOD Senddtmf(char tone) { return _to Senddtmf(tone); } \
   NS_SCRIPTABLE NS_IMETHOD Setringtone(const char *file) { return _to Setringtone(file); } \
+  NS_SCRIPTABLE NS_IMETHOD GetCallLogs(nsIList **retv NS_OUTPARAM) { return _to GetCallLogs(retv); } \
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk) { return _to AddObserver(cbk); } \
   NS_SCRIPTABLE NS_IMETHOD RemoveObserver(nsSipStateObserver *cbk) { return _to RemoveObserver(cbk); } \
   NS_SCRIPTABLE NS_IMETHOD ClearObservers(void) { return _to ClearObservers(); } 
@@ -187,6 +462,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD Accept(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Accept(); } \
   NS_SCRIPTABLE NS_IMETHOD Senddtmf(char tone) { return !_to ? NS_ERROR_NULL_POINTER : _to->Senddtmf(tone); } \
   NS_SCRIPTABLE NS_IMETHOD Setringtone(const char *file) { return !_to ? NS_ERROR_NULL_POINTER : _to->Setringtone(file); } \
+  NS_SCRIPTABLE NS_IMETHOD GetCallLogs(nsIList **retv NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetCallLogs(retv); } \
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddObserver(cbk); } \
   NS_SCRIPTABLE NS_IMETHOD RemoveObserver(nsSipStateObserver *cbk) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveObserver(cbk); } \
   NS_SCRIPTABLE NS_IMETHOD ClearObservers(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->ClearObservers(); } 
@@ -267,6 +543,12 @@ NS_IMETHODIMP nsSIP::Senddtmf(char tone)
 
 /* void setringtone (in string file); */
 NS_IMETHODIMP nsSIP::Setringtone(const char *file)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void getCallLogs ([retval] out nsIList retv); */
+NS_IMETHODIMP nsSIP::GetCallLogs(nsIList **retv NS_OUTPARAM)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
