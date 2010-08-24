@@ -50,6 +50,7 @@ interface nsISIP : nsISupports
 
   void setRingTone(in string file);
   void getCallLogs([retval] out nsIList retv);
+  void clearCallLogs();
 
   void addObserver(in nsSipStateObserver cbk);
   void removeObserver(in nsSipStateObserver cbk);

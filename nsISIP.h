@@ -421,6 +421,9 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   /* void getCallLogs ([retval] out nsIList retv); */
   NS_SCRIPTABLE NS_IMETHOD GetCallLogs(nsIList **retv NS_OUTPARAM) = 0;
 
+  /* void clearCallLogs (); */
+  NS_SCRIPTABLE NS_IMETHOD ClearCallLogs(void) = 0;
+
   /* void addObserver (in nsSipStateObserver cbk); */
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk) = 0;
 
@@ -445,6 +448,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD SendDtmf(char tone); \
   NS_SCRIPTABLE NS_IMETHOD SetRingTone(const char *file); \
   NS_SCRIPTABLE NS_IMETHOD GetCallLogs(nsIList **retv NS_OUTPARAM); \
+  NS_SCRIPTABLE NS_IMETHOD ClearCallLogs(void); \
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk); \
   NS_SCRIPTABLE NS_IMETHOD RemoveObserver(nsSipStateObserver *cbk); \
   NS_SCRIPTABLE NS_IMETHOD ClearObservers(void); 
@@ -460,6 +464,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD SendDtmf(char tone) { return _to SendDtmf(tone); } \
   NS_SCRIPTABLE NS_IMETHOD SetRingTone(const char *file) { return _to SetRingTone(file); } \
   NS_SCRIPTABLE NS_IMETHOD GetCallLogs(nsIList **retv NS_OUTPARAM) { return _to GetCallLogs(retv); } \
+  NS_SCRIPTABLE NS_IMETHOD ClearCallLogs(void) { return _to ClearCallLogs(); } \
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk) { return _to AddObserver(cbk); } \
   NS_SCRIPTABLE NS_IMETHOD RemoveObserver(nsSipStateObserver *cbk) { return _to RemoveObserver(cbk); } \
   NS_SCRIPTABLE NS_IMETHOD ClearObservers(void) { return _to ClearObservers(); } 
@@ -475,6 +480,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD SendDtmf(char tone) { return !_to ? NS_ERROR_NULL_POINTER : _to->SendDtmf(tone); } \
   NS_SCRIPTABLE NS_IMETHOD SetRingTone(const char *file) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetRingTone(file); } \
   NS_SCRIPTABLE NS_IMETHOD GetCallLogs(nsIList **retv NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetCallLogs(retv); } \
+  NS_SCRIPTABLE NS_IMETHOD ClearCallLogs(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->ClearCallLogs(); } \
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddObserver(cbk); } \
   NS_SCRIPTABLE NS_IMETHOD RemoveObserver(nsSipStateObserver *cbk) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveObserver(cbk); } \
   NS_SCRIPTABLE NS_IMETHOD ClearObservers(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->ClearObservers(); } 
@@ -561,6 +567,12 @@ NS_IMETHODIMP nsSIP::SetRingTone(const char *file)
 
 /* void getCallLogs ([retval] out nsIList retv); */
 NS_IMETHODIMP nsSIP::GetCallLogs(nsIList **retv NS_OUTPARAM)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void clearCallLogs (); */
+NS_IMETHODIMP nsSIP::ClearCallLogs()
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }

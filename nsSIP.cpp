@@ -201,6 +201,13 @@ NS_IMETHODIMP nsSIP::GetCallLogs(nsIList **retv NS_OUTPARAM)
 }
 
 
+/* void clearCallLogs (); */
+NS_IMETHODIMP nsSIP::ClearCallLogs()
+{
+  linphone_core_clear_call_logs(lc);
+  CallObservers("UPDATELOG");
+  return NS_OK;
+}
 
 
 /* ************************************* *
