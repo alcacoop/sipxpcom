@@ -48,6 +48,8 @@ interface nsISIP : nsISupports
   void accept();
   void sendDtmf(in char tone);
 
+  boolean isValidSipURI(in string uri);
+
   void setRingTone(in string file);
   void getCallLogs([retval] out nsIList retv);
   void clearCallLogs();

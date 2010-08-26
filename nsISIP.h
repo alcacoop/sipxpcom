@@ -415,6 +415,9 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   /* void sendDtmf (in char tone); */
   NS_SCRIPTABLE NS_IMETHOD SendDtmf(char tone) = 0;
 
+  /* boolean isValidSipURI (in string uri); */
+  NS_SCRIPTABLE NS_IMETHOD IsValidSipURI(const char *uri, PRBool *_retval NS_OUTPARAM) = 0;
+
   /* void setRingTone (in string file); */
   NS_SCRIPTABLE NS_IMETHOD SetRingTone(const char *file) = 0;
 
@@ -446,6 +449,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD Hangup(void); \
   NS_SCRIPTABLE NS_IMETHOD Accept(void); \
   NS_SCRIPTABLE NS_IMETHOD SendDtmf(char tone); \
+  NS_SCRIPTABLE NS_IMETHOD IsValidSipURI(const char *uri, PRBool *_retval NS_OUTPARAM); \
   NS_SCRIPTABLE NS_IMETHOD SetRingTone(const char *file); \
   NS_SCRIPTABLE NS_IMETHOD GetCallLogs(nsIList **retv NS_OUTPARAM); \
   NS_SCRIPTABLE NS_IMETHOD ClearCallLogs(void); \
@@ -462,6 +466,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD Hangup(void) { return _to Hangup(); } \
   NS_SCRIPTABLE NS_IMETHOD Accept(void) { return _to Accept(); } \
   NS_SCRIPTABLE NS_IMETHOD SendDtmf(char tone) { return _to SendDtmf(tone); } \
+  NS_SCRIPTABLE NS_IMETHOD IsValidSipURI(const char *uri, PRBool *_retval NS_OUTPARAM) { return _to IsValidSipURI(uri, _retval); } \
   NS_SCRIPTABLE NS_IMETHOD SetRingTone(const char *file) { return _to SetRingTone(file); } \
   NS_SCRIPTABLE NS_IMETHOD GetCallLogs(nsIList **retv NS_OUTPARAM) { return _to GetCallLogs(retv); } \
   NS_SCRIPTABLE NS_IMETHOD ClearCallLogs(void) { return _to ClearCallLogs(); } \
@@ -478,6 +483,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD Hangup(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Hangup(); } \
   NS_SCRIPTABLE NS_IMETHOD Accept(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Accept(); } \
   NS_SCRIPTABLE NS_IMETHOD SendDtmf(char tone) { return !_to ? NS_ERROR_NULL_POINTER : _to->SendDtmf(tone); } \
+  NS_SCRIPTABLE NS_IMETHOD IsValidSipURI(const char *uri, PRBool *_retval NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->IsValidSipURI(uri, _retval); } \
   NS_SCRIPTABLE NS_IMETHOD SetRingTone(const char *file) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetRingTone(file); } \
   NS_SCRIPTABLE NS_IMETHOD GetCallLogs(nsIList **retv NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetCallLogs(retv); } \
   NS_SCRIPTABLE NS_IMETHOD ClearCallLogs(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->ClearCallLogs(); } \
@@ -555,6 +561,12 @@ NS_IMETHODIMP nsSIP::Accept()
 
 /* void sendDtmf (in char tone); */
 NS_IMETHODIMP nsSIP::SendDtmf(char tone)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* boolean isValidSipURI (in string uri); */
+NS_IMETHODIMP nsSIP::IsValidSipURI(const char *uri, PRBool *_retval NS_OUTPARAM)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }

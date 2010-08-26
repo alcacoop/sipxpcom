@@ -122,6 +122,14 @@ NS_IMETHODIMP nsSIP::ChangeSipPort(PRInt32 _port)
 
 /* void call (in AString URI); */
 NS_IMETHODIMP nsSIP::Call(const char* URI) {
+
+  PRBool valid_URI;
+  IsValidSipURI(URI, &valid_URI);
+  if (!valid_URI) {
+    CallObservers("INVALIDURI");
+    return NS_ERROR_FAILURE;
+  }
+
   if (!call_in_progress)
     linphone_core_invite(lc, URI);
   return NS_OK;
@@ -150,6 +158,21 @@ NS_IMETHODIMP nsSIP::Accept()
 NS_IMETHODIMP nsSIP::SendDtmf(char tone)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+
+
+/* boolean checkSipURI (in string uri); */
+NS_IMETHODIMP nsSIP::IsValidSipURI(const char *uri, PRBool *_retval NS_OUTPARAM)
+{
+  LinphoneAddress* addr = linphone_address_new(uri);
+  if (addr) {
+    *_retval = true;
+    linphone_address_destroy(addr);
+  }
+  else *_retval = false;
+
+  return NS_OK;
 }
 
 
