@@ -41,13 +41,18 @@ interface nsISIP : nsISupports
 {
   void init(in long port);
   void destroy();
-  void changeSipPort(in long port);
+
+  void setSipPort(in long _port);
+  void setRTPAudioPort(in long _port);
+
+  void setNOFirewall();
+  void setNATFirewall(in string fw_addr);
+  void setSTUNFirewall(in string stun_addr);
 
   void call(in string URI);
   void hangup();
   void accept();
   void sendDtmf(in char tone);
-
   boolean isValidSipURI(in string uri);
 
   void setRingTone(in string file);

@@ -111,11 +111,47 @@ NS_IMETHODIMP nsSIP::Destroy() {
 }
 
 
+
 /* void changesipport (in long port); */
-NS_IMETHODIMP nsSIP::ChangeSipPort(PRInt32 _port)
+NS_IMETHODIMP nsSIP::SetSipPort(PRInt32 _port)
 {
   port = _port;
   linphone_core_set_sip_port(lc, _port);
+  return NS_OK;
+}
+
+/* void setRTPAudioPort (in long port); */
+NS_IMETHODIMP nsSIP::SetRTPAudioPort(PRInt32 _port)
+{
+  linphone_core_set_audio_port(lc, _port);
+  return NS_OK;
+}
+
+/* void setNOFirewall (); */
+NS_IMETHODIMP nsSIP::SetNOFirewall()
+{
+  linphone_core_set_firewall_policy(lc,LINPHONE_POLICY_NO_FIREWALL);
+  printf("NO FIREWALL: %d\n", linphone_core_get_firewall_policy(lc));
+  return NS_OK;
+}
+
+/* void setNATFirewall (in string fw_addr); */
+NS_IMETHODIMP nsSIP::SetNATFirewall(const char *fw_addr)
+{
+  linphone_core_set_nat_address(lc, fw_addr);
+  linphone_core_set_firewall_policy(lc,LINPHONE_POLICY_USE_NAT_ADDRESS);
+  printf("NAT ADDRESS: %s - %d\n", linphone_core_get_nat_address(lc), linphone_core_get_firewall_policy(lc));
+  
+  return NS_OK;
+}
+
+/* void setSTUNFirefall (in string stun_addr); */
+NS_IMETHODIMP nsSIP::SetSTUNFirewall(const char *stun_addr)
+{
+  linphone_core_set_stun_server(lc, stun_addr);
+  linphone_core_set_firewall_policy(lc, LINPHONE_POLICY_USE_STUN);
+  printf("STUN SERVER: %s - %d\n", linphone_core_get_stun_server(lc), linphone_core_get_firewall_policy(lc));
+
   return NS_OK;
 }
 

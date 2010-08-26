@@ -400,8 +400,20 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   /* void destroy (); */
   NS_SCRIPTABLE NS_IMETHOD Destroy(void) = 0;
 
-  /* void changeSipPort (in long port); */
-  NS_SCRIPTABLE NS_IMETHOD ChangeSipPort(PRInt32 port) = 0;
+  /* void setSipPort (in long port); */
+  NS_SCRIPTABLE NS_IMETHOD SetSipPort(PRInt32 port) = 0;
+
+  /* void setRTPAudioPort (in long port); */
+  NS_SCRIPTABLE NS_IMETHOD SetRTPAudioPort(PRInt32 port) = 0;
+
+  /* void setNOFirewall (); */
+  NS_SCRIPTABLE NS_IMETHOD SetNOFirewall(void) = 0;
+
+  /* void setNATFirewall (in string fw_addr); */
+  NS_SCRIPTABLE NS_IMETHOD SetNATFirewall(const char *fw_addr) = 0;
+
+  /* void setSTUNFirewall (in string stun_addr); */
+  NS_SCRIPTABLE NS_IMETHOD SetSTUNFirewall(const char *stun_addr) = 0;
 
   /* void call (in string URI); */
   NS_SCRIPTABLE NS_IMETHOD Call(const char *URI) = 0;
@@ -444,7 +456,11 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
 #define NS_DECL_NSISIP \
   NS_SCRIPTABLE NS_IMETHOD Init(PRInt32 port); \
   NS_SCRIPTABLE NS_IMETHOD Destroy(void); \
-  NS_SCRIPTABLE NS_IMETHOD ChangeSipPort(PRInt32 port); \
+  NS_SCRIPTABLE NS_IMETHOD SetSipPort(PRInt32 port); \
+  NS_SCRIPTABLE NS_IMETHOD SetRTPAudioPort(PRInt32 port); \
+  NS_SCRIPTABLE NS_IMETHOD SetNOFirewall(void); \
+  NS_SCRIPTABLE NS_IMETHOD SetNATFirewall(const char *fw_addr); \
+  NS_SCRIPTABLE NS_IMETHOD SetSTUNFirewall(const char *stun_addr); \
   NS_SCRIPTABLE NS_IMETHOD Call(const char *URI); \
   NS_SCRIPTABLE NS_IMETHOD Hangup(void); \
   NS_SCRIPTABLE NS_IMETHOD Accept(void); \
@@ -461,7 +477,11 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
 #define NS_FORWARD_NSISIP(_to) \
   NS_SCRIPTABLE NS_IMETHOD Init(PRInt32 port) { return _to Init(port); } \
   NS_SCRIPTABLE NS_IMETHOD Destroy(void) { return _to Destroy(); } \
-  NS_SCRIPTABLE NS_IMETHOD ChangeSipPort(PRInt32 port) { return _to ChangeSipPort(port); } \
+  NS_SCRIPTABLE NS_IMETHOD SetSipPort(PRInt32 port) { return _to SetSipPort(port); } \
+  NS_SCRIPTABLE NS_IMETHOD SetRTPAudioPort(PRInt32 port) { return _to SetRTPAudioPort(port); } \
+  NS_SCRIPTABLE NS_IMETHOD SetNOFirewall(void) { return _to SetNOFirewall(); } \
+  NS_SCRIPTABLE NS_IMETHOD SetNATFirewall(const char *fw_addr) { return _to SetNATFirewall(fw_addr); } \
+  NS_SCRIPTABLE NS_IMETHOD SetSTUNFirewall(const char *stun_addr) { return _to SetSTUNFirewall(stun_addr); } \
   NS_SCRIPTABLE NS_IMETHOD Call(const char *URI) { return _to Call(URI); } \
   NS_SCRIPTABLE NS_IMETHOD Hangup(void) { return _to Hangup(); } \
   NS_SCRIPTABLE NS_IMETHOD Accept(void) { return _to Accept(); } \
@@ -478,7 +498,11 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
 #define NS_FORWARD_SAFE_NSISIP(_to) \
   NS_SCRIPTABLE NS_IMETHOD Init(PRInt32 port) { return !_to ? NS_ERROR_NULL_POINTER : _to->Init(port); } \
   NS_SCRIPTABLE NS_IMETHOD Destroy(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Destroy(); } \
-  NS_SCRIPTABLE NS_IMETHOD ChangeSipPort(PRInt32 port) { return !_to ? NS_ERROR_NULL_POINTER : _to->ChangeSipPort(port); } \
+  NS_SCRIPTABLE NS_IMETHOD SetSipPort(PRInt32 port) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetSipPort(port); } \
+  NS_SCRIPTABLE NS_IMETHOD SetRTPAudioPort(PRInt32 port) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetRTPAudioPort(port); } \
+  NS_SCRIPTABLE NS_IMETHOD SetNOFirewall(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetNOFirewall(); } \
+  NS_SCRIPTABLE NS_IMETHOD SetNATFirewall(const char *fw_addr) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetNATFirewall(fw_addr); } \
+  NS_SCRIPTABLE NS_IMETHOD SetSTUNFirewall(const char *stun_addr) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetSTUNFirewall(stun_addr); } \
   NS_SCRIPTABLE NS_IMETHOD Call(const char *URI) { return !_to ? NS_ERROR_NULL_POINTER : _to->Call(URI); } \
   NS_SCRIPTABLE NS_IMETHOD Hangup(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Hangup(); } \
   NS_SCRIPTABLE NS_IMETHOD Accept(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Accept(); } \
@@ -535,8 +559,32 @@ NS_IMETHODIMP nsSIP::Destroy()
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-/* void changeSipPort (in long port); */
-NS_IMETHODIMP nsSIP::ChangeSipPort(PRInt32 port)
+/* void setSipPort (in long port); */
+NS_IMETHODIMP nsSIP::SetSipPort(PRInt32 port)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void setRTPAudioPort (in long port); */
+NS_IMETHODIMP nsSIP::SetRTPAudioPort(PRInt32 port)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void setNOFirewall (); */
+NS_IMETHODIMP nsSIP::SetNOFirewall()
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void setNATFirewall (in string fw_addr); */
+NS_IMETHODIMP nsSIP::SetNATFirewall(const char *fw_addr)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void setSTUNFirewall (in string stun_addr); */
+NS_IMETHODIMP nsSIP::SetSTUNFirewall(const char *stun_addr)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
