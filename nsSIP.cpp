@@ -156,6 +156,26 @@ NS_IMETHODIMP nsSIP::SetSTUNFirewall(const char *stun_addr)
 }
 
 
+/* void setPresenceInfo (); */
+NS_IMETHODIMP nsSIP::SetPresenceInfo(PRInt32 presence_status)
+{
+  LinphoneOnlineStatus status;
+  switch (presence_status){
+    case (0):
+      status = LINPHONE_STATUS_ONLINE;
+    case (1):
+      status = LINPHONE_STATUS_OFFLINE;
+    case (2):
+      status = LINPHONE_STATUS_BUSY;
+  }
+
+  linphone_core_set_presence_info(lc, 1, NULL, status);
+  linphone_core_notify_all_friends(lc, status);
+
+  return NS_OK;
+}
+
+
 /* void call (in AString URI); */
 NS_IMETHODIMP nsSIP::Call(const char* URI) {
 

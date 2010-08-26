@@ -49,6 +49,8 @@ interface nsISIP : nsISupports
   void setNATFirewall(in string fw_addr);
   void setSTUNFirewall(in string stun_addr);
 
+  void setPresenceInfo(in long presence_status);
+
   void call(in string URI);
   void hangup();
   void accept();
