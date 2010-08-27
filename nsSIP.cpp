@@ -155,6 +155,20 @@ NS_IMETHODIMP nsSIP::SetSTUNFirewall(const char *stun_addr)
   return NS_OK;
 }
 
+/* void setPrimaryContact (in string username); */
+NS_IMETHODIMP nsSIP::SetPrimaryContact(const char *username)
+{
+  linphone_core_set_primary_contact(lc, username);
+  return NS_OK;
+}
+
+/* void getPrimaryContact ([retval] out ACString username); */
+NS_IMETHODIMP nsSIP::GetPrimaryContact(nsACString & username NS_OUTPARAM)
+{
+  const char* identity = linphone_core_get_primary_contact(lc);
+  username = Substring(identity, (PRUint32)strlen(identity));
+  return NS_OK;
+}
 
 /* void setPresenceInfo (); */
 NS_IMETHODIMP nsSIP::SetPresenceInfo(PRInt32 presence_status)

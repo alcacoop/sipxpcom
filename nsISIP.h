@@ -415,6 +415,12 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   /* void setSTUNFirewall (in string stun_addr); */
   NS_SCRIPTABLE NS_IMETHOD SetSTUNFirewall(const char *stun_addr) = 0;
 
+  /* void setPrimaryContact (in string username); */
+  NS_SCRIPTABLE NS_IMETHOD SetPrimaryContact(const char *username) = 0;
+
+  /* void getPrimaryContact ([retval] out ACString username); */
+  NS_SCRIPTABLE NS_IMETHOD GetPrimaryContact(nsACString & username NS_OUTPARAM) = 0;
+
   /* void setPresenceInfo (in long presence_status); */
   NS_SCRIPTABLE NS_IMETHOD SetPresenceInfo(PRInt32 presence_status) = 0;
 
@@ -464,6 +470,8 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD SetNOFirewall(void); \
   NS_SCRIPTABLE NS_IMETHOD SetNATFirewall(const char *fw_addr); \
   NS_SCRIPTABLE NS_IMETHOD SetSTUNFirewall(const char *stun_addr); \
+  NS_SCRIPTABLE NS_IMETHOD SetPrimaryContact(const char *username); \
+  NS_SCRIPTABLE NS_IMETHOD GetPrimaryContact(nsACString & username NS_OUTPARAM); \
   NS_SCRIPTABLE NS_IMETHOD SetPresenceInfo(PRInt32 presence_status); \
   NS_SCRIPTABLE NS_IMETHOD Call(const char *URI); \
   NS_SCRIPTABLE NS_IMETHOD Hangup(void); \
@@ -486,6 +494,8 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD SetNOFirewall(void) { return _to SetNOFirewall(); } \
   NS_SCRIPTABLE NS_IMETHOD SetNATFirewall(const char *fw_addr) { return _to SetNATFirewall(fw_addr); } \
   NS_SCRIPTABLE NS_IMETHOD SetSTUNFirewall(const char *stun_addr) { return _to SetSTUNFirewall(stun_addr); } \
+  NS_SCRIPTABLE NS_IMETHOD SetPrimaryContact(const char *username) { return _to SetPrimaryContact(username); } \
+  NS_SCRIPTABLE NS_IMETHOD GetPrimaryContact(nsACString & username NS_OUTPARAM) { return _to GetPrimaryContact(username); } \
   NS_SCRIPTABLE NS_IMETHOD SetPresenceInfo(PRInt32 presence_status) { return _to SetPresenceInfo(presence_status); } \
   NS_SCRIPTABLE NS_IMETHOD Call(const char *URI) { return _to Call(URI); } \
   NS_SCRIPTABLE NS_IMETHOD Hangup(void) { return _to Hangup(); } \
@@ -508,6 +518,8 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD SetNOFirewall(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetNOFirewall(); } \
   NS_SCRIPTABLE NS_IMETHOD SetNATFirewall(const char *fw_addr) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetNATFirewall(fw_addr); } \
   NS_SCRIPTABLE NS_IMETHOD SetSTUNFirewall(const char *stun_addr) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetSTUNFirewall(stun_addr); } \
+  NS_SCRIPTABLE NS_IMETHOD SetPrimaryContact(const char *username) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetPrimaryContact(username); } \
+  NS_SCRIPTABLE NS_IMETHOD GetPrimaryContact(nsACString & username NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetPrimaryContact(username); } \
   NS_SCRIPTABLE NS_IMETHOD SetPresenceInfo(PRInt32 presence_status) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetPresenceInfo(presence_status); } \
   NS_SCRIPTABLE NS_IMETHOD Call(const char *URI) { return !_to ? NS_ERROR_NULL_POINTER : _to->Call(URI); } \
   NS_SCRIPTABLE NS_IMETHOD Hangup(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Hangup(); } \
@@ -591,6 +603,18 @@ NS_IMETHODIMP nsSIP::SetNATFirewall(const char *fw_addr)
 
 /* void setSTUNFirewall (in string stun_addr); */
 NS_IMETHODIMP nsSIP::SetSTUNFirewall(const char *stun_addr)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void setPrimaryContact (in string username); */
+NS_IMETHODIMP nsSIP::SetPrimaryContact(const char *username)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void getPrimaryContact ([retval] out ACString username); */
+NS_IMETHODIMP nsSIP::GetPrimaryContact(nsACString & username NS_OUTPARAM)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
