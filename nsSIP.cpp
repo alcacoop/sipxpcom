@@ -102,9 +102,13 @@ NS_IMETHODIMP nsSIP::Destroy() {
   lc = NULL;
 
 
+#ifdef DEBUG      
   printf("THREAD SHUTDOWN..");
+#endif
   mThread->Shutdown();
+#ifdef DEBUG      
   printf("..OK\n");
+#endif
 
 
   return NS_OK;
@@ -131,7 +135,9 @@ NS_IMETHODIMP nsSIP::SetRTPAudioPort(PRInt32 _port)
 NS_IMETHODIMP nsSIP::SetNOFirewall()
 {
   linphone_core_set_firewall_policy(lc,LINPHONE_POLICY_NO_FIREWALL);
+#ifdef DEBUG      
   printf("NO FIREWALL: %d\n", linphone_core_get_firewall_policy(lc));
+#endif
   return NS_OK;
 }
 
@@ -140,7 +146,9 @@ NS_IMETHODIMP nsSIP::SetNATFirewall(const char *fw_addr)
 {
   linphone_core_set_nat_address(lc, fw_addr);
   linphone_core_set_firewall_policy(lc,LINPHONE_POLICY_USE_NAT_ADDRESS);
+#ifdef DEBUG      
   printf("NAT ADDRESS: %s - %d\n", linphone_core_get_nat_address(lc), linphone_core_get_firewall_policy(lc));
+#endif
   
   return NS_OK;
 }
@@ -150,7 +158,9 @@ NS_IMETHODIMP nsSIP::SetSTUNFirewall(const char *stun_addr)
 {
   linphone_core_set_stun_server(lc, stun_addr);
   linphone_core_set_firewall_policy(lc, LINPHONE_POLICY_USE_STUN);
+#ifdef DEBUG      
   printf("STUN SERVER: %s - %d\n", linphone_core_get_stun_server(lc), linphone_core_get_firewall_policy(lc));
+#endif
 
   return NS_OK;
 }
@@ -328,14 +338,18 @@ NS_IMETHODIMP nsSIP::AddObserver(nsSipStateObserver *cbk)
   for (i = 0; i < count; ++i) {
     (nsIArray*)mObservers->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&pCallback);
     if (pCallback == cbk){
+#ifdef DEBUG      
       printf("OBSERVER ALREADY REGISTERED\n");
+#endif
       return NS_OK;
     }
   }
 
   NS_IF_ADDREF(cbk);
   mObservers->AppendElement(cbk, PR_FALSE);
+#ifdef DEBUG      
   printf("ADDED OBSERVER AT ADDR: %p \n", cbk);
+#endif
   return NS_OK;
 }
 
@@ -346,14 +360,18 @@ NS_IMETHODIMP nsSIP::RemoveObserver(nsSipStateObserver *cbk)
   NS_ENSURE_ARG_POINTER(cbk);
 
   if (!mObservers){
+#ifdef DEBUG      
     printf("NO SUCH OBSERVER\n");
+#endif
     return NS_OK;
   }
 
   PRUint32 count = 0;
   mObservers->GetLength(&count);
   if (count <= 0){
+#ifdef DEBUG      
     printf("NO SUCH OBSERVER\n");
+#endif
     return NS_OK;
   }
 
@@ -364,13 +382,17 @@ NS_IMETHODIMP nsSIP::RemoveObserver(nsSipStateObserver *cbk)
     (nsIArray*)mObservers->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&pCallback);
     if (pCallback == cbk){
       mObservers->RemoveElementAt(i);
+#ifdef DEBUG      
       printf("REMOVED OBSERVER AT ADDR: %p\n", (nsSipStateObserver*)pCallback);
+#endif
       NS_RELEASE(pCallback);
       return NS_OK;
     }
   }
 
+#ifdef DEBUG      
   printf("NO SUCH OBSERVER\n");
+#endif
   return NS_OK;
 }
 
@@ -389,12 +411,18 @@ void nsSIP::FlushObservers(){
   for (i = 0; i < count; i++) {
     (nsIArray*)mObservers->QueryElementAt(0, NS_GET_IID(nsSipStateObserver), (void**)&pCallback);
     mObservers->RemoveElementAt(0);
+#ifdef DEBUG      
     printf("REMOVED OBSERVER AT ADDR: %p ", (nsSipStateObserver*)pCallback);
+#endif
     NS_RELEASE(pCallback);
+#ifdef DEBUG      
     printf("(MEMORY RELEASED)\n");
+#endif
   }
 
+#ifdef DEBUG      
   printf("FLUSHED ALL %d OBSERVERS\n", count);
+#endif
   NS_RELEASE(mObservers);
   return;
 }
