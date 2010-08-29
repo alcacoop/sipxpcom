@@ -19,7 +19,7 @@ GECKO_LDFLAGS=-L$(GECKO_SDK_PATH)/lib -L$(GECKO_SDK_PATH)/bin -Wl,-rpath-link,$(
 # REQUIRE LIBLINPHONE CONFIGURED WITH --disable-video
 LINPHONE_FLAGS=-D_REENTRANT -DORTP_INET6  -L/usr/local/lib  -lpthread -lssl -lcrypto $(LINPHONE_SDK)/lib/liblinphone.a  $(LINPHONE_SDK)/lib/libmediastreamer.a $(LINPHONE_SDK)/lib/libortp.a /usr/lib/libeXosip2.a /usr/lib/libosip2.a /usr/lib/libosipparser2.a /usr/lib/libspeex.a /usr/lib/libspeexdsp.a -lasound
 
-FILES=nsCallLog.o nsSIP.o nsSIPModule.o
+FILES=nsProxyConfig.o nsCallLog.o nsSIP.o nsSIPModule.o
 TARGET=libsip.so
 
 
@@ -29,6 +29,7 @@ all: clean prepare build
 prepare: header xpt
 
 build:  
+	$(CXX) $(CPPFLAGS) -c nsProxyConfig.cpp $(GECKO_INCLUDES) $(GECKO_CONFIG_INCLUDE)
 	$(CXX) $(CPPFLAGS) -c nsCallLog.cpp $(GECKO_INCLUDES) $(GECKO_CONFIG_INCLUDE)
 	$(CXX) $(CPPFLAGS) -c nsSIP.cpp $(GECKO_INCLUDES) $(GECKO_CONFIG_INCLUDE)
 	$(CXX) $(CPPFLAGS) -c nsSIPModule.cpp  $(GECKO_INCLUDES) $(GECKO_CONFIG_INCLUDE)

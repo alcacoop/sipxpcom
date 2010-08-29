@@ -1,11 +1,12 @@
 #include "nsIGenericFactory.h"
 #include "nsSIP.h"
 #include "nsCallLog.h"
+#include "nsProxyConfig.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(nsSIP)
-
 NS_GENERIC_FACTORY_CONSTRUCTOR(nsCallLog)
 NS_GENERIC_FACTORY_CONSTRUCTOR(nsList)
+NS_GENERIC_FACTORY_CONSTRUCTOR(nsProxyConfig)
 
 static nsModuleComponentInfo components[] =
 {
@@ -26,6 +27,12 @@ static nsModuleComponentInfo components[] =
        LOG_CID,
        LOG_CONTRACTID,
        nsCallLogConstructor,
+    },
+    {
+       PROXYCFG_CLASSNAME, 
+       PROXYCFG_CID,
+       PROXYCFG_CONTRACTID,
+       nsProxyConfigConstructor,
     },
 };
 

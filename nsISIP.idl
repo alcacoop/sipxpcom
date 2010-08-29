@@ -19,9 +19,9 @@ interface nsICallLog : nsISupports
   attribute short direction;
   attribute short status;
   attribute long duration;
-  attribute ACString date;
   attribute ACString from;
   attribute ACString to;
+  attribute ACString date;
 };
 
 
@@ -35,6 +35,18 @@ interface nsIList : nsISupports
 };
 
 
+[scriptable, uuid(3b88b334-2836-4ed5-9c5c-4936dc9b73c5)]
+interface nsIProxyConfig : nsISupports
+{
+  attribute ACString sip_identity;
+  attribute ACString sip_proxy;
+  attribute ACString sip_route;
+  attribute ACString userid;
+  attribute ACString password;
+  attribute long duration;
+};
+
+
 
 [scriptable, uuid(c5bf5079-8bc3-4fc5-881f-f3bd85a63c61)]
 interface nsISIP : nsISupports
@@ -44,13 +56,19 @@ interface nsISIP : nsISupports
 
   void setSipPort(in long _port);
   void setRTPAudioPort(in long _port);
-
   void setNOFirewall();
   void setNATFirewall(in string fw_addr);
   void setSTUNFirewall(in string stun_addr);
 
-  void setPrimaryContact(in string username);
-  void getPrimaryContact([retval] out ACString username);
+  void setPrimaryIdentity(in string username);
+  void getPrimaryIdentity([retval] out ACString username);
+  void changeIdentity(in long account, [retval] out long used);
+  void getCurrentIdentity([retval] out ACString identity);
+
+  void setProxyConfig(in nsIProxyConfig cfg);
+  void getProxyConfig([retval] out nsIProxyConfig cfg);
+  void registerToProxy();
+  void unregisterToProxy();
   void setPresenceInfo(in long presence_status);
 
   void call(in string URI);
@@ -60,6 +78,7 @@ interface nsISIP : nsISupports
   boolean isValidSipURI(in string uri);
 
   void setRingTone(in string file);
+
   void getCallLogs([retval] out nsIList retv);
   void clearCallLogs();
 

@@ -1,4 +1,5 @@
 #include "nsCallLog.h"
+#include "nsProxyConfig.h"
 #include "nsSIP.h"
 
 
@@ -84,8 +85,7 @@ NS_IMETHODIMP nsSIP::Init(PRInt32 _port)
 
 /* void destroy (); */
 NS_IMETHODIMP nsSIP::Destroy() {
-  if (port==0)
-    return NS_OK;
+  if (port==0) return NS_ERROR_NOT_INITIALIZED;
 
   CallObservers("DESTROY");
   FlushObservers();
@@ -102,11 +102,11 @@ NS_IMETHODIMP nsSIP::Destroy() {
   lc = NULL;
 
 
-#ifdef DEBUG      
+#ifdef DEBUG
   printf("THREAD SHUTDOWN..");
 #endif
   mThread->Shutdown();
-#ifdef DEBUG      
+#ifdef DEBUG
   printf("..OK\n");
 #endif
 
@@ -119,6 +119,7 @@ NS_IMETHODIMP nsSIP::Destroy() {
 /* void changesipport (in long port); */
 NS_IMETHODIMP nsSIP::SetSipPort(PRInt32 _port)
 {
+  if (port==0) return NS_ERROR_NOT_INITIALIZED;
   port = _port;
   linphone_core_set_sip_port(lc, _port);
   return NS_OK;
@@ -127,6 +128,8 @@ NS_IMETHODIMP nsSIP::SetSipPort(PRInt32 _port)
 /* void setRTPAudioPort (in long port); */
 NS_IMETHODIMP nsSIP::SetRTPAudioPort(PRInt32 _port)
 {
+  if (port==0) return NS_ERROR_NOT_INITIALIZED;
+  
   linphone_core_set_audio_port(lc, _port);
   return NS_OK;
 }
@@ -134,8 +137,10 @@ NS_IMETHODIMP nsSIP::SetRTPAudioPort(PRInt32 _port)
 /* void setNOFirewall (); */
 NS_IMETHODIMP nsSIP::SetNOFirewall()
 {
+  if (port==0) return NS_ERROR_NOT_INITIALIZED;
+  
   linphone_core_set_firewall_policy(lc,LINPHONE_POLICY_NO_FIREWALL);
-#ifdef DEBUG      
+#ifdef DEBUG
   printf("NO FIREWALL: %d\n", linphone_core_get_firewall_policy(lc));
 #endif
   return NS_OK;
@@ -144,9 +149,11 @@ NS_IMETHODIMP nsSIP::SetNOFirewall()
 /* void setNATFirewall (in string fw_addr); */
 NS_IMETHODIMP nsSIP::SetNATFirewall(const char *fw_addr)
 {
+  if (port==0) return NS_ERROR_NOT_INITIALIZED;
+  
   linphone_core_set_nat_address(lc, fw_addr);
   linphone_core_set_firewall_policy(lc,LINPHONE_POLICY_USE_NAT_ADDRESS);
-#ifdef DEBUG      
+#ifdef DEBUG
   printf("NAT ADDRESS: %s - %d\n", linphone_core_get_nat_address(lc), linphone_core_get_firewall_policy(lc));
 #endif
   
@@ -156,9 +163,11 @@ NS_IMETHODIMP nsSIP::SetNATFirewall(const char *fw_addr)
 /* void setSTUNFirefall (in string stun_addr); */
 NS_IMETHODIMP nsSIP::SetSTUNFirewall(const char *stun_addr)
 {
+  if (port==0) return NS_ERROR_NOT_INITIALIZED;
+  
   linphone_core_set_stun_server(lc, stun_addr);
   linphone_core_set_firewall_policy(lc, LINPHONE_POLICY_USE_STUN);
-#ifdef DEBUG      
+#ifdef DEBUG
   printf("STUN SERVER: %s - %d\n", linphone_core_get_stun_server(lc), linphone_core_get_firewall_policy(lc));
 #endif
 
@@ -166,15 +175,19 @@ NS_IMETHODIMP nsSIP::SetSTUNFirewall(const char *stun_addr)
 }
 
 /* void setPrimaryContact (in string username); */
-NS_IMETHODIMP nsSIP::SetPrimaryContact(const char *username)
+NS_IMETHODIMP nsSIP::SetPrimaryIdentity(const char *username)
 {
+  if (port==0) return NS_ERROR_NOT_INITIALIZED;
+  
   linphone_core_set_primary_contact(lc, username);
   return NS_OK;
 }
 
 /* void getPrimaryContact ([retval] out ACString username); */
-NS_IMETHODIMP nsSIP::GetPrimaryContact(nsACString & username NS_OUTPARAM)
+NS_IMETHODIMP nsSIP::GetPrimaryIdentity(nsACString & username NS_OUTPARAM)
 {
+  if (port==0) return NS_ERROR_NOT_INITIALIZED;
+  
   const char* identity = linphone_core_get_primary_contact(lc);
   username = Substring(identity, (PRUint32)strlen(identity));
   return NS_OK;
@@ -183,6 +196,8 @@ NS_IMETHODIMP nsSIP::GetPrimaryContact(nsACString & username NS_OUTPARAM)
 /* void setPresenceInfo (); */
 NS_IMETHODIMP nsSIP::SetPresenceInfo(PRInt32 presence_status)
 {
+  if (port==0) return NS_ERROR_NOT_INITIALIZED;
+  
   LinphoneOnlineStatus status;
   switch (presence_status){
     case 0:
@@ -203,9 +218,173 @@ NS_IMETHODIMP nsSIP::SetPresenceInfo(PRInt32 presence_status)
 }
 
 
+/* void changeIdentity (in long account, [retval] out long used); */
+NS_IMETHODIMP nsSIP::ChangeIdentity(PRInt32 account, PRInt32 *used NS_OUTPARAM)
+{
+  if (port==0) return NS_ERROR_NOT_INITIALIZED;
+  
+  switch (account){
+    case 0:
+      linphone_core_set_default_proxy(lc,NULL);
+      *used = 0;
+      break;
+    case 1:
+      const MSList *proxies;
+      LinphoneProxyConfig *cfg;
+      proxies=linphone_core_get_proxy_config_list(lc);
+      cfg=(LinphoneProxyConfig*)ms_list_nth_data(proxies,0);
+      if (cfg==NULL){
+#ifdef DEBUG
+        printf("No such proxy\n");
+#endif
+        linphone_core_set_default_proxy(lc, NULL);
+        *used = 0;
+      } else {
+        linphone_core_set_default_proxy(lc, cfg);
+        *used = 1;
+      }
+      break;
+  }
+  return NS_OK;
+}
+
+
+
+/* void getCurrentIdentity ([retval] out ACString identity); */
+NS_IMETHODIMP nsSIP::GetCurrentIdentity(nsACString & identity NS_OUTPARAM)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void setProxyConfig (in nsIProxyConfig cfg); */
+NS_IMETHODIMP nsSIP::SetProxyConfig(nsIProxyConfig *cfg)
+{
+  if (port==0) return NS_ERROR_NOT_INITIALIZED;
+  
+  int exist = 0;
+
+  nsCString sip_identity;
+  cfg->GetSip_identity(sip_identity);
+  nsCString sip_proxy;
+  cfg->GetSip_proxy(sip_proxy);
+  nsCString sip_route;
+  cfg->GetSip_route(sip_route);
+  nsCString userid;
+  cfg->GetUserid(userid);
+  nsCString password;
+  cfg->GetPassword(password);
+  PRInt32 duration;
+  cfg->GetDuration(&duration);
+
+  const MSList *proxies;
+  LinphoneProxyConfig *proxy;
+  proxies = linphone_core_get_proxy_config_list(lc);
+  if (proxies == NULL) {
+    proxy = linphone_proxy_config_new();
+  } else {
+    proxy = (LinphoneProxyConfig*)ms_list_nth_data(proxies,0);
+    linphone_proxy_config_edit(proxy);
+    exist = 1;
+  }
+  
+  linphone_proxy_config_set_identity(proxy, ToNewCString(sip_identity));
+  linphone_proxy_config_set_server_addr(proxy, ToNewCString(sip_proxy));
+  linphone_proxy_config_set_route(proxy, ToNewCString(sip_route));
+  linphone_proxy_config_enable_register(proxy, false);
+  linphone_proxy_config_expires(proxy, duration);
+
+  if (!exist) {
+    linphone_core_add_proxy_config(lc, proxy);
+    linphone_core_set_default_proxy(lc, proxy);
+  } else {
+    linphone_proxy_config_done(proxy);
+  }
+  
+  linphone_core_clear_all_auth_info(lc);
+  LinphoneAuthInfo *auth = linphone_auth_info_new(ToNewCString(userid), ToNewCString(userid), ToNewCString(password), NULL, NULL);
+  linphone_core_add_auth_info(lc, auth);
+
+#ifdef DEBUG
+  printf("\nProxy configuration:\n");
+  printf("  Object address: %p\n", &proxy);
+  printf("  SIP Proxy: %s\n", ToNewCString(sip_proxy));
+  printf("  SIP Identity: %s\n", ToNewCString(sip_identity));
+  printf("  SIP Route: %s\n", ToNewCString(sip_route));
+  printf("  UserId: %s\n", ToNewCString(userid));
+  printf("  Password: %s\n", ToNewCString(password));
+  printf("  Reg. duration: %d\n\n", duration);
+#endif
+
+  return NS_OK;
+}
+
+/* void getProxyConfig ([retval] out nsIProxyConfig cfg); */
+NS_IMETHODIMP nsSIP::GetProxyConfig(nsIProxyConfig **cfg NS_OUTPARAM)
+{
+  if (port==0) return NS_ERROR_NOT_INITIALIZED;
+  
+  LinphoneProxyConfig *proxy = NULL;
+  linphone_core_get_default_proxy(lc, &proxy);
+  if (!proxy) return NS_OK;
+  nsCOMPtr<nsIProxyConfig> _cfg = do_CreateInstance(PROXYCFG_CONTRACTID);
+  NS_ADDREF(_cfg);
+
+  const char* str;
+  str = linphone_proxy_config_get_identity(proxy);
+  _cfg->SetSip_identity(Substring(str, (PRUint32)strlen(str)));
+  str = linphone_proxy_config_get_addr(proxy);
+  _cfg->SetSip_proxy(Substring(str, (PRUint32)strlen(str)));
+  str = linphone_proxy_config_get_route(proxy);
+  _cfg->SetSip_route(Substring(str, (PRUint32)strlen(str)));
+  _cfg->SetDuration(linphone_proxy_config_get_expires(proxy));
+  
+  const MSList* auths = linphone_core_get_auth_info_list(lc);
+  const LinphoneAuthInfo* auth = (LinphoneAuthInfo*)ms_list_nth_data(auths,0);
+  str = linphone_auth_info_get_username(auth);
+  _cfg->SetUserid(Substring(str, (PRUint32)strlen(str)));
+  str = linphone_auth_info_get_passwd(auth);
+  _cfg->SetPassword(Substring(str, (PRUint32)strlen(str)));
+
+  *cfg = _cfg;
+  return NS_OK;
+}
+
+/* void registerToProxy (); */
+NS_IMETHODIMP nsSIP::RegisterToProxy()
+{
+  if (port==0) return NS_ERROR_NOT_INITIALIZED;
+  
+  LinphoneProxyConfig *proxy;
+  linphone_core_get_default_proxy(lc, &proxy);
+  linphone_proxy_config_edit(proxy);
+  linphone_proxy_config_enable_register(proxy, true);
+  linphone_proxy_config_done(proxy);
+    
+  return NS_OK;
+}
+
+/* void unregisterToProxy (); */
+NS_IMETHODIMP nsSIP::UnregisterToProxy()
+{
+  if (port==0) return NS_ERROR_NOT_INITIALIZED;
+  
+  LinphoneProxyConfig *proxy;
+  linphone_core_get_default_proxy(lc, &proxy);
+  linphone_proxy_config_edit(proxy);
+  linphone_proxy_config_enable_register(proxy, false);
+  linphone_proxy_config_done(proxy);
+    
+  return NS_OK;
+}
+
+
+
+
 /* void call (in AString URI); */
 NS_IMETHODIMP nsSIP::Call(const char* URI) {
 
+  if (port==0) return NS_ERROR_NOT_INITIALIZED;
+  
   PRBool valid_URI;
   IsValidSipURI(URI, &valid_URI);
   if (!valid_URI) {
@@ -263,7 +442,9 @@ NS_IMETHODIMP nsSIP::IsValidSipURI(const char *uri, PRBool *_retval NS_OUTPARAM)
 /* void setringtone (in string file); */
 NS_IMETHODIMP nsSIP::SetRingTone(const char *file)
 {
-  if (port==0) return NS_OK;
+  return NS_ERROR_NOT_IMPLEMENTED;
+  if (port==0) return NS_ERROR_NOT_INITIALIZED;
+  
   //DO SOMETHING
   return NS_OK;
 }
@@ -338,7 +519,7 @@ NS_IMETHODIMP nsSIP::AddObserver(nsSipStateObserver *cbk)
   for (i = 0; i < count; ++i) {
     (nsIArray*)mObservers->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&pCallback);
     if (pCallback == cbk){
-#ifdef DEBUG      
+#ifdef DEBUG
       printf("OBSERVER ALREADY REGISTERED\n");
 #endif
       return NS_OK;
@@ -347,7 +528,7 @@ NS_IMETHODIMP nsSIP::AddObserver(nsSipStateObserver *cbk)
 
   NS_IF_ADDREF(cbk);
   mObservers->AppendElement(cbk, PR_FALSE);
-#ifdef DEBUG      
+#ifdef DEBUG
   printf("ADDED OBSERVER AT ADDR: %p \n", cbk);
 #endif
   return NS_OK;
@@ -360,7 +541,7 @@ NS_IMETHODIMP nsSIP::RemoveObserver(nsSipStateObserver *cbk)
   NS_ENSURE_ARG_POINTER(cbk);
 
   if (!mObservers){
-#ifdef DEBUG      
+#ifdef DEBUG
     printf("NO SUCH OBSERVER\n");
 #endif
     return NS_OK;
@@ -369,7 +550,7 @@ NS_IMETHODIMP nsSIP::RemoveObserver(nsSipStateObserver *cbk)
   PRUint32 count = 0;
   mObservers->GetLength(&count);
   if (count <= 0){
-#ifdef DEBUG      
+#ifdef DEBUG
     printf("NO SUCH OBSERVER\n");
 #endif
     return NS_OK;
@@ -382,7 +563,7 @@ NS_IMETHODIMP nsSIP::RemoveObserver(nsSipStateObserver *cbk)
     (nsIArray*)mObservers->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&pCallback);
     if (pCallback == cbk){
       mObservers->RemoveElementAt(i);
-#ifdef DEBUG      
+#ifdef DEBUG
       printf("REMOVED OBSERVER AT ADDR: %p\n", (nsSipStateObserver*)pCallback);
 #endif
       NS_RELEASE(pCallback);
@@ -390,7 +571,7 @@ NS_IMETHODIMP nsSIP::RemoveObserver(nsSipStateObserver *cbk)
     }
   }
 
-#ifdef DEBUG      
+#ifdef DEBUG
   printf("NO SUCH OBSERVER\n");
 #endif
   return NS_OK;
@@ -411,16 +592,16 @@ void nsSIP::FlushObservers(){
   for (i = 0; i < count; i++) {
     (nsIArray*)mObservers->QueryElementAt(0, NS_GET_IID(nsSipStateObserver), (void**)&pCallback);
     mObservers->RemoveElementAt(0);
-#ifdef DEBUG      
+#ifdef DEBUG
     printf("REMOVED OBSERVER AT ADDR: %p ", (nsSipStateObserver*)pCallback);
 #endif
     NS_RELEASE(pCallback);
-#ifdef DEBUG      
+#ifdef DEBUG
     printf("(MEMORY RELEASED)\n");
 #endif
   }
 
-#ifdef DEBUG      
+#ifdef DEBUG
   printf("FLUSHED ALL %d OBSERVERS\n", count);
 #endif
   NS_RELEASE(mObservers);

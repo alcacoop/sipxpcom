@@ -128,10 +128,6 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsICallLog : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD GetDuration(PRInt32 *aDuration) = 0;
   NS_SCRIPTABLE NS_IMETHOD SetDuration(PRInt32 aDuration) = 0;
 
-  /* attribute ACString date; */
-  NS_SCRIPTABLE NS_IMETHOD GetDate(nsACString & aDate) = 0;
-  NS_SCRIPTABLE NS_IMETHOD SetDate(const nsACString & aDate) = 0;
-
   /* attribute ACString from; */
   NS_SCRIPTABLE NS_IMETHOD GetFrom(nsACString & aFrom) = 0;
   NS_SCRIPTABLE NS_IMETHOD SetFrom(const nsACString & aFrom) = 0;
@@ -139,6 +135,10 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsICallLog : public nsISupports {
   /* attribute ACString to; */
   NS_SCRIPTABLE NS_IMETHOD GetTo(nsACString & aTo) = 0;
   NS_SCRIPTABLE NS_IMETHOD SetTo(const nsACString & aTo) = 0;
+
+  /* attribute ACString date; */
+  NS_SCRIPTABLE NS_IMETHOD GetDate(nsACString & aDate) = 0;
+  NS_SCRIPTABLE NS_IMETHOD SetDate(const nsACString & aDate) = 0;
 
 };
 
@@ -152,12 +152,12 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsICallLog : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD SetStatus(PRInt16 aStatus); \
   NS_SCRIPTABLE NS_IMETHOD GetDuration(PRInt32 *aDuration); \
   NS_SCRIPTABLE NS_IMETHOD SetDuration(PRInt32 aDuration); \
-  NS_SCRIPTABLE NS_IMETHOD GetDate(nsACString & aDate); \
-  NS_SCRIPTABLE NS_IMETHOD SetDate(const nsACString & aDate); \
   NS_SCRIPTABLE NS_IMETHOD GetFrom(nsACString & aFrom); \
   NS_SCRIPTABLE NS_IMETHOD SetFrom(const nsACString & aFrom); \
   NS_SCRIPTABLE NS_IMETHOD GetTo(nsACString & aTo); \
-  NS_SCRIPTABLE NS_IMETHOD SetTo(const nsACString & aTo); 
+  NS_SCRIPTABLE NS_IMETHOD SetTo(const nsACString & aTo); \
+  NS_SCRIPTABLE NS_IMETHOD GetDate(nsACString & aDate); \
+  NS_SCRIPTABLE NS_IMETHOD SetDate(const nsACString & aDate); 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object. */
 #define NS_FORWARD_NSICALLLOG(_to) \
@@ -167,12 +167,12 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsICallLog : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD SetStatus(PRInt16 aStatus) { return _to SetStatus(aStatus); } \
   NS_SCRIPTABLE NS_IMETHOD GetDuration(PRInt32 *aDuration) { return _to GetDuration(aDuration); } \
   NS_SCRIPTABLE NS_IMETHOD SetDuration(PRInt32 aDuration) { return _to SetDuration(aDuration); } \
-  NS_SCRIPTABLE NS_IMETHOD GetDate(nsACString & aDate) { return _to GetDate(aDate); } \
-  NS_SCRIPTABLE NS_IMETHOD SetDate(const nsACString & aDate) { return _to SetDate(aDate); } \
   NS_SCRIPTABLE NS_IMETHOD GetFrom(nsACString & aFrom) { return _to GetFrom(aFrom); } \
   NS_SCRIPTABLE NS_IMETHOD SetFrom(const nsACString & aFrom) { return _to SetFrom(aFrom); } \
   NS_SCRIPTABLE NS_IMETHOD GetTo(nsACString & aTo) { return _to GetTo(aTo); } \
-  NS_SCRIPTABLE NS_IMETHOD SetTo(const nsACString & aTo) { return _to SetTo(aTo); } 
+  NS_SCRIPTABLE NS_IMETHOD SetTo(const nsACString & aTo) { return _to SetTo(aTo); } \
+  NS_SCRIPTABLE NS_IMETHOD GetDate(nsACString & aDate) { return _to GetDate(aDate); } \
+  NS_SCRIPTABLE NS_IMETHOD SetDate(const nsACString & aDate) { return _to SetDate(aDate); } 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
 #define NS_FORWARD_SAFE_NSICALLLOG(_to) \
@@ -182,12 +182,12 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsICallLog : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD SetStatus(PRInt16 aStatus) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetStatus(aStatus); } \
   NS_SCRIPTABLE NS_IMETHOD GetDuration(PRInt32 *aDuration) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetDuration(aDuration); } \
   NS_SCRIPTABLE NS_IMETHOD SetDuration(PRInt32 aDuration) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetDuration(aDuration); } \
-  NS_SCRIPTABLE NS_IMETHOD GetDate(nsACString & aDate) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetDate(aDate); } \
-  NS_SCRIPTABLE NS_IMETHOD SetDate(const nsACString & aDate) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetDate(aDate); } \
   NS_SCRIPTABLE NS_IMETHOD GetFrom(nsACString & aFrom) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetFrom(aFrom); } \
   NS_SCRIPTABLE NS_IMETHOD SetFrom(const nsACString & aFrom) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetFrom(aFrom); } \
   NS_SCRIPTABLE NS_IMETHOD GetTo(nsACString & aTo) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetTo(aTo); } \
-  NS_SCRIPTABLE NS_IMETHOD SetTo(const nsACString & aTo) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetTo(aTo); } 
+  NS_SCRIPTABLE NS_IMETHOD SetTo(const nsACString & aTo) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetTo(aTo); } \
+  NS_SCRIPTABLE NS_IMETHOD GetDate(nsACString & aDate) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetDate(aDate); } \
+  NS_SCRIPTABLE NS_IMETHOD SetDate(const nsACString & aDate) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetDate(aDate); } 
 
 #if 0
 /* Use the code below as a template for the implementation class for this interface. */
@@ -251,16 +251,6 @@ NS_IMETHODIMP nsCallLog::SetDuration(PRInt32 aDuration)
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-/* attribute ACString date; */
-NS_IMETHODIMP nsCallLog::GetDate(nsACString & aDate)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
-}
-NS_IMETHODIMP nsCallLog::SetDate(const nsACString & aDate)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
-}
-
 /* attribute ACString from; */
 NS_IMETHODIMP nsCallLog::GetFrom(nsACString & aFrom)
 {
@@ -277,6 +267,16 @@ NS_IMETHODIMP nsCallLog::GetTo(nsACString & aTo)
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 NS_IMETHODIMP nsCallLog::SetTo(const nsACString & aTo)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* attribute ACString date; */
+NS_IMETHODIMP nsCallLog::GetDate(nsACString & aDate)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+NS_IMETHODIMP nsCallLog::SetDate(const nsACString & aDate)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
@@ -382,6 +382,187 @@ NS_IMETHODIMP nsList::GetLength(PRUint32 *aLength)
 #endif
 
 
+/* starting interface:    nsIProxyConfig */
+#define NS_IPROXYCONFIG_IID_STR "3b88b334-2836-4ed5-9c5c-4936dc9b73c5"
+
+#define NS_IPROXYCONFIG_IID \
+  {0x3b88b334, 0x2836, 0x4ed5, \
+    { 0x9c, 0x5c, 0x49, 0x36, 0xdc, 0x9b, 0x73, 0xc5 }}
+
+class NS_NO_VTABLE NS_SCRIPTABLE nsIProxyConfig : public nsISupports {
+ public: 
+
+  NS_DECLARE_STATIC_IID_ACCESSOR(NS_IPROXYCONFIG_IID)
+
+  /* attribute ACString sip_identity; */
+  NS_SCRIPTABLE NS_IMETHOD GetSip_identity(nsACString & aSip_identity) = 0;
+  NS_SCRIPTABLE NS_IMETHOD SetSip_identity(const nsACString & aSip_identity) = 0;
+
+  /* attribute ACString sip_proxy; */
+  NS_SCRIPTABLE NS_IMETHOD GetSip_proxy(nsACString & aSip_proxy) = 0;
+  NS_SCRIPTABLE NS_IMETHOD SetSip_proxy(const nsACString & aSip_proxy) = 0;
+
+  /* attribute ACString sip_route; */
+  NS_SCRIPTABLE NS_IMETHOD GetSip_route(nsACString & aSip_route) = 0;
+  NS_SCRIPTABLE NS_IMETHOD SetSip_route(const nsACString & aSip_route) = 0;
+
+  /* attribute ACString userid; */
+  NS_SCRIPTABLE NS_IMETHOD GetUserid(nsACString & aUserid) = 0;
+  NS_SCRIPTABLE NS_IMETHOD SetUserid(const nsACString & aUserid) = 0;
+
+  /* attribute ACString password; */
+  NS_SCRIPTABLE NS_IMETHOD GetPassword(nsACString & aPassword) = 0;
+  NS_SCRIPTABLE NS_IMETHOD SetPassword(const nsACString & aPassword) = 0;
+
+  /* attribute long duration; */
+  NS_SCRIPTABLE NS_IMETHOD GetDuration(PRInt32 *aDuration) = 0;
+  NS_SCRIPTABLE NS_IMETHOD SetDuration(PRInt32 aDuration) = 0;
+
+};
+
+  NS_DEFINE_STATIC_IID_ACCESSOR(nsIProxyConfig, NS_IPROXYCONFIG_IID)
+
+/* Use this macro when declaring classes that implement this interface. */
+#define NS_DECL_NSIPROXYCONFIG \
+  NS_SCRIPTABLE NS_IMETHOD GetSip_identity(nsACString & aSip_identity); \
+  NS_SCRIPTABLE NS_IMETHOD SetSip_identity(const nsACString & aSip_identity); \
+  NS_SCRIPTABLE NS_IMETHOD GetSip_proxy(nsACString & aSip_proxy); \
+  NS_SCRIPTABLE NS_IMETHOD SetSip_proxy(const nsACString & aSip_proxy); \
+  NS_SCRIPTABLE NS_IMETHOD GetSip_route(nsACString & aSip_route); \
+  NS_SCRIPTABLE NS_IMETHOD SetSip_route(const nsACString & aSip_route); \
+  NS_SCRIPTABLE NS_IMETHOD GetUserid(nsACString & aUserid); \
+  NS_SCRIPTABLE NS_IMETHOD SetUserid(const nsACString & aUserid); \
+  NS_SCRIPTABLE NS_IMETHOD GetPassword(nsACString & aPassword); \
+  NS_SCRIPTABLE NS_IMETHOD SetPassword(const nsACString & aPassword); \
+  NS_SCRIPTABLE NS_IMETHOD GetDuration(PRInt32 *aDuration); \
+  NS_SCRIPTABLE NS_IMETHOD SetDuration(PRInt32 aDuration); 
+
+/* Use this macro to declare functions that forward the behavior of this interface to another object. */
+#define NS_FORWARD_NSIPROXYCONFIG(_to) \
+  NS_SCRIPTABLE NS_IMETHOD GetSip_identity(nsACString & aSip_identity) { return _to GetSip_identity(aSip_identity); } \
+  NS_SCRIPTABLE NS_IMETHOD SetSip_identity(const nsACString & aSip_identity) { return _to SetSip_identity(aSip_identity); } \
+  NS_SCRIPTABLE NS_IMETHOD GetSip_proxy(nsACString & aSip_proxy) { return _to GetSip_proxy(aSip_proxy); } \
+  NS_SCRIPTABLE NS_IMETHOD SetSip_proxy(const nsACString & aSip_proxy) { return _to SetSip_proxy(aSip_proxy); } \
+  NS_SCRIPTABLE NS_IMETHOD GetSip_route(nsACString & aSip_route) { return _to GetSip_route(aSip_route); } \
+  NS_SCRIPTABLE NS_IMETHOD SetSip_route(const nsACString & aSip_route) { return _to SetSip_route(aSip_route); } \
+  NS_SCRIPTABLE NS_IMETHOD GetUserid(nsACString & aUserid) { return _to GetUserid(aUserid); } \
+  NS_SCRIPTABLE NS_IMETHOD SetUserid(const nsACString & aUserid) { return _to SetUserid(aUserid); } \
+  NS_SCRIPTABLE NS_IMETHOD GetPassword(nsACString & aPassword) { return _to GetPassword(aPassword); } \
+  NS_SCRIPTABLE NS_IMETHOD SetPassword(const nsACString & aPassword) { return _to SetPassword(aPassword); } \
+  NS_SCRIPTABLE NS_IMETHOD GetDuration(PRInt32 *aDuration) { return _to GetDuration(aDuration); } \
+  NS_SCRIPTABLE NS_IMETHOD SetDuration(PRInt32 aDuration) { return _to SetDuration(aDuration); } 
+
+/* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
+#define NS_FORWARD_SAFE_NSIPROXYCONFIG(_to) \
+  NS_SCRIPTABLE NS_IMETHOD GetSip_identity(nsACString & aSip_identity) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetSip_identity(aSip_identity); } \
+  NS_SCRIPTABLE NS_IMETHOD SetSip_identity(const nsACString & aSip_identity) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetSip_identity(aSip_identity); } \
+  NS_SCRIPTABLE NS_IMETHOD GetSip_proxy(nsACString & aSip_proxy) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetSip_proxy(aSip_proxy); } \
+  NS_SCRIPTABLE NS_IMETHOD SetSip_proxy(const nsACString & aSip_proxy) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetSip_proxy(aSip_proxy); } \
+  NS_SCRIPTABLE NS_IMETHOD GetSip_route(nsACString & aSip_route) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetSip_route(aSip_route); } \
+  NS_SCRIPTABLE NS_IMETHOD SetSip_route(const nsACString & aSip_route) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetSip_route(aSip_route); } \
+  NS_SCRIPTABLE NS_IMETHOD GetUserid(nsACString & aUserid) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetUserid(aUserid); } \
+  NS_SCRIPTABLE NS_IMETHOD SetUserid(const nsACString & aUserid) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetUserid(aUserid); } \
+  NS_SCRIPTABLE NS_IMETHOD GetPassword(nsACString & aPassword) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetPassword(aPassword); } \
+  NS_SCRIPTABLE NS_IMETHOD SetPassword(const nsACString & aPassword) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetPassword(aPassword); } \
+  NS_SCRIPTABLE NS_IMETHOD GetDuration(PRInt32 *aDuration) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetDuration(aDuration); } \
+  NS_SCRIPTABLE NS_IMETHOD SetDuration(PRInt32 aDuration) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetDuration(aDuration); } 
+
+#if 0
+/* Use the code below as a template for the implementation class for this interface. */
+
+/* Header file */
+class nsProxyConfig : public nsIProxyConfig
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSIPROXYCONFIG
+
+  nsProxyConfig();
+
+private:
+  ~nsProxyConfig();
+
+protected:
+  /* additional members */
+};
+
+/* Implementation file */
+NS_IMPL_ISUPPORTS1(nsProxyConfig, nsIProxyConfig)
+
+nsProxyConfig::nsProxyConfig()
+{
+  /* member initializers and constructor code */
+}
+
+nsProxyConfig::~nsProxyConfig()
+{
+  /* destructor code */
+}
+
+/* attribute ACString sip_identity; */
+NS_IMETHODIMP nsProxyConfig::GetSip_identity(nsACString & aSip_identity)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+NS_IMETHODIMP nsProxyConfig::SetSip_identity(const nsACString & aSip_identity)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* attribute ACString sip_proxy; */
+NS_IMETHODIMP nsProxyConfig::GetSip_proxy(nsACString & aSip_proxy)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+NS_IMETHODIMP nsProxyConfig::SetSip_proxy(const nsACString & aSip_proxy)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* attribute ACString sip_route; */
+NS_IMETHODIMP nsProxyConfig::GetSip_route(nsACString & aSip_route)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+NS_IMETHODIMP nsProxyConfig::SetSip_route(const nsACString & aSip_route)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* attribute ACString userid; */
+NS_IMETHODIMP nsProxyConfig::GetUserid(nsACString & aUserid)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+NS_IMETHODIMP nsProxyConfig::SetUserid(const nsACString & aUserid)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* attribute ACString password; */
+NS_IMETHODIMP nsProxyConfig::GetPassword(nsACString & aPassword)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+NS_IMETHODIMP nsProxyConfig::SetPassword(const nsACString & aPassword)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* attribute long duration; */
+NS_IMETHODIMP nsProxyConfig::GetDuration(PRInt32 *aDuration)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+NS_IMETHODIMP nsProxyConfig::SetDuration(PRInt32 aDuration)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* End of implementation class template. */
+#endif
+
+
 /* starting interface:    nsISIP */
 #define NS_ISIP_IID_STR "c5bf5079-8bc3-4fc5-881f-f3bd85a63c61"
 
@@ -415,11 +596,29 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   /* void setSTUNFirewall (in string stun_addr); */
   NS_SCRIPTABLE NS_IMETHOD SetSTUNFirewall(const char *stun_addr) = 0;
 
-  /* void setPrimaryContact (in string username); */
-  NS_SCRIPTABLE NS_IMETHOD SetPrimaryContact(const char *username) = 0;
+  /* void setPrimaryIdentity (in string username); */
+  NS_SCRIPTABLE NS_IMETHOD SetPrimaryIdentity(const char *username) = 0;
 
-  /* void getPrimaryContact ([retval] out ACString username); */
-  NS_SCRIPTABLE NS_IMETHOD GetPrimaryContact(nsACString & username NS_OUTPARAM) = 0;
+  /* void getPrimaryIdentity ([retval] out ACString username); */
+  NS_SCRIPTABLE NS_IMETHOD GetPrimaryIdentity(nsACString & username NS_OUTPARAM) = 0;
+
+  /* void changeIdentity (in long account, [retval] out long used); */
+  NS_SCRIPTABLE NS_IMETHOD ChangeIdentity(PRInt32 account, PRInt32 *used NS_OUTPARAM) = 0;
+
+  /* void getCurrentIdentity ([retval] out ACString identity); */
+  NS_SCRIPTABLE NS_IMETHOD GetCurrentIdentity(nsACString & identity NS_OUTPARAM) = 0;
+
+  /* void setProxyConfig (in nsIProxyConfig cfg); */
+  NS_SCRIPTABLE NS_IMETHOD SetProxyConfig(nsIProxyConfig *cfg) = 0;
+
+  /* void getProxyConfig ([retval] out nsIProxyConfig cfg); */
+  NS_SCRIPTABLE NS_IMETHOD GetProxyConfig(nsIProxyConfig **cfg NS_OUTPARAM) = 0;
+
+  /* void registerToProxy (); */
+  NS_SCRIPTABLE NS_IMETHOD RegisterToProxy(void) = 0;
+
+  /* void unregisterToProxy (); */
+  NS_SCRIPTABLE NS_IMETHOD UnregisterToProxy(void) = 0;
 
   /* void setPresenceInfo (in long presence_status); */
   NS_SCRIPTABLE NS_IMETHOD SetPresenceInfo(PRInt32 presence_status) = 0;
@@ -470,8 +669,14 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD SetNOFirewall(void); \
   NS_SCRIPTABLE NS_IMETHOD SetNATFirewall(const char *fw_addr); \
   NS_SCRIPTABLE NS_IMETHOD SetSTUNFirewall(const char *stun_addr); \
-  NS_SCRIPTABLE NS_IMETHOD SetPrimaryContact(const char *username); \
-  NS_SCRIPTABLE NS_IMETHOD GetPrimaryContact(nsACString & username NS_OUTPARAM); \
+  NS_SCRIPTABLE NS_IMETHOD SetPrimaryIdentity(const char *username); \
+  NS_SCRIPTABLE NS_IMETHOD GetPrimaryIdentity(nsACString & username NS_OUTPARAM); \
+  NS_SCRIPTABLE NS_IMETHOD ChangeIdentity(PRInt32 account, PRInt32 *used NS_OUTPARAM); \
+  NS_SCRIPTABLE NS_IMETHOD GetCurrentIdentity(nsACString & identity NS_OUTPARAM); \
+  NS_SCRIPTABLE NS_IMETHOD SetProxyConfig(nsIProxyConfig *cfg); \
+  NS_SCRIPTABLE NS_IMETHOD GetProxyConfig(nsIProxyConfig **cfg NS_OUTPARAM); \
+  NS_SCRIPTABLE NS_IMETHOD RegisterToProxy(void); \
+  NS_SCRIPTABLE NS_IMETHOD UnregisterToProxy(void); \
   NS_SCRIPTABLE NS_IMETHOD SetPresenceInfo(PRInt32 presence_status); \
   NS_SCRIPTABLE NS_IMETHOD Call(const char *URI); \
   NS_SCRIPTABLE NS_IMETHOD Hangup(void); \
@@ -494,8 +699,14 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD SetNOFirewall(void) { return _to SetNOFirewall(); } \
   NS_SCRIPTABLE NS_IMETHOD SetNATFirewall(const char *fw_addr) { return _to SetNATFirewall(fw_addr); } \
   NS_SCRIPTABLE NS_IMETHOD SetSTUNFirewall(const char *stun_addr) { return _to SetSTUNFirewall(stun_addr); } \
-  NS_SCRIPTABLE NS_IMETHOD SetPrimaryContact(const char *username) { return _to SetPrimaryContact(username); } \
-  NS_SCRIPTABLE NS_IMETHOD GetPrimaryContact(nsACString & username NS_OUTPARAM) { return _to GetPrimaryContact(username); } \
+  NS_SCRIPTABLE NS_IMETHOD SetPrimaryIdentity(const char *username) { return _to SetPrimaryIdentity(username); } \
+  NS_SCRIPTABLE NS_IMETHOD GetPrimaryIdentity(nsACString & username NS_OUTPARAM) { return _to GetPrimaryIdentity(username); } \
+  NS_SCRIPTABLE NS_IMETHOD ChangeIdentity(PRInt32 account, PRInt32 *used NS_OUTPARAM) { return _to ChangeIdentity(account, used); } \
+  NS_SCRIPTABLE NS_IMETHOD GetCurrentIdentity(nsACString & identity NS_OUTPARAM) { return _to GetCurrentIdentity(identity); } \
+  NS_SCRIPTABLE NS_IMETHOD SetProxyConfig(nsIProxyConfig *cfg) { return _to SetProxyConfig(cfg); } \
+  NS_SCRIPTABLE NS_IMETHOD GetProxyConfig(nsIProxyConfig **cfg NS_OUTPARAM) { return _to GetProxyConfig(cfg); } \
+  NS_SCRIPTABLE NS_IMETHOD RegisterToProxy(void) { return _to RegisterToProxy(); } \
+  NS_SCRIPTABLE NS_IMETHOD UnregisterToProxy(void) { return _to UnregisterToProxy(); } \
   NS_SCRIPTABLE NS_IMETHOD SetPresenceInfo(PRInt32 presence_status) { return _to SetPresenceInfo(presence_status); } \
   NS_SCRIPTABLE NS_IMETHOD Call(const char *URI) { return _to Call(URI); } \
   NS_SCRIPTABLE NS_IMETHOD Hangup(void) { return _to Hangup(); } \
@@ -518,8 +729,14 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD SetNOFirewall(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetNOFirewall(); } \
   NS_SCRIPTABLE NS_IMETHOD SetNATFirewall(const char *fw_addr) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetNATFirewall(fw_addr); } \
   NS_SCRIPTABLE NS_IMETHOD SetSTUNFirewall(const char *stun_addr) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetSTUNFirewall(stun_addr); } \
-  NS_SCRIPTABLE NS_IMETHOD SetPrimaryContact(const char *username) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetPrimaryContact(username); } \
-  NS_SCRIPTABLE NS_IMETHOD GetPrimaryContact(nsACString & username NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetPrimaryContact(username); } \
+  NS_SCRIPTABLE NS_IMETHOD SetPrimaryIdentity(const char *username) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetPrimaryIdentity(username); } \
+  NS_SCRIPTABLE NS_IMETHOD GetPrimaryIdentity(nsACString & username NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetPrimaryIdentity(username); } \
+  NS_SCRIPTABLE NS_IMETHOD ChangeIdentity(PRInt32 account, PRInt32 *used NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->ChangeIdentity(account, used); } \
+  NS_SCRIPTABLE NS_IMETHOD GetCurrentIdentity(nsACString & identity NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetCurrentIdentity(identity); } \
+  NS_SCRIPTABLE NS_IMETHOD SetProxyConfig(nsIProxyConfig *cfg) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetProxyConfig(cfg); } \
+  NS_SCRIPTABLE NS_IMETHOD GetProxyConfig(nsIProxyConfig **cfg NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetProxyConfig(cfg); } \
+  NS_SCRIPTABLE NS_IMETHOD RegisterToProxy(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->RegisterToProxy(); } \
+  NS_SCRIPTABLE NS_IMETHOD UnregisterToProxy(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->UnregisterToProxy(); } \
   NS_SCRIPTABLE NS_IMETHOD SetPresenceInfo(PRInt32 presence_status) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetPresenceInfo(presence_status); } \
   NS_SCRIPTABLE NS_IMETHOD Call(const char *URI) { return !_to ? NS_ERROR_NULL_POINTER : _to->Call(URI); } \
   NS_SCRIPTABLE NS_IMETHOD Hangup(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Hangup(); } \
@@ -607,14 +824,50 @@ NS_IMETHODIMP nsSIP::SetSTUNFirewall(const char *stun_addr)
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-/* void setPrimaryContact (in string username); */
-NS_IMETHODIMP nsSIP::SetPrimaryContact(const char *username)
+/* void setPrimaryIdentity (in string username); */
+NS_IMETHODIMP nsSIP::SetPrimaryIdentity(const char *username)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-/* void getPrimaryContact ([retval] out ACString username); */
-NS_IMETHODIMP nsSIP::GetPrimaryContact(nsACString & username NS_OUTPARAM)
+/* void getPrimaryIdentity ([retval] out ACString username); */
+NS_IMETHODIMP nsSIP::GetPrimaryIdentity(nsACString & username NS_OUTPARAM)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void changeIdentity (in long account, [retval] out long used); */
+NS_IMETHODIMP nsSIP::ChangeIdentity(PRInt32 account, PRInt32 *used NS_OUTPARAM)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void getCurrentIdentity ([retval] out ACString identity); */
+NS_IMETHODIMP nsSIP::GetCurrentIdentity(nsACString & identity NS_OUTPARAM)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void setProxyConfig (in nsIProxyConfig cfg); */
+NS_IMETHODIMP nsSIP::SetProxyConfig(nsIProxyConfig *cfg)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void getProxyConfig ([retval] out nsIProxyConfig cfg); */
+NS_IMETHODIMP nsSIP::GetProxyConfig(nsIProxyConfig **cfg NS_OUTPARAM)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void registerToProxy (); */
+NS_IMETHODIMP nsSIP::RegisterToProxy()
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void unregisterToProxy (); */
+NS_IMETHODIMP nsSIP::UnregisterToProxy()
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
