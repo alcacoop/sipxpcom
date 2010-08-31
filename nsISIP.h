@@ -43,8 +43,8 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsSipStateObserver : public nsISupports {
 
   NS_DECLARE_STATIC_IID_ACCESSOR(NS_SIPSTATEOBSERVER_IID)
 
-  /* void onStatusChange (in string status); */
-  NS_SCRIPTABLE NS_IMETHOD OnStatusChange(const char *status) = 0;
+  /* void onStatusChange (in string status, in string data); */
+  NS_SCRIPTABLE NS_IMETHOD OnStatusChange(const char *status, const char *data) = 0;
 
 };
 
@@ -52,15 +52,15 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsSipStateObserver : public nsISupports {
 
 /* Use this macro when declaring classes that implement this interface. */
 #define NS_DECL_NSSIPSTATEOBSERVER \
-  NS_SCRIPTABLE NS_IMETHOD OnStatusChange(const char *status); 
+  NS_SCRIPTABLE NS_IMETHOD OnStatusChange(const char *status, const char *data); 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object. */
 #define NS_FORWARD_NSSIPSTATEOBSERVER(_to) \
-  NS_SCRIPTABLE NS_IMETHOD OnStatusChange(const char *status) { return _to OnStatusChange(status); } 
+  NS_SCRIPTABLE NS_IMETHOD OnStatusChange(const char *status, const char *data) { return _to OnStatusChange(status, data); } 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
 #define NS_FORWARD_SAFE_NSSIPSTATEOBSERVER(_to) \
-  NS_SCRIPTABLE NS_IMETHOD OnStatusChange(const char *status) { return !_to ? NS_ERROR_NULL_POINTER : _to->OnStatusChange(status); } 
+  NS_SCRIPTABLE NS_IMETHOD OnStatusChange(const char *status, const char *data) { return !_to ? NS_ERROR_NULL_POINTER : _to->OnStatusChange(status, data); } 
 
 #if 0
 /* Use the code below as a template for the implementation class for this interface. */
@@ -94,8 +94,8 @@ _MYCLASS_::~_MYCLASS_()
   /* destructor code */
 }
 
-/* void onStatusChange (in string status); */
-NS_IMETHODIMP _MYCLASS_::OnStatusChange(const char *status)
+/* void onStatusChange (in string status, in string data); */
+NS_IMETHODIMP _MYCLASS_::OnStatusChange(const char *status, const char *data)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }

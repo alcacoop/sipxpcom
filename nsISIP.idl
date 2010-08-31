@@ -7,7 +7,7 @@
 
 [scriptable, function, uuid(3869ed55-e06a-4ac1-84ea-4c3a4b696924)]
 interface nsSipStateObserver : nsISupports {
-  void onStatusChange(in string status);
+  void onStatusChange(in string status, in string data);
 };
 
 

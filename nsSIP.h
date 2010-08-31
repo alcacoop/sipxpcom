@@ -35,7 +35,7 @@ public:
   NS_DECL_NSISIP
   nsSIP();
   int call_in_progress;
-  void CallObservers(const char* status);
+  void CallObservers(const char* status, const char* data);
   
 
 private:
@@ -106,55 +106,55 @@ static void linphonec_general_state (LinphoneCore * lc, LinphoneGeneralState *gs
       printf("GSTATE_CALL_IDLE");
 #endif
       app->call_in_progress = 0;
-      app->CallObservers("UPDATELOG");
+      app->CallObservers("UPDATELOG", NULL);
       break;
     case GSTATE_CALL_OUT_INVITE:
 #ifdef DEBUG
       printf("GSTATE_CALL_OUT_INVITE");
 #endif
       app->call_in_progress = 1;
-      app->CallObservers("CALLING");
+      app->CallObservers("CALLING", NULL);
       break;
     case GSTATE_CALL_OUT_CONNECTED:
 #ifdef DEBUG
       printf("GSTATE_CALL_OUT_CONNECTED");
 #endif
-      app->CallObservers("CONNECTED");
+      app->CallObservers("CONNECTED", NULL);
       break;
     case GSTATE_CALL_IN_INVITE:
 #ifdef DEBUG
       printf("GSTATE_CALL_IN_INVITE");
 #endif
       app->call_in_progress = 1;
-      app->CallObservers("INCOMING");
+      app->CallObservers("INCOMING", NULL);
       break;
     case GSTATE_CALL_IN_CONNECTED:
 #ifdef DEBUG
       printf("GSTATE_CALL_IN_CONNECTED");
 #endif
-      app->CallObservers("CONNECTED");
+      app->CallObservers("CONNECTED", NULL);
       break;
     case GSTATE_CALL_END:
 #ifdef DEBUG
       printf("GSTATE_CALL_END");
 #endif
-      app->CallObservers("HANGUP");
+      app->CallObservers("HANGUP", NULL);
       break;
     case GSTATE_CALL_ERROR:
 #ifdef DEBUG
       printf("GSTATE_CALL_ERROR");
 #endif
       if (strcmp(gstate->message, "User is busy.")==0)
-        app->CallObservers("BUSY");
-      if (strcmp(gstate->message, "No response.")==0)
-        app->CallObservers("INVALIDURI");
+        app->CallObservers("BUSY", NULL);
+      else 
+        app->CallObservers("INVALIDURI", NULL);
       break;
     default:
 #ifdef DEBUG
       printf("GSTATE_UNKNOWN_%d",gstate->new_state);
 #endif
       if (gstate->new_state == 28)
-        app->CallObservers("RINGING");
+        app->CallObservers("RINGING", NULL);
   }
 #ifdef DEBUG
   if (gstate->message) printf(" %s", gstate->message);

@@ -78,7 +78,7 @@ NS_IMETHODIMP nsSIP::Init(PRInt32 _port)
 
   NS_NewThread(getter_AddRefs(mThread), new nsRunner(lc, &port));
 
-  CallObservers("INIT");
+  CallObservers("INIT", NULL);
   return NS_OK;
 }
 
@@ -87,7 +87,7 @@ NS_IMETHODIMP nsSIP::Init(PRInt32 _port)
 NS_IMETHODIMP nsSIP::Destroy() {
   if (port==0) return NS_ERROR_NOT_INITIALIZED;
 
-  CallObservers("DESTROY");
+  CallObservers("DESTROY", NULL);
   FlushObservers();
 
   //HANGUP CALLS IN PROGRESS
@@ -388,7 +388,7 @@ NS_IMETHODIMP nsSIP::Call(const char* URI) {
   PRBool valid_URI;
   IsValidSipURI(URI, &valid_URI);
   if (!valid_URI) {
-    CallObservers("INVALIDURI");
+    CallObservers("INVALIDURI", NULL);
     return NS_ERROR_FAILURE;
   }
 
@@ -403,7 +403,7 @@ NS_IMETHODIMP nsSIP::Hangup() {
   if (call_in_progress)
     linphone_core_terminate_call(lc, NULL);
   else
-    CallObservers("HANGUP");
+    CallObservers("HANGUP", NULL);
   return NS_OK;
 }
 
@@ -509,7 +509,7 @@ NS_IMETHODIMP nsSIP::GetCallLogs(nsIList **retv NS_OUTPARAM)
 NS_IMETHODIMP nsSIP::ClearCallLogs()
 {
   linphone_core_clear_call_logs(lc);
-  CallObservers("UPDATELOG");
+  CallObservers("UPDATELOG", NULL);
   return NS_OK;
 }
 
@@ -649,7 +649,7 @@ void nsSIP::getProxyForObserver(nsCOMPtr<nsSipStateObserver> cbk, nsCOMPtr<nsSip
 }
 
 
-void nsSIP::CallObservers(const char* status)
+void nsSIP::CallObservers(const char* status, const char* data)
 {
   if (!mObservers)
       return;
@@ -666,7 +666,7 @@ void nsSIP::CallObservers(const char* status)
     nsCOMPtr<nsSipStateObserver> pCbk;
     getProxyForObserver(_pCallback, &pCbk);
     NS_IF_ADDREF(pCbk);
-    pCbk->OnStatusChange(status);
+    pCbk->OnStatusChange(status, data);
   }
 
   return;
