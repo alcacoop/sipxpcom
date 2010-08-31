@@ -641,6 +641,9 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   /* void setRingTone (in string file); */
   NS_SCRIPTABLE NS_IMETHOD SetRingTone(const char *file) = 0;
 
+  /* void setPlayLevel (in short level); */
+  NS_SCRIPTABLE NS_IMETHOD SetPlayLevel(PRInt16 level) = 0;
+
   /* void getCallLogs ([retval] out nsIList retv); */
   NS_SCRIPTABLE NS_IMETHOD GetCallLogs(nsIList **retv NS_OUTPARAM) = 0;
 
@@ -684,6 +687,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD SendDtmf(char tone); \
   NS_SCRIPTABLE NS_IMETHOD IsValidSipURI(const char *uri, PRBool *_retval NS_OUTPARAM); \
   NS_SCRIPTABLE NS_IMETHOD SetRingTone(const char *file); \
+  NS_SCRIPTABLE NS_IMETHOD SetPlayLevel(PRInt16 level); \
   NS_SCRIPTABLE NS_IMETHOD GetCallLogs(nsIList **retv NS_OUTPARAM); \
   NS_SCRIPTABLE NS_IMETHOD ClearCallLogs(void); \
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk); \
@@ -714,6 +718,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD SendDtmf(char tone) { return _to SendDtmf(tone); } \
   NS_SCRIPTABLE NS_IMETHOD IsValidSipURI(const char *uri, PRBool *_retval NS_OUTPARAM) { return _to IsValidSipURI(uri, _retval); } \
   NS_SCRIPTABLE NS_IMETHOD SetRingTone(const char *file) { return _to SetRingTone(file); } \
+  NS_SCRIPTABLE NS_IMETHOD SetPlayLevel(PRInt16 level) { return _to SetPlayLevel(level); } \
   NS_SCRIPTABLE NS_IMETHOD GetCallLogs(nsIList **retv NS_OUTPARAM) { return _to GetCallLogs(retv); } \
   NS_SCRIPTABLE NS_IMETHOD ClearCallLogs(void) { return _to ClearCallLogs(); } \
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk) { return _to AddObserver(cbk); } \
@@ -744,6 +749,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD SendDtmf(char tone) { return !_to ? NS_ERROR_NULL_POINTER : _to->SendDtmf(tone); } \
   NS_SCRIPTABLE NS_IMETHOD IsValidSipURI(const char *uri, PRBool *_retval NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->IsValidSipURI(uri, _retval); } \
   NS_SCRIPTABLE NS_IMETHOD SetRingTone(const char *file) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetRingTone(file); } \
+  NS_SCRIPTABLE NS_IMETHOD SetPlayLevel(PRInt16 level) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetPlayLevel(level); } \
   NS_SCRIPTABLE NS_IMETHOD GetCallLogs(nsIList **retv NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetCallLogs(retv); } \
   NS_SCRIPTABLE NS_IMETHOD ClearCallLogs(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->ClearCallLogs(); } \
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddObserver(cbk); } \
@@ -910,6 +916,12 @@ NS_IMETHODIMP nsSIP::IsValidSipURI(const char *uri, PRBool *_retval NS_OUTPARAM)
 
 /* void setRingTone (in string file); */
 NS_IMETHODIMP nsSIP::SetRingTone(const char *file)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void setPlayLevel (in short level); */
+NS_IMETHODIMP nsSIP::SetPlayLevel(PRInt16 level)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }

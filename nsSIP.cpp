@@ -452,6 +452,20 @@ NS_IMETHODIMP nsSIP::SetRingTone(const char *file)
   return NS_OK;
 }
 
+/* void setPlayLevel (in short level); */
+NS_IMETHODIMP nsSIP::SetPlayLevel(PRInt16 level)
+{
+  if (level<0) level = 0;
+  if (level>100) level = 100;
+  linphone_core_set_play_level(lc, level);
+
+  //HACK!
+  MSSndCard *sndcard;
+  sndcard=lc->sound_conf.play_sndcard;
+  if (sndcard) ms_snd_card_set_level(sndcard,MS_SND_CARD_MASTER,level);
+
+  return NS_OK;
+}
 
 //NS_IMETHODIMP nsSIP::GetCallLogs()
 NS_IMETHODIMP nsSIP::GetCallLogs(nsIList **retv NS_OUTPARAM)

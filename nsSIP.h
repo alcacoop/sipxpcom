@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "linphone/linphonecore.h"
+#include "linphone/private.h"
+#include "mediastreamer2/mediastream.h"
 
 #include "nsCOMPtr.h"
 #include "nsIArray.h"
