@@ -354,7 +354,7 @@ NS_IMETHODIMP nsSIP::GetProxyConfig(nsIProxyConfig **cfg NS_OUTPARAM)
   
   LinphoneProxyConfig *proxy = NULL;
   linphone_core_get_default_proxy(lc, &proxy);
-  if (!proxy) return NS_ERROR_FAILURE;
+  if (!proxy) return NS_OK;
   nsCOMPtr<nsIProxyConfig> _cfg = do_CreateInstance(PROXYCFG_CONTRACTID);
   NS_ADDREF(_cfg);
 
