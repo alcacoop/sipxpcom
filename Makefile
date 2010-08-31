@@ -1,5 +1,5 @@
 GECKO_SDK_PATH=/src/firefox/xulrunner-sdk
-LINPHONE_SDK=./linphone-sdk-i386/
+LINPHONE_SDK=./linphone-sdk-i686/
 
 CXX=c++ 
 CPPFLAGS+=-O3 -fPIC -shared -DDEBUG
