@@ -419,7 +419,10 @@ NS_IMETHODIMP nsSIP::Accept()
 /* void senddtmf (in char tone); */
 NS_IMETHODIMP nsSIP::SendDtmf(char tone)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  if (port==0) return NS_ERROR_NOT_INITIALIZED;
+  if (call_in_progress)
+    linphone_core_send_dtmf(lc, tone);
+  return NS_OK;
 }
 
 
