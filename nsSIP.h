@@ -55,12 +55,18 @@ static void linphonec_display_something (LinphoneCore * lc, const char *somethin
 static void linphonec_display_status (LinphoneCore * lc, const char *something){};
 static void linphonec_display_warning (LinphoneCore * lc, const char *something){};
 static void linphonec_display_url (LinphoneCore * lc, const char *something, const char *url){};
-static void linphonec_call_received(LinphoneCore *lc, const char *from){};
 static void linphonec_prompt_for_auth(LinphoneCore *lc, const char *realm, const char *username){};
 static void linphonec_notify_received(LinphoneCore *lc,const char *from,const char *msg){};
 static void linphonec_notify_presence_received(LinphoneCore *lc,LinphoneFriend *fid){};
 static void linphonec_new_unknown_subscriber(LinphoneCore *lc, LinphoneFriend *lf, const char *url){};
 static void linphonec_bye_received(LinphoneCore *lc, const char *from){};
+
+
+static void linphonec_call_received(LinphoneCore *lc, const char *from){
+  nsSIP* app = (nsSIP*)linphone_core_get_user_data(lc);
+  app->call_in_progress = 1;
+  app->CallObservers("INCOMING", from);
+};
 
 static void linphonec_dtmf_received(LinphoneCore *lc, int dtmf){
   nsSIP* app = (nsSIP*)linphone_core_get_user_data(lc);
@@ -132,8 +138,6 @@ static void linphonec_general_state (LinphoneCore * lc, LinphoneGeneralState *gs
 #ifdef DEBUG
       printf("GSTATE_CALL_IN_INVITE");
 #endif
-      app->call_in_progress = 1;
-      app->CallObservers("INCOMING", NULL);
       break;
     case GSTATE_CALL_IN_CONNECTED:
 #ifdef DEBUG

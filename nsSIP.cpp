@@ -39,7 +39,6 @@ nsSIP::nsSIP() : mObservers(nsnull){
   call_in_progress = 0;
 
   cb_table.show =(ShowInterfaceCb)stub;
-  cb_table.inv_recv = linphonec_call_received;
   cb_table.bye_recv = (ByeReceivedCb) stub;
   cb_table.notify_recv = (NotifyReceivedCb)stub;
   cb_table.new_unknown_subscriber = (NewUnknownSubscriberCb)stub;
@@ -49,10 +48,12 @@ nsSIP::nsSIP() : mObservers(nsnull){
   cb_table.display_url = (DisplayUrlCb) stub;
   cb_table.call_log_updated = (CallLogUpdated) stub;
   cb_table.text_received = (TextMessageReceived)stub;
-  cb_table.general_state = linphonec_general_state;
-  cb_table.dtmf_received = linphonec_dtmf_received;
   cb_table.refer_received = (ReferReceived)stub;
   cb_table.buddy_info_updated = (BuddyInfoUpdated) stub;
+
+  cb_table.general_state = linphonec_general_state;
+  cb_table.inv_recv = linphonec_call_received;
+  cb_table.dtmf_received = linphonec_dtmf_received;
 }
 
 nsSIP::~nsSIP() {
