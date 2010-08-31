@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 #include "linphone/private.h"
 #include "mediastreamer2/mediastream.h"
 
@@ -61,7 +61,14 @@ static void linphonec_notify_received(LinphoneCore *lc,const char *from,const ch
 static void linphonec_notify_presence_received(LinphoneCore *lc,LinphoneFriend *fid){};
 static void linphonec_new_unknown_subscriber(LinphoneCore *lc, LinphoneFriend *lf, const char *url){};
 static void linphonec_bye_received(LinphoneCore *lc, const char *from){};
-static void linphonec_dtmf_received(LinphoneCore *lc, int dtmf){};
+
+static void linphonec_dtmf_received(LinphoneCore *lc, int dtmf){
+  nsSIP* app = (nsSIP*)linphone_core_get_user_data(lc);
+  char tone[2]; 
+  tone[0] = dtmf;
+  tone[1] = 0;
+  app->CallObservers("DTMF", tone);
+};
 
 static void linphonec_general_state (LinphoneCore * lc, LinphoneGeneralState *gstate){
   nsSIP* app = (nsSIP*)linphone_core_get_user_data(lc);

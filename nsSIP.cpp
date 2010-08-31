@@ -50,7 +50,7 @@ nsSIP::nsSIP() : mObservers(nsnull){
   cb_table.call_log_updated = (CallLogUpdated) stub;
   cb_table.text_received = (TextMessageReceived)stub;
   cb_table.general_state = linphonec_general_state;
-  cb_table.dtmf_received = (DtmfReceived) stub;
+  cb_table.dtmf_received = linphonec_dtmf_received;
   cb_table.refer_received = (ReferReceived)stub;
   cb_table.buddy_info_updated = (BuddyInfoUpdated) stub;
 }
