@@ -235,7 +235,6 @@ NS_IMETHODIMP nsSIP::SetIdentity(PRInt32 identity_num)
   
   switch (identity_num){
     case 0:
-      UnregisterToProxy();
       linphone_core_set_default_proxy(lc,NULL);
       break;
     case 1:
@@ -250,7 +249,6 @@ NS_IMETHODIMP nsSIP::SetIdentity(PRInt32 identity_num)
       } else {
         cfg=(LinphoneProxyConfig*)ms_list_nth_data(proxies,0);
         linphone_core_set_default_proxy(lc, cfg);
-        RegisterToProxy();
       }
       break;
   }
