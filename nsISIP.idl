@@ -61,9 +61,9 @@ interface nsISIP : nsISupports
   void setSTUNFirewall(in string stun_addr);
 
   void setPrimaryIdentity(in string username);
-  void getPrimaryIdentity([retval] out ACString username);
-  void changeIdentity(in long account, [retval] out long used);
-  void getCurrentIdentity([retval] out ACString identity);
+  void getCurrentIdentity([retval] out long current);
+  void getIdentity(in long identity_num, [retval] out ACString username);
+  void setIdentity(in long identity_num);
 
   void setProxyConfig(in nsIProxyConfig cfg);
   void getProxyConfig([retval] out nsIProxyConfig cfg);

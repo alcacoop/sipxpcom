@@ -175,7 +175,7 @@ NS_IMETHODIMP nsSIP::SetSTUNFirewall(const char *stun_addr)
   return NS_OK;
 }
 
-/* void setPrimaryContact (in string username); */
+/* void setPrimaryIdentity (in string username); */
 NS_IMETHODIMP nsSIP::SetPrimaryIdentity(const char *username)
 {
   if (port==0) return NS_ERROR_NOT_INITIALIZED;
@@ -184,15 +184,80 @@ NS_IMETHODIMP nsSIP::SetPrimaryIdentity(const char *username)
   return NS_OK;
 }
 
-/* void getPrimaryContact ([retval] out ACString username); */
-NS_IMETHODIMP nsSIP::GetPrimaryIdentity(nsACString & username NS_OUTPARAM)
+
+
+/* void getCurrentIdentity ([retval] out long current); */
+NS_IMETHODIMP nsSIP::GetCurrentIdentity(PRInt32 *current NS_OUTPARAM)
+{
+  if (port==0) return NS_ERROR_NOT_INITIALIZED;
+  LinphoneProxyConfig *cfg;
+  linphone_core_get_default_proxy(lc, &cfg);
+  if (cfg == NULL) *current = 0;
+  else *current = 1;
+  return NS_OK;
+}
+
+/* void getIdentity (in long identity_num, [retval] out ACString username); */
+NS_IMETHODIMP nsSIP::GetIdentity(PRInt32 identity_num, nsACString & username NS_OUTPARAM)
+{
+  if (port==0) return NS_ERROR_NOT_INITIALIZED;
+
+  const char* identity;
+  if (identity_num == 0){
+    identity = linphone_core_get_primary_contact(lc);
+    username = Substring(identity, (PRUint32)strlen(identity));
+  } else {
+    const MSList *proxies;
+    LinphoneProxyConfig *cfg;
+    proxies=linphone_core_get_proxy_config_list(lc);
+    if (proxies==NULL){
+#ifdef DEBUG
+      printf("No such proxy\n");
+#endif
+      return NS_ERROR_FAILURE;
+    } else {
+      cfg=(LinphoneProxyConfig*)ms_list_nth_data(proxies, identity_num-1);
+      identity = linphone_proxy_config_get_identity(cfg); 
+      char* tmp = (char *)calloc(sizeof(char*), strlen(identity)+3);
+      sprintf(tmp, "<%s>", identity);
+      username = Substring(tmp, (PRUint32)strlen(tmp));
+      free(tmp);
+    }
+  }
+
+  return NS_OK;
+}
+
+/* void setIdentity (in long identity_num); */
+NS_IMETHODIMP nsSIP::SetIdentity(PRInt32 identity_num)
 {
   if (port==0) return NS_ERROR_NOT_INITIALIZED;
   
-  const char* identity = linphone_core_get_primary_contact(lc);
-  username = Substring(identity, (PRUint32)strlen(identity));
+  switch (identity_num){
+    case 0:
+      UnregisterToProxy();
+      linphone_core_set_default_proxy(lc,NULL);
+      break;
+    case 1:
+      const MSList *proxies;
+      LinphoneProxyConfig *cfg;
+      proxies=linphone_core_get_proxy_config_list(lc);
+      if (proxies==NULL){
+#ifdef DEBUG
+        printf("No such proxy\n");
+#endif
+        return NS_ERROR_FAILURE;
+      } else {
+        cfg=(LinphoneProxyConfig*)ms_list_nth_data(proxies,0);
+        linphone_core_set_default_proxy(lc, cfg);
+        RegisterToProxy();
+      }
+      break;
+  }
   return NS_OK;
 }
+
+
 
 /* void setPresenceInfo (); */
 NS_IMETHODIMP nsSIP::SetPresenceInfo(PRInt32 presence_status)
@@ -219,43 +284,6 @@ NS_IMETHODIMP nsSIP::SetPresenceInfo(PRInt32 presence_status)
 }
 
 
-/* void changeIdentity (in long account, [retval] out long used); */
-NS_IMETHODIMP nsSIP::ChangeIdentity(PRInt32 account, PRInt32 *used NS_OUTPARAM)
-{
-  if (port==0) return NS_ERROR_NOT_INITIALIZED;
-  
-  switch (account){
-    case 0:
-      linphone_core_set_default_proxy(lc,NULL);
-      *used = 0;
-      break;
-    case 1:
-      const MSList *proxies;
-      LinphoneProxyConfig *cfg;
-      proxies=linphone_core_get_proxy_config_list(lc);
-      cfg=(LinphoneProxyConfig*)ms_list_nth_data(proxies,0);
-      if (cfg==NULL){
-#ifdef DEBUG
-        printf("No such proxy\n");
-#endif
-        linphone_core_set_default_proxy(lc, NULL);
-        *used = 0;
-      } else {
-        linphone_core_set_default_proxy(lc, cfg);
-        *used = 1;
-      }
-      break;
-  }
-  return NS_OK;
-}
-
-
-
-/* void getCurrentIdentity ([retval] out ACString identity); */
-NS_IMETHODIMP nsSIP::GetCurrentIdentity(nsACString & identity NS_OUTPARAM)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
 
 /* void setProxyConfig (in nsIProxyConfig cfg); */
 NS_IMETHODIMP nsSIP::SetProxyConfig(nsIProxyConfig *cfg)

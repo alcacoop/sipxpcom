@@ -599,14 +599,14 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   /* void setPrimaryIdentity (in string username); */
   NS_SCRIPTABLE NS_IMETHOD SetPrimaryIdentity(const char *username) = 0;
 
-  /* void getPrimaryIdentity ([retval] out ACString username); */
-  NS_SCRIPTABLE NS_IMETHOD GetPrimaryIdentity(nsACString & username NS_OUTPARAM) = 0;
+  /* void getCurrentIdentity ([retval] out long current); */
+  NS_SCRIPTABLE NS_IMETHOD GetCurrentIdentity(PRInt32 *current NS_OUTPARAM) = 0;
 
-  /* void changeIdentity (in long account, [retval] out long used); */
-  NS_SCRIPTABLE NS_IMETHOD ChangeIdentity(PRInt32 account, PRInt32 *used NS_OUTPARAM) = 0;
+  /* void getIdentity (in long identity_num, [retval] out ACString username); */
+  NS_SCRIPTABLE NS_IMETHOD GetIdentity(PRInt32 identity_num, nsACString & username NS_OUTPARAM) = 0;
 
-  /* void getCurrentIdentity ([retval] out ACString identity); */
-  NS_SCRIPTABLE NS_IMETHOD GetCurrentIdentity(nsACString & identity NS_OUTPARAM) = 0;
+  /* void setIdentity (in long identity_num); */
+  NS_SCRIPTABLE NS_IMETHOD SetIdentity(PRInt32 identity_num) = 0;
 
   /* void setProxyConfig (in nsIProxyConfig cfg); */
   NS_SCRIPTABLE NS_IMETHOD SetProxyConfig(nsIProxyConfig *cfg) = 0;
@@ -676,9 +676,9 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD SetNATFirewall(const char *fw_addr); \
   NS_SCRIPTABLE NS_IMETHOD SetSTUNFirewall(const char *stun_addr); \
   NS_SCRIPTABLE NS_IMETHOD SetPrimaryIdentity(const char *username); \
-  NS_SCRIPTABLE NS_IMETHOD GetPrimaryIdentity(nsACString & username NS_OUTPARAM); \
-  NS_SCRIPTABLE NS_IMETHOD ChangeIdentity(PRInt32 account, PRInt32 *used NS_OUTPARAM); \
-  NS_SCRIPTABLE NS_IMETHOD GetCurrentIdentity(nsACString & identity NS_OUTPARAM); \
+  NS_SCRIPTABLE NS_IMETHOD GetCurrentIdentity(PRInt32 *current NS_OUTPARAM); \
+  NS_SCRIPTABLE NS_IMETHOD GetIdentity(PRInt32 identity_num, nsACString & username NS_OUTPARAM); \
+  NS_SCRIPTABLE NS_IMETHOD SetIdentity(PRInt32 identity_num); \
   NS_SCRIPTABLE NS_IMETHOD SetProxyConfig(nsIProxyConfig *cfg); \
   NS_SCRIPTABLE NS_IMETHOD GetProxyConfig(nsIProxyConfig **cfg NS_OUTPARAM); \
   NS_SCRIPTABLE NS_IMETHOD RegisterToProxy(void); \
@@ -708,9 +708,9 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD SetNATFirewall(const char *fw_addr) { return _to SetNATFirewall(fw_addr); } \
   NS_SCRIPTABLE NS_IMETHOD SetSTUNFirewall(const char *stun_addr) { return _to SetSTUNFirewall(stun_addr); } \
   NS_SCRIPTABLE NS_IMETHOD SetPrimaryIdentity(const char *username) { return _to SetPrimaryIdentity(username); } \
-  NS_SCRIPTABLE NS_IMETHOD GetPrimaryIdentity(nsACString & username NS_OUTPARAM) { return _to GetPrimaryIdentity(username); } \
-  NS_SCRIPTABLE NS_IMETHOD ChangeIdentity(PRInt32 account, PRInt32 *used NS_OUTPARAM) { return _to ChangeIdentity(account, used); } \
-  NS_SCRIPTABLE NS_IMETHOD GetCurrentIdentity(nsACString & identity NS_OUTPARAM) { return _to GetCurrentIdentity(identity); } \
+  NS_SCRIPTABLE NS_IMETHOD GetCurrentIdentity(PRInt32 *current NS_OUTPARAM) { return _to GetCurrentIdentity(current); } \
+  NS_SCRIPTABLE NS_IMETHOD GetIdentity(PRInt32 identity_num, nsACString & username NS_OUTPARAM) { return _to GetIdentity(identity_num, username); } \
+  NS_SCRIPTABLE NS_IMETHOD SetIdentity(PRInt32 identity_num) { return _to SetIdentity(identity_num); } \
   NS_SCRIPTABLE NS_IMETHOD SetProxyConfig(nsIProxyConfig *cfg) { return _to SetProxyConfig(cfg); } \
   NS_SCRIPTABLE NS_IMETHOD GetProxyConfig(nsIProxyConfig **cfg NS_OUTPARAM) { return _to GetProxyConfig(cfg); } \
   NS_SCRIPTABLE NS_IMETHOD RegisterToProxy(void) { return _to RegisterToProxy(); } \
@@ -740,9 +740,9 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD SetNATFirewall(const char *fw_addr) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetNATFirewall(fw_addr); } \
   NS_SCRIPTABLE NS_IMETHOD SetSTUNFirewall(const char *stun_addr) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetSTUNFirewall(stun_addr); } \
   NS_SCRIPTABLE NS_IMETHOD SetPrimaryIdentity(const char *username) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetPrimaryIdentity(username); } \
-  NS_SCRIPTABLE NS_IMETHOD GetPrimaryIdentity(nsACString & username NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetPrimaryIdentity(username); } \
-  NS_SCRIPTABLE NS_IMETHOD ChangeIdentity(PRInt32 account, PRInt32 *used NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->ChangeIdentity(account, used); } \
-  NS_SCRIPTABLE NS_IMETHOD GetCurrentIdentity(nsACString & identity NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetCurrentIdentity(identity); } \
+  NS_SCRIPTABLE NS_IMETHOD GetCurrentIdentity(PRInt32 *current NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetCurrentIdentity(current); } \
+  NS_SCRIPTABLE NS_IMETHOD GetIdentity(PRInt32 identity_num, nsACString & username NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetIdentity(identity_num, username); } \
+  NS_SCRIPTABLE NS_IMETHOD SetIdentity(PRInt32 identity_num) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetIdentity(identity_num); } \
   NS_SCRIPTABLE NS_IMETHOD SetProxyConfig(nsIProxyConfig *cfg) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetProxyConfig(cfg); } \
   NS_SCRIPTABLE NS_IMETHOD GetProxyConfig(nsIProxyConfig **cfg NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetProxyConfig(cfg); } \
   NS_SCRIPTABLE NS_IMETHOD RegisterToProxy(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->RegisterToProxy(); } \
@@ -842,20 +842,20 @@ NS_IMETHODIMP nsSIP::SetPrimaryIdentity(const char *username)
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-/* void getPrimaryIdentity ([retval] out ACString username); */
-NS_IMETHODIMP nsSIP::GetPrimaryIdentity(nsACString & username NS_OUTPARAM)
+/* void getCurrentIdentity ([retval] out long current); */
+NS_IMETHODIMP nsSIP::GetCurrentIdentity(PRInt32 *current NS_OUTPARAM)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-/* void changeIdentity (in long account, [retval] out long used); */
-NS_IMETHODIMP nsSIP::ChangeIdentity(PRInt32 account, PRInt32 *used NS_OUTPARAM)
+/* void getIdentity (in long identity_num, [retval] out ACString username); */
+NS_IMETHODIMP nsSIP::GetIdentity(PRInt32 identity_num, nsACString & username NS_OUTPARAM)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-/* void getCurrentIdentity ([retval] out ACString identity); */
-NS_IMETHODIMP nsSIP::GetCurrentIdentity(nsACString & identity NS_OUTPARAM)
+/* void setIdentity (in long identity_num); */
+NS_IMETHODIMP nsSIP::SetIdentity(PRInt32 identity_num)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
