@@ -326,7 +326,7 @@ NS_IMETHODIMP nsSIP::GetProxyConfig(nsIProxyConfig **cfg NS_OUTPARAM)
   
   LinphoneProxyConfig *proxy = NULL;
   linphone_core_get_default_proxy(lc, &proxy);
-  if (!proxy) return NS_OK;
+  if (!proxy) return NS_ERROR_FAILURE;
   nsCOMPtr<nsIProxyConfig> _cfg = do_CreateInstance(PROXYCFG_CONTRACTID);
   NS_ADDREF(_cfg);
 
@@ -357,6 +357,7 @@ NS_IMETHODIMP nsSIP::RegisterToProxy()
   
   LinphoneProxyConfig *proxy;
   linphone_core_get_default_proxy(lc, &proxy);
+  if (!proxy) return NS_ERROR_FAILURE;
   linphone_proxy_config_edit(proxy);
   linphone_proxy_config_enable_register(proxy, true);
   linphone_proxy_config_done(proxy);
@@ -371,6 +372,7 @@ NS_IMETHODIMP nsSIP::UnregisterToProxy()
   
   LinphoneProxyConfig *proxy;
   linphone_core_get_default_proxy(lc, &proxy);
+  if (!proxy) return NS_ERROR_FAILURE;
   linphone_proxy_config_edit(proxy);
   linphone_proxy_config_enable_register(proxy, false);
   linphone_proxy_config_done(proxy);
