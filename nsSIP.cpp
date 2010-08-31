@@ -445,12 +445,19 @@ NS_IMETHODIMP nsSIP::IsValidSipURI(const char *uri, PRBool *_retval NS_OUTPARAM)
 /* void setringtone (in string file); */
 NS_IMETHODIMP nsSIP::SetRingTone(const char *file)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
   if (port==0) return NS_ERROR_NOT_INITIALIZED;
-  
-  //DO SOMETHING
+  linphone_core_set_ring(lc, file);
   return NS_OK;
 }
+
+/* void setRingbackTone (in string file); */
+NS_IMETHODIMP nsSIP::SetRingbackTone(const char *file)
+{
+  if (port==0) return NS_ERROR_NOT_INITIALIZED;
+  linphone_core_set_ringback(lc, file);
+  return NS_OK;
+}
+
 
 /* void setPlayLevel (in short level); */
 NS_IMETHODIMP nsSIP::SetPlayLevel(PRInt16 level)

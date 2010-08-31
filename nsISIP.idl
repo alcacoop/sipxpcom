@@ -78,6 +78,7 @@ interface nsISIP : nsISupports
   boolean isValidSipURI(in string uri);
 
   void setRingTone(in string file);
+  void setRingbackTone(in string file);
   void setPlayLevel(in short level);
 
   void getCallLogs([retval] out nsIList retv);
