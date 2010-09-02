@@ -488,6 +488,12 @@ NS_IMETHODIMP nsSIP::SetRingbackTone(const char *file)
 }
 
 
+/* void getPlayLevel ([retval] out short level); */
+NS_IMETHODIMP nsSIP::GetPlayLevel(PRInt16 *level NS_OUTPARAM)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
 /* void setPlayLevel (in short level); */
 NS_IMETHODIMP nsSIP::SetPlayLevel(PRInt16 level)
 {
@@ -501,6 +507,18 @@ NS_IMETHODIMP nsSIP::SetPlayLevel(PRInt16 level)
   if (sndcard) ms_snd_card_set_level(sndcard,MS_SND_CARD_MASTER,level);
 
   return NS_OK;
+}
+
+/* void getMicLevel ([retval] out short level); */
+NS_IMETHODIMP nsSIP::GetMicLevel(PRInt16 *level NS_OUTPARAM)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void setMicLevel (in short level); */
+NS_IMETHODIMP nsSIP::SetMicLevel(PRInt16 level)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 //NS_IMETHODIMP nsSIP::GetCallLogs()

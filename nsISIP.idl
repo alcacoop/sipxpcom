@@ -79,7 +79,10 @@ interface nsISIP : nsISupports
 
   void setRingTone(in string file);
   void setRingbackTone(in string file);
+  void getPlayLevel([retval] out short level);
   void setPlayLevel(in short level);
+  void getMicLevel([retval] out short level);
+  void setMicLevel(in short level);
 
   void getCallLogs([retval] out nsIList retv);
   void clearCallLogs();
