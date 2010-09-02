@@ -620,6 +620,9 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   /* void unregisterToProxy (); */
   NS_SCRIPTABLE NS_IMETHOD UnregisterToProxy(void) = 0;
 
+  /* void addFriend (in ACString name, in ACString addr); */
+  NS_SCRIPTABLE NS_IMETHOD AddFriend(const nsACString & name, const nsACString & addr) = 0;
+
   /* void setPresenceInfo (in long presence_status); */
   NS_SCRIPTABLE NS_IMETHOD SetPresenceInfo(PRInt32 presence_status) = 0;
 
@@ -692,6 +695,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD GetProxyConfig(nsIProxyConfig **cfg NS_OUTPARAM); \
   NS_SCRIPTABLE NS_IMETHOD RegisterToProxy(void); \
   NS_SCRIPTABLE NS_IMETHOD UnregisterToProxy(void); \
+  NS_SCRIPTABLE NS_IMETHOD AddFriend(const nsACString & name, const nsACString & addr); \
   NS_SCRIPTABLE NS_IMETHOD SetPresenceInfo(PRInt32 presence_status); \
   NS_SCRIPTABLE NS_IMETHOD Call(const char *URI); \
   NS_SCRIPTABLE NS_IMETHOD Hangup(void); \
@@ -727,6 +731,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD GetProxyConfig(nsIProxyConfig **cfg NS_OUTPARAM) { return _to GetProxyConfig(cfg); } \
   NS_SCRIPTABLE NS_IMETHOD RegisterToProxy(void) { return _to RegisterToProxy(); } \
   NS_SCRIPTABLE NS_IMETHOD UnregisterToProxy(void) { return _to UnregisterToProxy(); } \
+  NS_SCRIPTABLE NS_IMETHOD AddFriend(const nsACString & name, const nsACString & addr) { return _to AddFriend(name, addr); } \
   NS_SCRIPTABLE NS_IMETHOD SetPresenceInfo(PRInt32 presence_status) { return _to SetPresenceInfo(presence_status); } \
   NS_SCRIPTABLE NS_IMETHOD Call(const char *URI) { return _to Call(URI); } \
   NS_SCRIPTABLE NS_IMETHOD Hangup(void) { return _to Hangup(); } \
@@ -762,6 +767,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD GetProxyConfig(nsIProxyConfig **cfg NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetProxyConfig(cfg); } \
   NS_SCRIPTABLE NS_IMETHOD RegisterToProxy(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->RegisterToProxy(); } \
   NS_SCRIPTABLE NS_IMETHOD UnregisterToProxy(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->UnregisterToProxy(); } \
+  NS_SCRIPTABLE NS_IMETHOD AddFriend(const nsACString & name, const nsACString & addr) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddFriend(name, addr); } \
   NS_SCRIPTABLE NS_IMETHOD SetPresenceInfo(PRInt32 presence_status) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetPresenceInfo(presence_status); } \
   NS_SCRIPTABLE NS_IMETHOD Call(const char *URI) { return !_to ? NS_ERROR_NULL_POINTER : _to->Call(URI); } \
   NS_SCRIPTABLE NS_IMETHOD Hangup(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Hangup(); } \
@@ -898,6 +904,12 @@ NS_IMETHODIMP nsSIP::RegisterToProxy()
 
 /* void unregisterToProxy (); */
 NS_IMETHODIMP nsSIP::UnregisterToProxy()
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void addFriend (in ACString name, in ACString addr); */
+NS_IMETHODIMP nsSIP::AddFriend(const nsACString & name, const nsACString & addr)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }

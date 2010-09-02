@@ -69,6 +69,8 @@ interface nsISIP : nsISupports
   void getProxyConfig([retval] out nsIProxyConfig cfg);
   void registerToProxy();
   void unregisterToProxy();
+
+  void addFriend(in ACString name, in ACString addr);
   void setPresenceInfo(in long presence_status);
 
   void call(in string URI);

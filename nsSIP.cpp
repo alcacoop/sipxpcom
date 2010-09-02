@@ -40,10 +40,7 @@ nsSIP::nsSIP() : mObservers(nsnull){
 
   cb_table.show =(ShowInterfaceCb)stub;
   cb_table.bye_recv = (ByeReceivedCb) stub;
-  cb_table.notify_recv = (NotifyReceivedCb)stub;
-  cb_table.new_unknown_subscriber = (NewUnknownSubscriberCb)stub;
   cb_table.auth_info_requested = (AuthInfoRequested) stub;
-  cb_table.display_status = (DisplayStatusCb) stub;
   cb_table.display_message = (DisplayMessageCb)stub;
   cb_table.display_url = (DisplayUrlCb) stub;
   cb_table.call_log_updated = (CallLogUpdated) stub;
@@ -51,9 +48,13 @@ nsSIP::nsSIP() : mObservers(nsnull){
   cb_table.refer_received = (ReferReceived)stub;
   cb_table.buddy_info_updated = (BuddyInfoUpdated) stub;
 
+  cb_table.new_unknown_subscriber = linphonec_new_unknown_subscriber;
+  cb_table.display_status = linphonec_display_status;
   cb_table.general_state = linphonec_general_state;
   cb_table.inv_recv = linphonec_call_received;
   cb_table.dtmf_received = linphonec_dtmf_received;
+  cb_table.notify_recv = linphonec_notify_received;
+  cb_table.notify_presence_recv = linphonec_notify_presence_received;
 }
 
 nsSIP::~nsSIP() {
@@ -256,6 +257,24 @@ NS_IMETHODIMP nsSIP::SetIdentity(PRInt32 identity_num)
 }
 
 
+/* void addFriend (in ACString name, in ACString addr); */
+NS_IMETHODIMP nsSIP::AddFriend(const nsACString & name, const nsACString & addr)
+{
+	LinphoneFriend *newFriend;
+
+	newFriend = linphone_friend_new();
+  linphone_friend_set_sip_addr(newFriend, ToNewCString(addr));
+  linphone_friend_set_name(newFriend, ToNewCString(name));
+  linphone_friend_done(newFriend);
+  if (!newFriend)
+    return NS_ERROR_FAILURE;
+  //linphone_friend_set_sip_addr(newFriend, ToNewCString(addr));
+  //linphone_friend_set_name(newFriend, ToNewCString(name));
+
+  linphone_friend_send_subscribe(newFriend, true);
+	linphone_core_add_friend(lc, newFriend);
+  return NS_OK;
+}
 
 /* void setPresenceInfo (); */
 NS_IMETHODIMP nsSIP::SetPresenceInfo(PRInt32 presence_status)
@@ -265,18 +284,17 @@ NS_IMETHODIMP nsSIP::SetPresenceInfo(PRInt32 presence_status)
   LinphoneOnlineStatus status;
   switch (presence_status){
     case 0:
-      status = LINPHONE_STATUS_ONLINE;
+      status = LINPHONE_STATUS_OFFLINE;
       break;
     case 1:
-      status = LINPHONE_STATUS_OFFLINE;
+      status = LINPHONE_STATUS_ONLINE;
       break;
     case 2:
       status = LINPHONE_STATUS_BUSY;
       break;
   }
 
-  linphone_core_set_presence_info(lc, 1, "account", status);
-  linphone_core_notify_all_friends(lc, status);
+  linphone_core_set_presence_info(lc, 0, NULL, status);
 
   return NS_OK;
 }
@@ -319,6 +337,7 @@ NS_IMETHODIMP nsSIP::SetProxyConfig(nsIProxyConfig *cfg)
   linphone_proxy_config_set_route(proxy, ToNewCString(sip_route));
   linphone_proxy_config_enable_register(proxy, false);
   linphone_proxy_config_expires(proxy, duration);
+  linphone_proxy_config_enable_publish(proxy, true);
 
   if (!exist) {
     linphone_core_add_proxy_config(lc, proxy);
@@ -501,11 +520,12 @@ NS_IMETHODIMP nsSIP::SetPlayLevel(PRInt16 level)
   if (level>100) level = 100;
   linphone_core_set_play_level(lc, level);
 
+  /*
   //HACK!
   MSSndCard *sndcard;
   sndcard=lc->sound_conf.play_sndcard;
   if (sndcard) ms_snd_card_set_level(sndcard,MS_SND_CARD_MASTER,level);
-
+  */
   return NS_OK;
 }
 
