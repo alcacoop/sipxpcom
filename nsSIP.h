@@ -52,15 +52,33 @@ private:
 
 /* Linphone Callbacks*/
 static void linphonec_display_something (LinphoneCore * lc, const char *something){};
-static void linphonec_display_status (LinphoneCore * lc, const char *something){};
 static void linphonec_display_warning (LinphoneCore * lc, const char *something){};
 static void linphonec_display_url (LinphoneCore * lc, const char *something, const char *url){};
 static void linphonec_prompt_for_auth(LinphoneCore *lc, const char *realm, const char *username){};
-static void linphonec_notify_received(LinphoneCore *lc,const char *from,const char *msg){};
-static void linphonec_notify_presence_received(LinphoneCore *lc,LinphoneFriend *fid){};
-static void linphonec_new_unknown_subscriber(LinphoneCore *lc, LinphoneFriend *lf, const char *url){};
 static void linphonec_bye_received(LinphoneCore *lc, const char *from){};
 
+
+static void linphonec_new_unknown_subscriber(LinphoneCore *lc, LinphoneFriend *lf, const char *url){
+  printf("NEW: %s\n", url);
+};
+
+static void linphonec_notify_presence_received(LinphoneCore *lc,LinphoneFriend *fid){
+  char* addr = linphone_address_as_string(linphone_friend_get_address(fid));
+  printf("PRESENCE: %s - %d\n", addr, linphone_friend_get_status(fid));
+  ms_free(addr);
+};
+
+static void linphonec_display_status (LinphoneCore * lc, const char *something){
+#ifdef DEBUG
+  printf("STATUS: %s\n", something);
+#endif
+  nsSIP* app = (nsSIP*)linphone_core_get_user_data(lc);
+  app->CallObservers("STATUS", something);
+};
+
+static void linphonec_notify_received(LinphoneCore *lc,const char *from,const char *msg){
+  printf("NOTIFY: %s - %s\n", from, msg);
+};
 
 static void linphonec_call_received(LinphoneCore *lc, const char *from){
   nsSIP* app = (nsSIP*)linphone_core_get_user_data(lc);
@@ -172,4 +190,4 @@ static void linphonec_general_state (LinphoneCore * lc, LinphoneGeneralState *gs
   printf("\n");
 #endif
 };
-static void stub(){};
+static void stub(){ printf("STUB\n"); };
