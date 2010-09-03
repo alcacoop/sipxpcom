@@ -104,13 +104,9 @@ NS_IMETHODIMP nsSIP::Destroy() {
   lc = NULL;
 
 
-#ifdef DEBUG
-  printf("THREAD SHUTDOWN..");
-#endif
+  debug("THREAD SHUTDOWN..");
   mThread->Shutdown();
-#ifdef DEBUG
-  printf("..OK\n");
-#endif
+  debug("..OK");
 
 
   return NS_OK;
@@ -142,9 +138,7 @@ NS_IMETHODIMP nsSIP::SetNOFirewall()
   if (port==0) return NS_ERROR_NOT_INITIALIZED;
   
   linphone_core_set_firewall_policy(lc,LINPHONE_POLICY_NO_FIREWALL);
-#ifdef DEBUG
-  printf("NO FIREWALL: %d\n", linphone_core_get_firewall_policy(lc));
-#endif
+  debug("NO FIREWALL: %d", linphone_core_get_firewall_policy(lc));
   return NS_OK;
 }
 
@@ -155,9 +149,7 @@ NS_IMETHODIMP nsSIP::SetNATFirewall(const char *fw_addr)
   
   linphone_core_set_nat_address(lc, fw_addr);
   linphone_core_set_firewall_policy(lc,LINPHONE_POLICY_USE_NAT_ADDRESS);
-#ifdef DEBUG
-  printf("NAT ADDRESS: %s - %d\n", linphone_core_get_nat_address(lc), linphone_core_get_firewall_policy(lc));
-#endif
+  debug("NAT ADDRESS: %s - %d", linphone_core_get_nat_address(lc), linphone_core_get_firewall_policy(lc));
   
   return NS_OK;
 }
@@ -169,9 +161,7 @@ NS_IMETHODIMP nsSIP::SetSTUNFirewall(const char *stun_addr)
   
   linphone_core_set_stun_server(lc, stun_addr);
   linphone_core_set_firewall_policy(lc, LINPHONE_POLICY_USE_STUN);
-#ifdef DEBUG
-  printf("STUN SERVER: %s - %d\n", linphone_core_get_stun_server(lc), linphone_core_get_firewall_policy(lc));
-#endif
+  debug("STUN SERVER: %s - %d", linphone_core_get_stun_server(lc), linphone_core_get_firewall_policy(lc));
 
   return NS_OK;
 }
@@ -212,9 +202,7 @@ NS_IMETHODIMP nsSIP::GetIdentity(PRInt32 identity_num, nsACString & username NS_
     LinphoneProxyConfig *cfg;
     proxies=linphone_core_get_proxy_config_list(lc);
     if (proxies==NULL){
-#ifdef DEBUG
-      printf("No such proxy\n");
-#endif
+      debug("No such proxy");
       return NS_ERROR_FAILURE;
     } else {
       cfg=(LinphoneProxyConfig*)ms_list_nth_data(proxies, identity_num-1);
@@ -243,9 +231,7 @@ NS_IMETHODIMP nsSIP::SetIdentity(PRInt32 identity_num)
       LinphoneProxyConfig *cfg;
       proxies=linphone_core_get_proxy_config_list(lc);
       if (proxies==NULL){
-#ifdef DEBUG
-        printf("No such proxy\n");
-#endif
+        debug("No such proxy");
         return NS_ERROR_FAILURE;
       } else {
         cfg=(LinphoneProxyConfig*)ms_list_nth_data(proxies,0);
@@ -350,16 +336,14 @@ NS_IMETHODIMP nsSIP::SetProxyConfig(nsIProxyConfig *cfg)
   LinphoneAuthInfo *auth = linphone_auth_info_new(ToNewCString(userid), ToNewCString(userid), ToNewCString(password), NULL, NULL);
   linphone_core_add_auth_info(lc, auth);
 
-#ifdef DEBUG
-  printf("\nProxy configuration:\n");
-  printf("  Object address: %p\n", &proxy);
-  printf("  SIP Proxy: %s\n", ToNewCString(sip_proxy));
-  printf("  SIP Identity: %s\n", ToNewCString(sip_identity));
-  printf("  SIP Route: %s\n", ToNewCString(sip_route));
-  printf("  UserId: %s\n", ToNewCString(userid));
-  printf("  Password: %s\n", ToNewCString(password));
-  printf("  Reg. duration: %d\n\n", duration);
-#endif
+  debug("Proxy configuration");
+  debug("  Object address: %p", &proxy);
+  debug("  SIP Proxy: %s", ToNewCString(sip_proxy));
+  debug("  SIP Identity: %s", ToNewCString(sip_identity));
+  debug("  SIP Route: %s", ToNewCString(sip_route));
+  debug("  UserId: %s", ToNewCString(userid));
+  debug("  Password: %s", ToNewCString(password));
+  debug("  Reg. duration: %d", duration);
 
   return NS_OK;
 }
@@ -610,18 +594,14 @@ NS_IMETHODIMP nsSIP::AddObserver(nsSipStateObserver *cbk)
   for (i = 0; i < count; ++i) {
     (nsIArray*)mObservers->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&pCallback);
     if (pCallback == cbk){
-#ifdef DEBUG
-      printf("OBSERVER ALREADY REGISTERED\n");
-#endif
+      debug("OBSERVER ALREADY REGISTERED");
       return NS_OK;
     }
   }
 
   NS_IF_ADDREF(cbk);
   mObservers->AppendElement(cbk, PR_FALSE);
-#ifdef DEBUG
-  printf("ADDED OBSERVER AT ADDR: %p \n", cbk);
-#endif
+  debug("ADDED OBSERVER AT ADDR: %p", cbk);
   return NS_OK;
 }
 
@@ -632,18 +612,14 @@ NS_IMETHODIMP nsSIP::RemoveObserver(nsSipStateObserver *cbk)
   NS_ENSURE_ARG_POINTER(cbk);
 
   if (!mObservers){
-#ifdef DEBUG
-    printf("NO SUCH OBSERVER\n");
-#endif
+    debug("NO SUCH OBSERVER");
     return NS_OK;
   }
 
   PRUint32 count = 0;
   mObservers->GetLength(&count);
   if (count <= 0){
-#ifdef DEBUG
-    printf("NO SUCH OBSERVER\n");
-#endif
+    debug("NO SUCH OBSERVER");
     return NS_OK;
   }
 
@@ -654,17 +630,13 @@ NS_IMETHODIMP nsSIP::RemoveObserver(nsSipStateObserver *cbk)
     (nsIArray*)mObservers->QueryElementAt(i, NS_GET_IID(nsSipStateObserver), (void**)&pCallback);
     if (pCallback == cbk){
       mObservers->RemoveElementAt(i);
-#ifdef DEBUG
-      printf("REMOVED OBSERVER AT ADDR: %p\n", (nsSipStateObserver*)pCallback);
-#endif
+      debug("REMOVED OBSERVER AT ADDR: %p", (nsSipStateObserver*)pCallback);
       NS_RELEASE(pCallback);
       return NS_OK;
     }
   }
 
-#ifdef DEBUG
-  printf("NO SUCH OBSERVER\n");
-#endif
+  debug("NO SUCH OBSERVER");
   return NS_OK;
 }
 
@@ -683,18 +655,12 @@ void nsSIP::FlushObservers(){
   for (i = 0; i < count; i++) {
     (nsIArray*)mObservers->QueryElementAt(0, NS_GET_IID(nsSipStateObserver), (void**)&pCallback);
     mObservers->RemoveElementAt(0);
-#ifdef DEBUG
-    printf("REMOVED OBSERVER AT ADDR: %p ", (nsSipStateObserver*)pCallback);
-#endif
+    debug("REMOVED OBSERVER AT ADDR: %p", (nsSipStateObserver*)pCallback);
     NS_RELEASE(pCallback);
-#ifdef DEBUG
-    printf("(MEMORY RELEASED)\n");
-#endif
+    debug("(MEMORY RELEASED)");
   }
 
-#ifdef DEBUG
-  printf("FLUSHED ALL %d OBSERVERS\n", count);
-#endif
+  debug("FLUSHED ALL %d OBSERVERS", count);
   NS_RELEASE(mObservers);
   return;
 }

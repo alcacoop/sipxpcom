@@ -27,6 +27,18 @@
 
 
 
+static void debug( const char* format, ... ) {
+#ifdef DEBUG
+  va_list args;
+  printf( "DEBUG - " );
+  va_start( args, format );
+  vprintf( format, args );
+  va_end( args );
+  printf( "\n" );
+#endif
+}
+
+
 
 class nsSIP : public nsISIP
 {
@@ -59,25 +71,23 @@ static void linphonec_bye_received(LinphoneCore *lc, const char *from){};
 
 
 static void linphonec_new_unknown_subscriber(LinphoneCore *lc, LinphoneFriend *lf, const char *url){
-  printf("NEW: %s\n", url);
+  debug("NEW: %s", url);
 };
 
 static void linphonec_notify_presence_received(LinphoneCore *lc,LinphoneFriend *fid){
   char* addr = linphone_address_as_string(linphone_friend_get_address(fid));
-  printf("PRESENCE: %s - %d\n", addr, linphone_friend_get_status(fid));
+  debug("PRESENCE: %s - %d", addr, linphone_friend_get_status(fid));
   ms_free(addr);
 };
 
 static void linphonec_display_status (LinphoneCore * lc, const char *something){
-#ifdef DEBUG
-  printf("STATUS: %s\n", something);
-#endif
+  debug("STATUS: %s", something);
   nsSIP* app = (nsSIP*)linphone_core_get_user_data(lc);
   app->CallObservers("STATUS", something);
 };
 
 static void linphonec_notify_received(LinphoneCore *lc,const char *from,const char *msg){
-  printf("NOTIFY: %s - %s\n", from, msg);
+  debug("NOTIFY: %s - %s", from, msg);
 };
 
 static void linphonec_call_received(LinphoneCore *lc, const char *from){
@@ -98,96 +108,64 @@ static void linphonec_general_state (LinphoneCore * lc, LinphoneGeneralState *gs
   nsSIP* app = (nsSIP*)linphone_core_get_user_data(lc);
   switch(gstate->new_state) {
     case GSTATE_POWER_OFF:
-#ifdef DEBUG
-      printf("GSTATE_POWER_OFF");
-#endif
+      debug("GSTATE_POWER_OFF");
       break;
     case GSTATE_POWER_STARTUP:
-#ifdef DEBUG
-      printf("GSTATE_POWER_STARTUP");
-#endif
+      debug("GSTATE_POWER_STARTUP");
       break;
     case GSTATE_POWER_ON:
-#ifdef DEBUG
-      printf("GSTATE_POWER_ON");
-#endif
+      debug("GSTATE_POWER_ON");
       break;
     case GSTATE_POWER_SHUTDOWN:
-#ifdef DEBUG
-      printf("GSTATE_POWER_SHUTDOWN");
-#endif
+      debug("GSTATE_POWER_SHUTDOWN");
       break;
     case GSTATE_REG_NONE:
-#ifdef DEBUG
-      printf("GSTATE_REG_NONE");
-#endif
+      debug("GSTATE_REG_NONE");
       break;
     case GSTATE_REG_OK:
-#ifdef DEBUG
-      printf("GSTATE_REG_OK");
-#endif
+      debug("GSTATE_REG_OK");
       break;
     case GSTATE_REG_FAILED:
-#ifdef DEBUG
-      printf("GSTATE_REG_FAILED");
-#endif
+      debug("GSTATE_REG_FAILED");
       break;
     case GSTATE_CALL_IDLE:
-#ifdef DEBUG
-      printf("GSTATE_CALL_IDLE");
-#endif
+      debug("GSTATE_CALL_IDLE");
       app->call_in_progress = 0;
       app->CallObservers("UPDATELOG", NULL);
       break;
     case GSTATE_CALL_OUT_INVITE:
-#ifdef DEBUG
-      printf("GSTATE_CALL_OUT_INVITE");
-#endif
+      debug("GSTATE_CALL_OUT_INVITE");
       app->call_in_progress = 1;
       app->CallObservers("CALLING", NULL);
       break;
     case GSTATE_CALL_OUT_CONNECTED:
-#ifdef DEBUG
-      printf("GSTATE_CALL_OUT_CONNECTED");
-#endif
+      debug("GSTATE_CALL_OUT_CONNECTED");
       app->CallObservers("CONNECTED", NULL);
       break;
     case GSTATE_CALL_IN_INVITE:
-#ifdef DEBUG
-      printf("GSTATE_CALL_IN_INVITE");
-#endif
+      debug("GSTATE_CALL_IN_INVITE");
       break;
     case GSTATE_CALL_IN_CONNECTED:
-#ifdef DEBUG
-      printf("GSTATE_CALL_IN_CONNECTED");
-#endif
+      debug("GSTATE_CALL_IN_CONNECTED");
       app->CallObservers("CONNECTED", NULL);
       break;
     case GSTATE_CALL_END:
-#ifdef DEBUG
-      printf("GSTATE_CALL_END");
-#endif
+      debug("GSTATE_CALL_END");
       app->CallObservers("HANGUP", NULL);
       break;
     case GSTATE_CALL_ERROR:
-#ifdef DEBUG
-      printf("GSTATE_CALL_ERROR");
-#endif
+      debug("GSTATE_CALL_ERROR");
       if (strcmp(gstate->message, "User is busy.")==0)
         app->CallObservers("BUSY", NULL);
       else 
         app->CallObservers("INVALIDURI", NULL);
       break;
     default:
-#ifdef DEBUG
-      printf("GSTATE_UNKNOWN_%d",gstate->new_state);
-#endif
+      debug("GSTATE_UNKNOWN_%d",gstate->new_state);
       if (gstate->new_state == 28)
         app->CallObservers("RINGING", NULL);
   }
-#ifdef DEBUG
-  if (gstate->message) printf(" %s", gstate->message);
-  printf("\n");
-#endif
+  if (gstate->message) debug(" %s", gstate->message);
 };
-static void stub(){ printf("STUB\n"); };
+
+static void stub(){ debug("STUB"); };
