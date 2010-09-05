@@ -43,11 +43,11 @@ nsSIP::nsSIP() : mObservers(nsnull){
   cb_table.auth_info_requested = (AuthInfoRequested) stub;
   cb_table.display_message = (DisplayMessageCb)stub;
   cb_table.display_url = (DisplayUrlCb) stub;
-  cb_table.call_log_updated = (CallLogUpdated) stub;
   cb_table.text_received = (TextMessageReceived)stub;
   cb_table.refer_received = (ReferReceived)stub;
   cb_table.buddy_info_updated = (BuddyInfoUpdated) stub;
 
+  cb_table.call_log_updated = linphonec_calllog_update;
   cb_table.new_unknown_subscriber = linphonec_new_unknown_subscriber;
   cb_table.display_status = linphonec_display_status;
   cb_table.general_state = linphonec_general_state;

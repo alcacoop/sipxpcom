@@ -63,12 +63,11 @@ private:
 
 
 /* Linphone Callbacks*/
-static void linphonec_display_something (LinphoneCore * lc, const char *something){};
-static void linphonec_display_warning (LinphoneCore * lc, const char *something){};
-static void linphonec_display_url (LinphoneCore * lc, const char *something, const char *url){};
-static void linphonec_prompt_for_auth(LinphoneCore *lc, const char *realm, const char *username){};
-static void linphonec_bye_received(LinphoneCore *lc, const char *from){};
-
+static void linphonec_calllog_update (LinphoneCore *lc, struct _LinphoneCallLog *newcl){
+  nsSIP* app = (nsSIP*)linphone_core_get_user_data(lc);
+  app->CallObservers("UPDATELOG", NULL);
+  debug("UPDATELOG");
+};
 
 static void linphonec_new_unknown_subscriber(LinphoneCore *lc, LinphoneFriend *lf, const char *url){
   debug("NEW: %s", url);
@@ -131,7 +130,6 @@ static void linphonec_general_state (LinphoneCore * lc, LinphoneGeneralState *gs
     case GSTATE_CALL_IDLE:
       debug("GSTATE_CALL_IDLE");
       app->call_in_progress = 0;
-      app->CallObservers("UPDATELOG", NULL);
       break;
     case GSTATE_CALL_OUT_INVITE:
       debug("GSTATE_CALL_OUT_INVITE");
