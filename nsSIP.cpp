@@ -494,7 +494,10 @@ NS_IMETHODIMP nsSIP::SetRingbackTone(const char *file)
 /* void getPlayLevel ([retval] out short level); */
 NS_IMETHODIMP nsSIP::GetPlayLevel(PRInt16 *level NS_OUTPARAM)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+  MSSndCard *sndcard;
+  sndcard=lc->sound_conf.play_sndcard;
+  if (sndcard) *level = ms_snd_card_get_level(sndcard, MS_SND_CARD_MASTER);
+  return NS_OK;
 }
 
 /* void setPlayLevel (in short level); */
@@ -502,27 +505,35 @@ NS_IMETHODIMP nsSIP::SetPlayLevel(PRInt16 level)
 {
   if (level<0) level = 0;
   if (level>100) level = 100;
-  linphone_core_set_play_level(lc, level);
 
-  /*
   //HACK!
   MSSndCard *sndcard;
   sndcard=lc->sound_conf.play_sndcard;
   if (sndcard) ms_snd_card_set_level(sndcard,MS_SND_CARD_MASTER,level);
-  */
+  linphone_core_set_play_level(lc, level);
+  
   return NS_OK;
 }
 
 /* void getMicLevel ([retval] out short level); */
 NS_IMETHODIMP nsSIP::GetMicLevel(PRInt16 *level NS_OUTPARAM)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+
+  MSSndCard *sndcard;
+  sndcard=lc->sound_conf.capt_sndcard;
+  *level = sndcard->desc->get_level(sndcard, MS_SND_CARD_CAPTURE);
+
+  return NS_OK;
 }
 
 /* void setMicLevel (in short level); */
 NS_IMETHODIMP nsSIP::SetMicLevel(PRInt16 level)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+  MSSndCard *sndcard;
+  sndcard=lc->sound_conf.capt_sndcard;
+  if (sndcard) ms_snd_card_set_level(sndcard, MS_SND_CARD_CAPTURE, level);
+  linphone_core_set_rec_level(lc, level);
+  return NS_OK;
 }
 
 //NS_IMETHODIMP nsSIP::GetCallLogs()
