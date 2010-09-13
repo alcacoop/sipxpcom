@@ -16,7 +16,7 @@ public:
   NS_IMETHOD Run(){
     while (true){
       if (!*port) return NS_OK;
-      PR_Sleep(PR_MillisecondsToInterval(100));
+      PR_Sleep(PR_MillisecondsToInterval(250));
       linphone_core_iterate(lc);
     }
   } 
