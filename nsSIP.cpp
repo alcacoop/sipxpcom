@@ -77,6 +77,7 @@ NS_IMETHODIMP nsSIP::Init(PRInt32 _port)
   linphone_core_set_sip_port(lc, port);
   linphone_core_set_inc_timeout(lc, 20);
   linphone_core_enable_echo_cancellation(lc, false);
+  linphone_core_set_use_rfc2833_for_dtmf(lc, true);
 
   NS_NewThread(getter_AddRefs(mThread), new nsRunner(lc, &port));
 
@@ -454,6 +455,7 @@ NS_IMETHODIMP nsSIP::SendDtmf(char tone)
   if (port==0) return NS_ERROR_NOT_INITIALIZED;
   if (call_in_progress)
     linphone_core_send_dtmf(lc, tone);
+  
   return NS_OK;
 }
 
@@ -535,6 +537,71 @@ NS_IMETHODIMP nsSIP::SetMicLevel(PRInt16 level)
   linphone_core_set_rec_level(lc, level);
   return NS_OK;
 }
+
+
+/* void getCodec (in short index, [retval] out ACString codec); */
+NS_IMETHODIMP nsSIP::GetCodec(PRInt16 index, nsACString & codec NS_OUTPARAM)
+{
+	PayloadType *pt;
+  codecs_config_t *config = &lc->codecs_conf;
+	int _index = 0;
+	MSList *node = config->audio_codecs;
+
+	for(;node!=NULL;node=ms_list_next(node)){
+		pt=(PayloadType*)(node->data);
+    if (index == _index) { 
+      char* tmp = (char *)calloc(sizeof(char*), 200);
+      sprintf(tmp, "%s (%d) %s", pt->mime_type, pt->clock_rate, linphone_core_payload_type_enabled(lc,pt) ? "enabled" : "disabled");
+      codec = Substring(tmp, (PRUint32)strlen(tmp));
+      free(tmp);
+    }
+
+		_index++;
+	}
+  return NS_OK;
+}
+
+
+/* void enableCodec (in short codec); */
+NS_IMETHODIMP nsSIP::EnableCodec(PRInt16 codec)
+{
+	PayloadType *pt;
+  codecs_config_t *config=&lc->codecs_conf;
+	int index=0;
+	MSList *node=config->audio_codecs;
+
+  for(;node!=NULL;node=ms_list_next(node)){
+    if (index == codec || codec == -1) {
+      pt=(PayloadType*)(node->data);
+      pt->flags|=PAYLOAD_TYPE_ENABLED;
+      debug("%2d: %s (%d) %s", index, pt->mime_type, pt->clock_rate, "enabled");
+    }
+		index++;
+	}
+    
+  return NS_OK;
+}
+
+/* void disableCodec (in short codec); */
+NS_IMETHODIMP nsSIP::DisableCodec(PRInt16 codec)
+{
+	PayloadType *pt;
+  codecs_config_t *config=&lc->codecs_conf;
+	int index=0;
+	MSList *node=config->audio_codecs;
+
+  for(;node!=NULL;node=ms_list_next(node)){
+    if (index == codec || codec == -1) {
+      pt=(PayloadType*)(node->data);
+      pt->flags&=~PAYLOAD_TYPE_ENABLED;
+      debug("%2d: %s (%d) %s", index, pt->mime_type, pt->clock_rate, "disabled");
+    }
+		index++;
+	}
+    
+  return NS_OK;
+}
+
 
 //NS_IMETHODIMP nsSIP::GetCallLogs()
 NS_IMETHODIMP nsSIP::GetCallLogs(nsIList **retv NS_OUTPARAM)

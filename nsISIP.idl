@@ -4,7 +4,6 @@
 #include "nsIRunnable.idl"
 #include "nsIArray.idl"
 
-
 [scriptable, function, uuid(3869ed55-e06a-4ac1-84ea-4c3a4b696924)]
 interface nsSipStateObserver : nsISupports {
   void onStatusChange(in string status, in string data);
@@ -85,6 +84,10 @@ interface nsISIP : nsISupports
   void setPlayLevel(in short level);
   void getMicLevel([retval] out short level);
   void setMicLevel(in short level);
+
+  void getCodec(in short index, [retval] out ACString codec);
+  void enableCodec(in short codec);
+  void disableCodec(in short codec);
 
   void getCallLogs([retval] out nsIList retv);
   void clearCallLogs();

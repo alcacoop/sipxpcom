@@ -659,6 +659,15 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   /* void setMicLevel (in short level); */
   NS_SCRIPTABLE NS_IMETHOD SetMicLevel(PRInt16 level) = 0;
 
+  /* void getCodec (in short index, [retval] out ACString codec); */
+  NS_SCRIPTABLE NS_IMETHOD GetCodec(PRInt16 index, nsACString & codec NS_OUTPARAM) = 0;
+
+  /* void enableCodec (in short codec); */
+  NS_SCRIPTABLE NS_IMETHOD EnableCodec(PRInt16 codec) = 0;
+
+  /* void disableCodec (in short codec); */
+  NS_SCRIPTABLE NS_IMETHOD DisableCodec(PRInt16 codec) = 0;
+
   /* void getCallLogs ([retval] out nsIList retv); */
   NS_SCRIPTABLE NS_IMETHOD GetCallLogs(nsIList **retv NS_OUTPARAM) = 0;
 
@@ -708,6 +717,9 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD SetPlayLevel(PRInt16 level); \
   NS_SCRIPTABLE NS_IMETHOD GetMicLevel(PRInt16 *level NS_OUTPARAM); \
   NS_SCRIPTABLE NS_IMETHOD SetMicLevel(PRInt16 level); \
+  NS_SCRIPTABLE NS_IMETHOD GetCodec(PRInt16 index, nsACString & codec NS_OUTPARAM); \
+  NS_SCRIPTABLE NS_IMETHOD EnableCodec(PRInt16 codec); \
+  NS_SCRIPTABLE NS_IMETHOD DisableCodec(PRInt16 codec); \
   NS_SCRIPTABLE NS_IMETHOD GetCallLogs(nsIList **retv NS_OUTPARAM); \
   NS_SCRIPTABLE NS_IMETHOD ClearCallLogs(void); \
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk); \
@@ -744,6 +756,9 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD SetPlayLevel(PRInt16 level) { return _to SetPlayLevel(level); } \
   NS_SCRIPTABLE NS_IMETHOD GetMicLevel(PRInt16 *level NS_OUTPARAM) { return _to GetMicLevel(level); } \
   NS_SCRIPTABLE NS_IMETHOD SetMicLevel(PRInt16 level) { return _to SetMicLevel(level); } \
+  NS_SCRIPTABLE NS_IMETHOD GetCodec(PRInt16 index, nsACString & codec NS_OUTPARAM) { return _to GetCodec(index, codec); } \
+  NS_SCRIPTABLE NS_IMETHOD EnableCodec(PRInt16 codec) { return _to EnableCodec(codec); } \
+  NS_SCRIPTABLE NS_IMETHOD DisableCodec(PRInt16 codec) { return _to DisableCodec(codec); } \
   NS_SCRIPTABLE NS_IMETHOD GetCallLogs(nsIList **retv NS_OUTPARAM) { return _to GetCallLogs(retv); } \
   NS_SCRIPTABLE NS_IMETHOD ClearCallLogs(void) { return _to ClearCallLogs(); } \
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk) { return _to AddObserver(cbk); } \
@@ -780,6 +795,9 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsISIP : public nsISupports {
   NS_SCRIPTABLE NS_IMETHOD SetPlayLevel(PRInt16 level) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetPlayLevel(level); } \
   NS_SCRIPTABLE NS_IMETHOD GetMicLevel(PRInt16 *level NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMicLevel(level); } \
   NS_SCRIPTABLE NS_IMETHOD SetMicLevel(PRInt16 level) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetMicLevel(level); } \
+  NS_SCRIPTABLE NS_IMETHOD GetCodec(PRInt16 index, nsACString & codec NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetCodec(index, codec); } \
+  NS_SCRIPTABLE NS_IMETHOD EnableCodec(PRInt16 codec) { return !_to ? NS_ERROR_NULL_POINTER : _to->EnableCodec(codec); } \
+  NS_SCRIPTABLE NS_IMETHOD DisableCodec(PRInt16 codec) { return !_to ? NS_ERROR_NULL_POINTER : _to->DisableCodec(codec); } \
   NS_SCRIPTABLE NS_IMETHOD GetCallLogs(nsIList **retv NS_OUTPARAM) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetCallLogs(retv); } \
   NS_SCRIPTABLE NS_IMETHOD ClearCallLogs(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->ClearCallLogs(); } \
   NS_SCRIPTABLE NS_IMETHOD AddObserver(nsSipStateObserver *cbk) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddObserver(cbk); } \
@@ -982,6 +1000,24 @@ NS_IMETHODIMP nsSIP::GetMicLevel(PRInt16 *level NS_OUTPARAM)
 
 /* void setMicLevel (in short level); */
 NS_IMETHODIMP nsSIP::SetMicLevel(PRInt16 level)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void getCodec (in short index, [retval] out ACString codec); */
+NS_IMETHODIMP nsSIP::GetCodec(PRInt16 index, nsACString & codec NS_OUTPARAM)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void enableCodec (in short codec); */
+NS_IMETHODIMP nsSIP::EnableCodec(PRInt16 codec)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void disableCodec (in short codec); */
+NS_IMETHODIMP nsSIP::DisableCodec(PRInt16 codec)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
