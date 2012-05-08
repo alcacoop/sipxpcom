@@ -1,0 +1,4 @@
+Componente binario XPCOM che implementa 
+uno stack SIP mediante linphone SDK
+
+Usato in firephone (deprecated)

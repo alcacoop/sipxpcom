@@ -10,3 +10,5 @@ pjsip/pjsip.suo
 pjsip/pjsip.ncb
 pjsip/pjsip.suo
 pjsua_app.c
+libsip.so.i386
+libsip.so
