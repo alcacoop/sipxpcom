@@ -73,6 +73,7 @@ NS_IMETHODIMP nsSIP::Init(PRInt32 _port)
   port = _port;
 
   //LINPHONE INITIALIZATION
+  //lc = linphone_core_new(&cb_table, "/etc/xuldiprc", NULL, this);
   lc = linphone_core_new(&cb_table, NULL, NULL, this);
   linphone_core_set_sip_port(lc, port);
   linphone_core_set_inc_timeout(lc, 20);
@@ -252,16 +253,49 @@ NS_IMETHODIMP nsSIP::AddFriend(const nsACString & name, const nsACString & addr)
 	newFriend = linphone_friend_new();
   linphone_friend_set_sip_addr(newFriend, ToNewCString(addr));
   linphone_friend_set_name(newFriend, ToNewCString(name));
-  linphone_friend_done(newFriend);
+  linphone_friend_send_subscribe(newFriend, true);
   if (!newFriend)
     return NS_ERROR_FAILURE;
-  //linphone_friend_set_sip_addr(newFriend, ToNewCString(addr));
-  //linphone_friend_set_name(newFriend, ToNewCString(name));
 
-  linphone_friend_send_subscribe(newFriend, true);
 	linphone_core_add_friend(lc, newFriend);
+
+  /*
+int linphone_proxy_config_send_publish(LinphoneProxyConfig *cfg, LinphoneOnlineStatus os);
+int linphone_online_status_to_eXosip(LinphoneOnlineStatus os);
+  linphone_friend_notify(newFriend, LINPHONE_STATUS_ONLINE);
+void linphone_friend_close_subscriptions(LinphoneFriend *lf);
+*/
+
   return NS_OK;
 }
+
+/*
+static int linphonec_friend_delete(LinphoneCore *lc, int num)
+{
+	const MSList *friend = linphone_core_get_friend_list(lc);
+	unsigned int n;
+
+	for(n=0; friend!=NULL; friend=ms_list_next(friend), ++n )
+	{
+		if ( n == num )
+		{
+			linphone_core_remove_friend(lc, friend->data);
+			return 0;
+		}
+	}
+
+	if (-1 == num) 
+	{
+		unsigned int i;
+		for (i = 0 ; i < n ; i++)
+			linphonec_friend_delete(lc, 0);
+		return 0;
+	}
+
+	linphonec_out("No such friend %u\n", num);
+	return 1;
+}
+*/
 
 /* void setPresenceInfo (); */
 NS_IMETHODIMP nsSIP::SetPresenceInfo(PRInt32 presence_status)
@@ -282,6 +316,12 @@ NS_IMETHODIMP nsSIP::SetPresenceInfo(PRInt32 presence_status)
   }
 
   linphone_core_set_presence_info(lc, 0, NULL, status);
+
+  /*
+  LinphoneProxyConfig *proxy = NULL;
+  linphone_core_get_default_proxy(lc, &proxy);
+  if (proxy) linphone_proxy_config_send_publish(proxy, status);
+  */
 
   return NS_OK;
 }
